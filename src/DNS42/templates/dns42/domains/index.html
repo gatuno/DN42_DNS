@@ -1,0 +1,57 @@
+{extends 'dns42/base.html'}
+{block body}
+<p>{trans 'List of .dn42 domains'}</p>
+<table class="domains">{amedia 'v4_icon', '/img/ipv4_icon.png'}{amedia 'v6_icon', '/img/ipv6_icon.png'}
+	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Nameservers'}</th></tr></thead>
+	<tbody>{foreach $domains as $d}
+	<tr><td>{$d.dominio}</td>{assign $nss = $d->get_name_severs_list ()}
+	<td class="ns_td"><table class="ns"><tr>
+	{foreach $nss as $ns}
+		<td class="td_{$ns.estado_as_string ()}"><a href="{url 'DNS42_Views_Domains::ver_nameserver', $ns.nombre}">{$ns.nombre}</a>{if $ns.ipv4 != ''} <img src="{$v4_icon}" title="{$ns.ipv4}" />{/if}{if $ns.ipv6 != ''} <img src="{$v6_icon}" title="{$ns.ipv6}" />{/if}</td>
+	{/foreach}
+	</tr></table></td>
+	</tr>
+	{/foreach}</tbody>
+</table>
+{/block}
+{block extrahead}
+<style type="text/css">
+{literal}
+.td_good {
+	background-color: lightgreen;
+}
+.td_bad {
+	background-color: lightpink;
+}
+.td_unknown {
+	background-color: lightgray;
+}
+.td_warn {
+	background-color: lightgoldenrodyellow;
+}
+.domains {
+	border: 1px solid #ddd;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+.domains td, .domains th {
+	padding: 8px;
+	text-align: left;
+	border: 1px solid #ddd;
+}
+td.ns_td {
+	padding: 0px;
+}
+.ns {
+	border-spacing: 0;
+}
+.ns td {
+	border-left: 0px;
+	border-top: 0px;
+	border-bottom: 0px;
+	border-right: 1px solid #ddd;
+	border-collapse: collapse;
+}
+{/literal}
+</style>
+{/block}

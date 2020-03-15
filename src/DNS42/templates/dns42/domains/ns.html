@@ -1,0 +1,9 @@
+{extends 'dns42/base.html'}
+{block body}
+{if $ns.ipv4 != ''}<p><img src="{media '/img/ipv4_icon.png'}" title="{trans 'IPv4'}" /> {$ns.ipv4}{if $ns.ping4 != ''} {trans 'Ping'}: {$ns.ping4}{/if}</p>{/if}
+{if $ns.ipv6 != ''}<p><img src="{media '/img/ipv6_icon.png'}" title="{trans 'IPv6'}" /> {$ns.ipv6}{if $ns.ping6 != ''} {trans 'Ping'}: {$ns.ping6}{/if}</p>{/if}
+<p>{trans 'Domains associated with this nameserver'}
+<ul>{foreach $domains as $d}
+	<li>{$d.dominio}</li>
+{/foreach}</ul>
+{/block}

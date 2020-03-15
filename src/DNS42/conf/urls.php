@@ -56,30 +56,6 @@ $ctl[] = array (
 	'method' => 'passwordRecovery',
 );
 
-/* Registro de nuevos usuarios */
-if (Gatuf::config ('enable_register', false) !== false) {
-	$ctl[] = array (
-		'regex' => '#^/register/$#',
-		'base' => $base,
-		'model' => 'DNS42_Views_Register',
-		'method' => 'register',
-	);
-
-	$ctl[] = array (
-		'regex' => '#^/register/ik/$#',
-		'base' => $base,
-		'model' => 'DNS42_Views_Register',
-		'method' => 'inputKey',
-	);
-
-	$ctl[] = array (
-		'regex' => '#^/register/k/(.*)/$#',
-		'base' => $base,
-		'model' => 'DNS42_Views_Register',
-		'method' => 'confirmation',
-	);
-}
-
 /* Gestión de usuarios */
 $ctl[] = array (
 	'regex' => '#^/users/$#',
@@ -121,6 +97,20 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'DNS42_Views_Users',
 	'method' => 'cambiar_pass',
+);
+
+$ctl[] = array (
+	'regex' => '#^/dns/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Domains',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/ns/(.*)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Domains',
+	'method' => 'ver_nameserver',
 );
 
 return $ctl;

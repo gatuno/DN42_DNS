@@ -41,19 +41,40 @@ class DNS42_NameServer extends Gatuf_Model {
 			),
 			'ping4' =>
 			array (
-			       'type' => 'Gatuf_DB_Field_Integer',
+			       'type' => 'Gatuf_DB_Field_Varchar',
 			       'blank' => false,
-			       'default' => 0,
+			       'size' => 256,
 			),
 			'ping6' =>
 			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 256,
+			),
+			'estado' =>
+			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
-			       'default' => 0,
+			       'default' => 0, /* 0 = desconocido, 1 = mal, 2 = advertencia, 3 = bien */
 			),
 		);
 		
 		$this->default_order = 'nombre ASC';
+	}
+	
+	public function estado_as_string () {
+		switch ($this->estado) {
+			case 0:
+				return 'unknown';
+			case 1:
+				return 'bad';
+			case 2:
+				return 'warn';
+			case 3:
+				return 'good';
+			default:
+				return 'unknown';
+		}
 	}
 }
 
