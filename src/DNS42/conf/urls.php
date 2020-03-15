@@ -107,10 +107,10 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/ns/(.*)/$#',
+	'regex' => '#^/server/(.*)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Domains',
-	'method' => 'ver_nameserver',
+	'method' => 'ver_server',
 );
 
 return $ctl;

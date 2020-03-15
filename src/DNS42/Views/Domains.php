@@ -5,7 +5,7 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Domains {
 	public function index ($request, $match) {
-		$domains = Gatuf::factory ('DNS42_TopLevelDomain')->getList ();
+		$domains = Gatuf::factory ('DNS42_Domain')->getList ();
 		
 		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/index.html',
 		                                         array('page_title' => __('Domains'),
@@ -13,22 +13,22 @@ class DNS42_Views_Domains {
 		                                         $request);
 	}
 	
-	public function ver_nameserver ($request, $match) {
+	public function ver_server ($request, $match) {
 		$sql = new Gatuf_SQL ('nombre=%s', $match[1]);
-		$ns = Gatuf::factory ('DNS42_NameServer')->getOne ($sql->gen ());
+		$server = Gatuf::factory ('DNS42_Server')->getOne ($sql->gen ());
 		
-		if (null === $ns) {
+		if (null === $server) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$page_title = sprintf (__('Name server %s'), $ns->nombre);
+		$page_title = sprintf (__('Server %s'), $server->nombre);
 		
-		$domains = $ns->get_dominios_list ();
+		$ns = $server->get_domains_list ();
 		
 		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/ns.html',
 		                                         array('page_title' => $page_title,
-		                                         'domains' => $domains,
-		                                         'ns' => $ns),
+		                                         'ns' => $ns,
+		                                         'server' => $server),
 		                                         $request);
 	}
 }

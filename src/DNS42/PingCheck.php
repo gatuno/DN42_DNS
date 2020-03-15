@@ -18,7 +18,7 @@ class DNS42_PingCheck extends Gatuf_Model {
 			array (
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
 			       'blank' => false,
-			       'model' => 'DNS42_NameServer',
+			       'model' => 'DNS42_Server',
 			       'relate_name' => 'ping_checks',
 			),
 			'prioridad' =>

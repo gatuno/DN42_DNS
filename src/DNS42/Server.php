@@ -1,10 +1,10 @@
 <?php
 
-class DNS42_NameServer extends Gatuf_Model {
+class DNS42_Server extends Gatuf_Model {
 	public $_model = __CLASS__;
 	
 	function init () {
-		$this->_a['table'] = 'name_servers';
+		$this->_a['table'] = 'servers';
 		$this->_a['model'] = __CLASS__;
 		$this->primary_key = 'id';
 		
@@ -14,19 +14,36 @@ class DNS42_NameServer extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Sequence',
 			       'blank' => true,
 			),
-			'dominio' =>
+			'nombre' =>
 			array (
-			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'type' => 'Gatuf_DB_Field_Varchar',
 			       'blank' => false,
-			       'model' => 'DNS42_Domain',
-			       'relate_name' => 'ns',
+			       'size' => 256,
+			       //'unique' => true,
 			),
-			'server' =>
+			'ipv4' =>
 			array (
-			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'type' => 'Gatuf_DB_Field_Varchar',
 			       'blank' => false,
-			       'model' => 'DNS42_Server',
-			       'relate_name' => 'domains',
+			       'size' => 256,
+			),
+			'ipv6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 256,
+			),
+			'ping4' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 256,
+			),
+			'ping6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 256,
 			),
 			'estado' =>
 			array (
@@ -36,13 +53,7 @@ class DNS42_NameServer extends Gatuf_Model {
 			),
 		);
 		
-		$this->_a['idx'] = array (
-			'ns_idx' =>
-			array (
-			       'col' => 'dominio, server',
-			       'type' => 'unique',
-			),
-		);
+		$this->default_order = 'nombre ASC';
 	}
 	
 	public function estado_as_string () {

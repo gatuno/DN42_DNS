@@ -55,13 +55,16 @@ foreach ($files as $file) {
 		continue;
 	}
 	
-	/* Primero, crear los objetos Nameserver o revisar si ya existen */
+	if ($data['domain'] == 'rzl') continue;
+	if ($data['domain'] == 'hack') continue;
+	
+	/* Primero, crear los objetos servidor o revisar si ya existen */
 	$all_ns_by_name = array ();
 	foreach ($data['nserver'] as $ns) {
 		$toks = explode (" ", $ns);
 		
 		$sql = new Gatuf_SQL ('nombre=%s', $toks[0]);
-		$ns = Gatuf::factory ('DNS42_NameServer')->getOne (array ('filter' => $sql->gen ()));
+		$server = Gatuf::factory ('DNS42_Server')->getOne (array ('filter' => $sql->gen ()));
 		
 		if (count ($toks) > 1) {
 			/* Tenemos nombre + IP, actualizar si es necesario */
@@ -71,27 +74,27 @@ foreach ($files as $file) {
 			} else if (filter_var ($toks[1], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
 				$ip = 6;
 			}
-			if ($ns == null) {
+			if ($server == null) {
 				/* Crear */
-				$ns = new DNS42_NameServer ();
-				$ns->nombre = $toks[0];
+				$server = new DNS42_Server ();
+				$server->nombre = mb_strtolower ($toks[0]);
 				
 				if ($ip == 4) {
-					$ns->ipv4 = $toks[1];
+					$server->ipv4 = $toks[1];
 				} else if ($ip == 6) {
-					$ns->ipv6 = $toks[1];
+					$server->ipv6 = $toks[1];
 				}
 				
-				$ns->create ();
+				$server->create ();
 			} else {
 				/* Actualizar */
 				if ($ip == 4) {
-					$ns->ipv4 = $toks[1];
+					$server->ipv4 = $toks[1];
 				} else if ($ip == 6) {
-					$ns->ipv6 = $toks[1];
+					$server->ipv6 = $toks[1];
 				}
 				
-				$ns->update ();
+				$server->update ();
 			}
 		}
 		/* En caso contrario, es solo el nombre sin IP, es una delegación fuera de zona, ignorar, solo asociar con el dominio */
@@ -103,28 +106,29 @@ foreach ($files as $file) {
 	
 	/* Buscar y crear el dominio si es necesario */
 	$sql = new Gatuf_SQL ('dominio=%s', $data['domain']);
-	$dominio = Gatuf::factory ('DNS42_TopLevelDomain')->getOne (array ('filter' => $sql->gen ()));
+	$dominio = Gatuf::factory ('DNS42_Domain')->getOne (array ('filter' => $sql->gen ()));
 	
 	if ($dominio === null) {
-		$dominio = new DNS42_TopLevelDomain ();
-		$dominio->dominio = $data['domain'];
+		$dominio = new DNS42_Domain ();
+		$dominio->dominio = mb_strtolower ($data['domain']);
 		
 		$dominio->create ();
 	}
 	
 	/* Quitar los ns no asociados */
-	$ns_assoc = $dominio->get_name_severs_list ();
+	$ns_assoc = $dominio->get_ns_list ();
 	foreach ($ns_assoc as $ns) {
 		
-		$key = array_search ($ns->nombre, $all_ns_by_name);
+		$server = $ns->get_server ();
+		$key = array_search ($server->nombre, $all_ns_by_name);
 		if ($key !== false) {
-			if (!isset ($all_active_ns[$ns->nombre])) $all_active_ns[$ns->nombre] = 1;
+			if (!isset ($all_active_ns[$server->nombre])) $all_active_ns[$server->nombre] = 1;
 			/* No es necesario asociar este ns, ya lo está */
 			/* Quitar del arreglo */
 			unset ($all_ns_by_name [$key]);
 		} else {
-			/* ¿Está asociado en y no existe?, desasociar */
-			$dominio->delAssoc ($ns);
+			/* ¿Está asociado en BD y no existe?, desasociar */
+			$ns->delete ();
 		}
 	}
 	
@@ -132,13 +136,17 @@ foreach ($files as $file) {
 	foreach ($all_ns_by_name as $new_ns) {
 		if (!isset ($all_active_ns[$new_ns])) $all_active_ns[$new_ns] = 1;
 		$sql = new Gatuf_SQL ('nombre=%s', $new_ns);
-		$ns = Gatuf::factory ('DNS42_NameServer')->getOne (array ('filter' => $sql->gen ()));
+		$server = Gatuf::factory ('DNS42_Server')->getOne (array ('filter' => $sql->gen ()));
 		
-		if ($ns === null) {
+		if ($server === null) {
 			//echo "--- Error, $new_ns no existe ---\n";
 			$pending_ns[$dominio->dominio] = $new_ns;
 		} else {
-			$dominio->setAssoc ($ns);
+			$ns = new DNS42_NameServer ();
+			$ns->server = $server;
+			$ns->dominio = $dominio;
+			
+			$ns->create ();
 		}
 	}
 	
@@ -147,18 +155,43 @@ foreach ($files as $file) {
 
 foreach ($pending_ns as $domain => $new_ns) {
 	$sql = new Gatuf_SQL ('nombre=%s', $new_ns);
-	$ns = Gatuf::factory ('DNS42_NameServer')->getOne (array ('filter' => $sql->gen ()));
+	$server = Gatuf::factory ('DNS42_Server')->getOne (array ('filter' => $sql->gen ()));
 	
 	$sql = new Gatuf_SQL ('dominio=%s', $domain);
-	$dominio = Gatuf::factory ('DNS42_TopLevelDomain')->getOne (array ('filter' => $sql->gen ()));
+	$dominio = Gatuf::factory ('DNS42_Domain')->getOne (array ('filter' => $sql->gen ()));
 	
-	if ($ns === null) {
+	if ($server === null) {
 		echo "--- Error, NS=$new_ns no existe ---\n";
 	} else if ($dominio === null) {
 		echo "--- Error, DOMAIN=$domain no existe ---\n";
 	} else {
-		$dominio->setAssoc ($ns);
+		$ns = new DNS42_NameServer ();
+		$ns->server = $server;
+		$ns->dominio = $dominio;
+		
+		$ns->create ();
 	}
 }
 /* TODO: Recorrer todos los dominios y buscar cuáles no están activos */
 
+$domains = Gatuf::factory ('DNS42_Domain')->getList ();
+
+foreach ($domains as $domain) {
+	if (isset ($all_active_domains [$domain->dominio]) && $all_active_domains [$domain->dominio] == 1) continue;
+	
+	$nss = $domain->get_ns_list ();
+	
+	foreach ($nss as $ns) {
+		$ns->delete ();
+	}
+}
+
+$servers = Gatuf::factory ('DNS42_Server')->getList ();
+foreach ($servers as $server) {
+	$ns_count = $server->get_domains_list (array ('count' => true));
+	
+	if ($ns_count == 0) {
+		/* Este servidor ya no se usa, eliminar */
+		$server->delete ();
+	}
+}

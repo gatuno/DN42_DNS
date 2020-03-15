@@ -4,10 +4,10 @@
 <table class="domains">{amedia 'v4_icon', '/img/ipv4_icon.png'}{amedia 'v6_icon', '/img/ipv6_icon.png'}
 	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Nameservers'}</th></tr></thead>
 	<tbody>{foreach $domains as $d}
-	<tr><td>{$d.dominio}</td>{assign $nss = $d->get_name_severs_list ()}
+	<tr><td>{$d.dominio}</td>{assign $nss = $d->get_ns_list ()}
 	<td class="ns_td"><table class="ns"><tr>
-	{foreach $nss as $ns}
-		<td class="td_{$ns.estado_as_string ()}"><a href="{url 'DNS42_Views_Domains::ver_nameserver', $ns.nombre}">{$ns.nombre}</a>{if $ns.ipv4 != ''} <img src="{$v4_icon}" title="{$ns.ipv4}" />{/if}{if $ns.ipv6 != ''} <img src="{$v6_icon}" title="{$ns.ipv6}" />{/if}</td>
+	{foreach $nss as $ns}{assign $server = $ns.get_server ()}
+		<td class="td_{$server.estado_as_string ()}"><a href="{url 'DNS42_Views_Domains::ver_server', $server.nombre}">{$server.nombre}</a>{if $server.ipv4 != ''} <img src="{$v4_icon}" title="{$server.ipv4}" />{/if}{if $server.ipv6 != ''} <img src="{$v6_icon}" title="{$server.ipv6}" />{/if}</td>
 	{/foreach}
 	</tr></table></td>
 	</tr>

@@ -15,16 +15,16 @@ foreach ($checks as $check) {
 	
 	if ($ret === false) continue;
 	
-	$ns = $check->get_server ();
+	$server = $check->get_server ();
 	
-	if ($ns->ipv4 == '' || $ns->ipv6 == '') {
+	if ($server->ipv4 == '' || $server->ipv6 == '') {
 		$check->delete ();
 		continue;
 	}
 	
 	$ping4 = '';
-	if ($ns->ipv4 != '') {
-		$ping = new DNS42_Ping ($ns->ipv4, 255, 3, 4);
+	if ($server->ipv4 != '') {
+		$ping = new DNS42_Ping ($server->ipv4, 255, 3, 4);
 		
 		$lat = $ping->ping ('socket');
 		
@@ -36,8 +36,8 @@ foreach ($checks as $check) {
 	}
 	
 	$ping6 = '';
-	if ($ns->ipv6 != '') {
-		$ping = new DNS42_Ping ($ns->ipv6, 255, 3, 6);
+	if ($server->ipv6 != '') {
+		$ping = new DNS42_Ping ($server->ipv6, 255, 3, 6);
 		
 		$lat = $ping->ping ('socket');
 		
@@ -48,36 +48,36 @@ foreach ($checks as $check) {
 		}
 	}
 	
-	$ns->ping4 = $ping4;
-	$ns->ping6 = $ping6;
-	if ($ns->ipv4 != '' && $ns->ipv6 != '') {
+	$server->ping4 = $ping4;
+	$server->ping6 = $ping6;
+	if ($server->ipv4 != '' && $server->ipv6 != '') {
 		/* El color verde se logra con los dos pings en verde */
 		if ($ping4 == 'failed' && $ping6 == 'failed') {
-			$ns->estado = 1; /* Rojo */
+			$server->estado = 1; /* Rojo */
 		} else if ($ping4 == 'failed') {
-			$ns->estado = 2; /* Advertencia */
+			$server->estado = 2; /* Advertencia */
 		} else if ($ping6 == 'failed') {
-			$ns->estado = 2; /* Advertencia */
+			$server->estado = 2; /* Advertencia */
 		} else {
-			$ns->estado = 3;
+			$server->estado = 3;
 		}
-	} else if ($ns->ipv4 != '') {
+	} else if ($server->ipv4 != '') {
 		/* El verde se logra solo con el ping de ipv4 */
 		if ($ping4 == 'failed') {
-			$ns->estado = 1;
+			$server->estado = 1;
 		} else {
-			$ns->estado = 3;
+			$server->estado = 3;
 		}
-	} else if ($ns->ipv6 != '') {
+	} else if ($server->ipv6 != '') {
 		/* El verde se logra solo con el ping de ipv6 */
 		if ($ping6 == 'failed') {
-			$ns->estado = 1;
+			$server->estado = 1;
 		} else {
-			$ns->estado = 3;
+			$server->estado = 3;
 		}
 	}
 	
-	$ns->update ();
+	$server->update ();
 	
 	$check->delete ();
 	

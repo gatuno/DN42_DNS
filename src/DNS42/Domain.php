@@ -1,10 +1,10 @@
 <?php
 
-class DNS42_TopLevelDomain extends Gatuf_Model {
+class DNS42_Domain extends Gatuf_Model {
 	public $_model = __CLASS__;
 	
 	function init () {
-		$this->_a['table'] = 'top_levels';
+		$this->_a['table'] = 'domains';
 		$this->_a['model'] = __CLASS__;
 		$this->primary_key = 'id';
 		
@@ -19,6 +19,7 @@ class DNS42_TopLevelDomain extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Varchar',
 			       'blank' => false,
 			       'size' => 256,
+			       //'unique' => true,
 			),
 			'estado' =>
 			array (
