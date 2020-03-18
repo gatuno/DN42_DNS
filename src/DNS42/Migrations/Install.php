@@ -6,6 +6,7 @@ function DNS42_Migrations_Install_setup ($params=null) {
 		'DNS42_Server',
 		'DNS42_NameServer',
 		'DNS42_PingCheck',
+		'DNS42_NSCheck',
 	);
 	
 	$db = Gatuf::db ();
@@ -27,6 +28,7 @@ function DNS42_Migrations_Install_teardown ($params=null) {
 		'DNS42_Server',
 		'DNS42_NameServer',
 		'DNS42_PingCheck',
+		'DNS42_NSCheck',
 	);
 	
 	$db = Gatuf::db ();

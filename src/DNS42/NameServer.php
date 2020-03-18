@@ -34,6 +34,54 @@ class DNS42_NameServer extends Gatuf_Model {
 			       'blank' => false,
 			       'default' => 0, /* 0 = desconocido, 1 = mal, 2 = advertencia, 3 = bien */
 			),
+			'open_transfer4' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
+			'open_transfer6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
+			'autoritative4' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
+			'autoritative6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
+			'parent_match4' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
+			'parent_match6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
+			'soa4' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 256,
+			),
+			'soa6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 256,
+			),
 		);
 		
 		$this->_a['idx'] = array (
@@ -45,15 +93,13 @@ class DNS42_NameServer extends Gatuf_Model {
 		);
 	}
 	
-	public function estado_as_string () {
-		switch ($this->estado) {
+	public function klass_field ($field) {
+		switch ($this->$field) {
 			case 0:
 				return 'unknown';
 			case 1:
 				return 'bad';
 			case 2:
-				return 'warn';
-			case 3:
 				return 'good';
 			default:
 				return 'unknown';

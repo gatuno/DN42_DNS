@@ -113,4 +113,32 @@ $ctl[] = array (
 	'method' => 'ver_server',
 );
 
+$ctl[] = array (
+	'regex' => '#^/domain/(.*)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Domains',
+	'method' => 'ver',
+);
+
+$ctl[] = array (
+	'regex' => '#^/check/ns/(\d+)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Domains',
+	'method' => 'programar_check_ns',
+);
+
+$ctl[] = array (
+	'regex' => '#^/check/ping/(.*)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Domains',
+	'method' => 'programar_check_ping',
+);
+
+$ctl[] = array (
+	'regex' => '#^/check/domain/(.*)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Domains',
+	'method' => 'programar_check_domain',
+);
+
 return $ctl;

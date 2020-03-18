@@ -56,6 +56,36 @@ class DNS42_Server extends Gatuf_Model {
 		$this->default_order = 'nombre ASC';
 	}
 	
+	public function preSave ($create = false) {
+		/* Actualizar la variable de estado acorde al resultados de los pings */
+		if ($this->ipv4 != '' && $this->ipv6 != '') {
+			/* El color verde se logra con los dos pings en verde */
+			if ($this->ping4 == 'failed' && $this->ping6 == 'failed') {
+				$this->estado = 1; /* Rojo */
+			} else if ($this->ping4 == 'failed') {
+				$this->estado = 2; /* Advertencia */
+			} else if ($this->ping6 == 'failed') {
+				$this->estado = 2; /* Advertencia */
+			} else {
+				$this->estado = 3;
+			}
+		} else if ($this->ipv4 != '') {
+			/* El verde se logra solo con el ping de ipv4 */
+			if ($this->ping4 == 'failed') {
+				$this->estado = 1;
+			} else {
+				$this->estado = 3;
+			}
+		} else if ($this->ipv6 != '') {
+			/* El verde se logra solo con el ping de ipv6 */
+			if ($this->ping6 == 'failed') {
+				$this->estado = 1;
+			} else {
+				$this->estado = 3;
+			}
+		}
+	}
+	
 	public function estado_as_string () {
 		switch ($this->estado) {
 			case 0:

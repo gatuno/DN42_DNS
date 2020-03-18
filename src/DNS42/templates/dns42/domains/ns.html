@@ -1,9 +1,10 @@
 {extends 'dns42/base.html'}
 {block body}
+<a href="{url 'DNS42_Views_Domains::programar_check_ping', $server.nombre}">{trans 'Schedule ping check on this server'}</a>
 {if $server.ipv4 != ''}<p><img src="{media '/img/ipv4_icon.png'}" title="{trans 'IPv4'}" /> {$server.ipv4}{if $server.ping4 != ''} {trans 'Ping'}: {$server.ping4}{/if}</p>{/if}
 {if $server.ipv6 != ''}<p><img src="{media '/img/ipv6_icon.png'}" title="{trans 'IPv6'}" /> {$server.ipv6}{if $server.ping6 != ''} {trans 'Ping'}: {$server.ping6}{/if}</p>{/if}
 <p>{trans 'Domains associated with this nameserver'}
 <ul>{foreach $ns as $n}{assign $d = $n.get_dominio ()}
-	<li>{$d.dominio}</li>
+	<li><a href="{url 'DNS42_Views_Domains::ver', $d.dominio}">{$d.dominio}</a></li>
 {/foreach}</ul>
 {/block}
