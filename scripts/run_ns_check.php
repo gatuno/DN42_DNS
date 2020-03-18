@@ -6,28 +6,26 @@ require 'Gatuf.php';
 Gatuf::start(dirname(__FILE__).'/../src/DNS42/conf/dns42.php');
 Gatuf_Despachador::loadControllers(Gatuf::config('dns42_views'));
 
+restore_error_handler ();
+
 function run_test ($host, $dominio) {
 	$opts = array ('nameservers' => array ($host));
 	$resolver = new Net_DNS2_Resolver ($opts);
 	
-	/* Intentar una transferencia full */
+	/* Valores por defecto */
 	$full_axfr = false;
-	try {
-		$result = $resolver->query ($dominio->dominio, 'AXFR');
-		
-		$full_axfr = true;
-	} catch (Net_DNS2_Exception $err) {
-		$full_axfr = false;
-	}
+	$soa = '';
+	$auth = false;
+	$ns_list = array ();
+	$parent_match = false;
 	
+	/* Buscar el registro SOA del dominio */
 	try {
 		$result = $resolver->query ($dominio->dominio, 'SOA');
 	} catch (Net_DNS2_Exception $err) {
 		$result = false;
 	}
 	
-	$soa = '';
-	$auth = false;
 	if ($result !== false) {
 		if ($result->header->aa == 1) {
 			$auth = true;
@@ -38,14 +36,23 @@ function run_test ($host, $dominio) {
 		}
 	}
 	
+	if ($auth) {
+		/* Intentar una transferencia full solo si es la autoridad de la zona */
+		try {
+			$result = $resolver->query ($dominio->dominio, 'AXFR');
+		
+			$full_axfr = true;
+		} catch (Net_DNS2_Exception $err) {
+			$full_axfr = false;
+		}
+	}
+	
 	try {
 		$result = $resolver->query ($dominio->dominio, 'NS');
 	} catch (Net_DNS2_Exception $err) {
 		$result = false;
 	}
 	
-	$ns_list = array ();
-	$parent_match = false;
 	if ($result !== false) {
 		foreach ($result->answer as $ns) {
 			if (get_class ($ns) == 'Net_DNS2_RR_NS') {
@@ -68,7 +75,6 @@ function run_test ($host, $dominio) {
 		}
 	}
 	
-	var_dump ($soa);
 	return array ('axfr' => $full_axfr, 'auth' => $auth, 'parent_match' => $parent_match, 'ns_list' => $ns_list, 'soa' => $soa);
 }
 
@@ -80,7 +86,10 @@ while (count ($checks) > 0) {
 	$check = $checks[0];
 	$ret = $check->block_for_check ();
 	
-	if ($ret === false) continue;
+	if ($ret === false) {
+		$checks = Gatuf::factory ('DNS42_NSCheck')->getList (array ('order' => 'prioridad ASC', 'filter' => 'estado = 0', 'nb' => 1));
+		continue;
+	}
 	
 	$ns = $check->get_ns ();
 	$server = $ns->get_server ();
@@ -99,6 +108,7 @@ while (count ($checks) > 0) {
 			$ns->autoritative4 = 2;
 		} else {
 			$ns->autoritative4 = 1;
+			$ns->open_transfer4 = 0;
 		}
 		
 		if ($results['parent_match'] == true) {
@@ -108,6 +118,7 @@ while (count ($checks) > 0) {
 		}
 		
 		$ns->soa4 = $results['soa'];
+		$ns->ns_list4 = implode (",", $results['ns_list']);
 	}
 	
 	if ($server->ipv6 != '') {
@@ -123,6 +134,7 @@ while (count ($checks) > 0) {
 			$ns->autoritative6 = 2;
 		} else {
 			$ns->autoritative6 = 1;
+			$ns->open_transfer6 = 0;
 		}
 		
 		if ($results['parent_match'] == true) {
@@ -132,6 +144,7 @@ while (count ($checks) > 0) {
 		}
 		
 		$ns->soa6 = $results['soa'];
+		$ns->ns_list6 = implode (",", $results['ns_list']);
 	}
 	
 	$ns->update ();

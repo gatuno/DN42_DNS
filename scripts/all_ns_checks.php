@@ -6,12 +6,14 @@ require 'Gatuf.php';
 Gatuf::start(dirname(__FILE__).'/../src/DNS42/conf/dns42.php');
 Gatuf_Despachador::loadControllers(Gatuf::config('dns42_views'));
 
-$ns = Gatuf::factory ('DNS42_NameServer')->getList ();
+$nss = Gatuf::factory ('DNS42_NameServer')->getList ();
 
-foreach ($servers as $server) {
-	$check = $server->get_ping_checks_list ();
+foreach ($nss as $ns) {
+	$check = $ns->get_ns_checks_list ();
 	
 	if (count ($check) > 0) continue;
+	
+	$server = $ns->get_server ();
 	
 	if ($server->ipv4 == '' && $server->ipv6 == '') continue;
 	
@@ -26,10 +28,8 @@ foreach ($servers as $server) {
 		$prio = 120;
 	}
 	
-	$check = new DNS42_PingCheck ();
-	
-	$check->server = $server;
-	$check->prioridad = $prio;
-	$check->estado = 0;
+	$check = new DNS42_NSCheck ();
+	$check->ns = $ns;
 	$check->create ();
 }
+

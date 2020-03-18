@@ -82,6 +82,18 @@ class DNS42_NameServer extends Gatuf_Model {
 			       'blank' => false,
 			       'size' => 256,
 			),
+			'ns_list4' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 2048,
+			),
+			'ns_list6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 2048,
+			),
 		);
 		
 		$this->_a['idx'] = array (

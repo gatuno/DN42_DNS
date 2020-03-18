@@ -6,6 +6,8 @@ require 'Gatuf.php';
 Gatuf::start(dirname(__FILE__).'/../src/DNS42/conf/dns42.php');
 Gatuf_Despachador::loadControllers(Gatuf::config('dns42_views'));
 
+restore_error_handler ();
+
 $checks = Gatuf::factory ('DNS42_PingCheck')->getList (array ('order' => 'prioridad ASC', 'filter' => 'estado = 0', 'nb' => 1));
 
 $check_method = Gatuf::config ('dn42_ping_method');
@@ -14,7 +16,10 @@ while (count ($checks) > 0) {
 	$check = $checks[0];
 	$ret = $check->block_for_check ();
 	
-	if ($ret === false) continue;
+	if ($ret === false) {
+		$checks = Gatuf::factory ('DNS42_PingCheck')->getList (array ('order' => 'prioridad ASC', 'filter' => 'estado = 0', 'nb' => 1));
+		continue;
+	}
 	
 	$server = $check->get_server ();
 	
