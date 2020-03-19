@@ -64,7 +64,7 @@ $cfg['dns42_views'] = dirname(__FILE__).'/urls.php';
 # <http://www.php.net/manual/en/timezones.php>
 $cfg['time_zone'] = 'America/Mexico_City';
 
-$cfg['languages'] = array('en');
+$cfg['languages'] = array('en', 'es_MX');
 
 # ---------------------------------------------------------------------------- #
 #                             Database section                                 #

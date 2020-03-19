@@ -1,0 +1,581 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-18 22:44-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: DNS42/gettexttemplates/dns42/users/ver.html.php:3
+#, php-format
+msgid "Full Name: %%name%%"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/ver.html.php:4
+#, php-format
+msgid "Login: %%login%%"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/ver.html.php:5
+#: DNS42/gettexttemplates/dns42/users/actualizar.html.php:5
+msgid "Update user info"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/ver.html.php:6
+#: DNS42/gettexttemplates/dns42/users/cambiar_mi_pass.html.php:4
+#: DNS42/Views/Users.php:78
+msgid "Change my password"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/ver.html.php:7
+msgid "Reset user password"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/cambiar_mi_pass.html.php:3
+#: DNS42/gettexttemplates/dns42/users/agregar.html.php:3
+#: DNS42/gettexttemplates/dns42/users/reset_pass.html.php:5
+#: DNS42/gettexttemplates/dns42/users/actualizar.html.php:4
+msgid "The form has errors:"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/agregar.html.php:4
+msgid "Create"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/index.html.php:3
+msgid "Add user"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/index.html.php:4 DNS42/Views/Users.php:39
+msgid "Add new user"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/reset_pass.html.php:3
+#: DNS42/gettexttemplates/dns42/users/actualizar.html.php:3
+msgid "Username:"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/reset_pass.html.php:4
+msgid "Full name:"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/users/reset_pass.html.php:6
+#: DNS42/Views/Users.php:101
+msgid "Reset password"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/base.html.php:3
+msgid "Home"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/base.html.php:4 DNS42/Views/Domains.php:11
+msgid "Domains"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/base.html.php:5
+#: DNS42/gettexttemplates/dns42/base.html.php:6
+msgid "Logout"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/base.html.php:7
+msgid "Login"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/base.html.php:8
+msgid "Foot page"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/index.html.php:3
+msgid "Welcome text here"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-ask.html.php:3
+msgid ""
+"Oups, please check the provided login or email address to recover your "
+"password."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-ask.html.php:4
+msgid "Recover My Password"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/login.html.php:3
+#, php-format
+msgid ""
+"Have you forgotten you password? Try <a href=\"%%recov_url%%\">recovering</a>"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/login.html.php:4
+msgid "What is your login?"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/login.html.php:5
+msgid "My login is"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/login.html.php:6
+msgid "My password is"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/login.html.php:7 DNS42/Views/Login.php:43
+msgid "Sign in"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-email.txt.php:3
+#, php-format
+msgid ""
+"Hello,\n"
+"\n"
+"You lost your password and wanted to recover it.\n"
+"To provide a new password for your account, you\n"
+"just have to follow the provided link. You will\n"
+"get a simple form to provide a new password.\n"
+"\n"
+"%%url%%\n"
+"\n"
+"Alternatively, go to this page:\n"
+"\n"
+"%%urlik%%\n"
+"\n"
+"and provide the following verification key:\n"
+"\n"
+"%%key%%\n"
+"\n"
+"If you are not the one who requested to reset\n"
+"your password, simply ignore this email, your\n"
+"password will not be changed.\n"
+"\n"
+"Yours faithfully,\n"
+"DNS42\n"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-reset.html.php:3
+msgid "Oups, please check the form for errors."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-reset.html.php:4
+msgid "Login:"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-reset.html.php:5
+msgid "Email:"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-reset.html.php:6
+msgid "Reset Your Password"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-inputkey.html.php:3
+msgid "Oups, we found an error in the form."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-inputkey.html.php:4
+msgid "Recover Your Password"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:3
+msgid "Run checks for all the nameservers in this domain"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:4
+msgid "Schedule check for this nameserver with this domain"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:5
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:25
+msgid "Test"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:6
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:26
+msgid "Result"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:7
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:27
+#: DNS42/gettexttemplates/dns42/domains/ns.html.php:5
+#: DNS42/gettexttemplates/dns42/domains/ns.html.php:7
+msgid "Ping"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:8
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:28
+msgid "DNS Response"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:9
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:14
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:18
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:22
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:29
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:34
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:38
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:42
+msgid "Not tested"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:10
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:15
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:19
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:30
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:35
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:39
+msgid "Bad"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:11
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:16
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:20
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:24
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:31
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:36
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:40
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:44
+msgid "Correct"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:12
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:32
+msgid "Returned NS list"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:13
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:33
+msgid "Parent NS match"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:17
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:37
+msgid "Authoritative response from this NS"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:21
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:41
+msgid "Full transfer"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:23
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:43
+msgid "Bad. Full transfer allowed"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/ns.html.php:3
+msgid "Schedule ping check on this server"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/ns.html.php:4
+msgid "IPv4"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/ns.html.php:6
+msgid "IPv6"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/ns.html.php:8
+msgid "Domains associated with this nameserver"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:3
+msgid "List of .dn42 domains"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:4
+msgid "Ping response"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:5
+msgid "Partial ping response"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:6
+msgid "No ping response"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:7
+msgid "This nameserver has IPv4"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:8
+msgid "This nameserver has IPv6"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:9
+msgid "Domain"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:10
+msgid "Nameservers"
+msgstr ""
+
+#: DNS42/Form/User/ChangeOwnPassword.php:12
+msgid "Your current password"
+msgstr ""
+
+#: DNS42/Form/User/ChangeOwnPassword.php:18
+msgid "Your new password"
+msgstr ""
+
+#: DNS42/Form/User/ChangeOwnPassword.php:21
+#: DNS42/Form/Register/Confirmation.php:72
+#: DNS42/Form/Login/PasswordReset.php:21
+msgid ""
+"Your password must be hard for other people to find it, but easy for you to "
+"remember."
+msgstr ""
+
+#: DNS42/Form/User/ChangeOwnPassword.php:29
+#: DNS42/Form/Register/Confirmation.php:82
+#: DNS42/Form/Login/PasswordReset.php:29
+msgid "Confirm your password"
+msgstr ""
+
+#: DNS42/Form/User/ChangeOwnPassword.php:41
+#: DNS42/Form/User/ChangePassword.php:33 DNS42/Form/User/Agregar.php:93
+#: DNS42/Form/Register/Confirmation.php:120
+#: DNS42/Form/Login/PasswordReset.php:41
+msgid "The two passwords must be the same."
+msgstr ""
+
+#: DNS42/Form/User/ChangeOwnPassword.php:44
+msgid "The supplied password doesn't match our records."
+msgstr ""
+
+#: DNS42/Form/User/ChangeOwnPassword.php:52
+#: DNS42/Form/User/ChangePassword.php:41 DNS42/Form/User/Agregar.php:101
+#: DNS42/Form/User/Actualizar.php:51 DNS42/Form/Register/InputKey.php:70
+#: DNS42/Form/Register/Confirmation.php:135
+#: DNS42/Form/Login/PasswordInputKey.php:39
+#: DNS42/Form/Login/PasswordReset.php:72
+msgid "Cannot save an invalid form."
+msgstr ""
+
+#: DNS42/Form/User/ChangePassword.php:10
+msgid "The new password"
+msgstr ""
+
+#: DNS42/Form/User/ChangePassword.php:21 DNS42/Form/User/Agregar.php:68
+msgid "Confirm the password"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:9
+msgid "Username"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:17 DNS42/Form/User/Actualizar.php:12
+#: DNS42/Form/Register/Confirmation.php:48
+msgid "First name"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:25 DNS42/Form/User/Actualizar.php:20
+#: DNS42/Form/Register/Confirmation.php:58
+msgid "Last name"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:33 DNS42/Form/User/Actualizar.php:28
+msgid "Email"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:34 DNS42/Form/User/Actualizar.php:29
+msgid "A valid email address for password recovery propuse"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:46 DNS42/Form/User/Actualizar.php:41
+msgid "Language"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:47 DNS42/Form/User/Actualizar.php:42
+msgid "Default language for the user"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:56
+msgid "The password for the user"
+msgstr ""
+
+#: DNS42/Form/User/Agregar.php:85
+msgid "The selected username already exists"
+msgstr ""
+
+#: DNS42/Form/Register/InputKey.php:35
+msgid "The confirmation key"
+msgstr ""
+
+#: DNS42/Form/Register/InputKey.php:48 DNS42/Form/Register/Confirmation.php:97
+msgid ""
+"We are sorry but this confirmation key is not valid. Maybe you should "
+"directly copy/paste it from your confirmation email."
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:37
+msgid "Your login name"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:50
+msgid "Your email address"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:52
+msgid "We will use this to verify your account and other goodies"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:58
+msgid "I accept the terms and conditions of this site"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:75
+#, php-format
+msgid "The login name \"%s\" is already in use, please choose a different one"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:85
+msgid "We know that is boring, but you must accept the terms and conditions"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:96
+#, php-format
+msgid "The email \"%s\" is already in use"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:144
+msgid "Site - Confirm your account"
+msgstr ""
+
+#: DNS42/Form/Register/Confirmation.php:39
+msgid "Your confirmation key"
+msgstr ""
+
+#: DNS42/Form/Register/Confirmation.php:69
+#: DNS42/Form/Login/PasswordReset.php:18
+msgid "Your password"
+msgstr ""
+
+#: DNS42/Form/Register/Confirmation.php:109
+msgid ""
+"This account has already been confirmed. Maybe should you try to recover "
+"your password using the help link."
+msgstr ""
+
+#: DNS42/Form/Login/PasswordInputKey.php:9
+#: DNS42/Form/Login/PasswordReset.php:12
+msgid "Your verification key"
+msgstr ""
+
+#: DNS42/Form/Login/PasswordInputKey.php:20
+#: DNS42/Form/Login/PasswordReset.php:53
+msgid ""
+"We are sorry but this validation key is not valid. Maybe you should directly "
+"copy/paste it from your validation email."
+msgstr ""
+
+#: DNS42/Form/Login/PasswordInputKey.php:32
+#: DNS42/Form/Login/PasswordReset.php:65
+msgid ""
+"Sorry, but this verification key has expired, please restart the password "
+"recovery sequence. For security reasons, the verification key is only valid "
+"3h."
+msgstr ""
+
+#: DNS42/Form/Login/PasswordReset.php:44
+msgid ""
+"This account is not active. Please contact the forge administrator to "
+"activate it."
+msgstr ""
+
+#: DNS42/Form/Login/PasswordRecovery.php:7
+msgid "Your login or email"
+msgstr ""
+
+#: DNS42/Form/Login/PasswordRecovery.php:8
+msgid "Provide either your login or your email to recover your password."
+msgstr ""
+
+#: DNS42/Form/Login/PasswordRecovery.php:19
+#: DNS42/Form/Login/PasswordRecovery.php:32
+msgid ""
+"Sorry, we cannot find a user with this email address or login. Feel free to "
+"try again."
+msgstr ""
+
+#: DNS42/Form/Login/PasswordRecovery.php:40
+msgid "Cannot save the model from an invalid form."
+msgstr ""
+
+#: DNS42/Form/Login/PasswordRecovery.php:63
+msgid "Password Recovery - ?"
+msgstr ""
+
+#: DNS42/Views/Index.php:8
+msgid "Start page"
+msgstr ""
+
+#: DNS42/Views/Domains.php:24
+#, php-format
+msgid "Domain %s"
+msgstr ""
+
+#: DNS42/Views/Domains.php:99
+#, php-format
+msgid "Server %s"
+msgstr ""
+
+#: DNS42/Views/Users.php:14
+msgid "List of users"
+msgstr ""
+
+#: DNS42/Views/Users.php:17
+msgid "User"
+msgstr ""
+
+#: DNS42/Views/Users.php:18
+msgid "Name"
+msgstr ""
+
+#: DNS42/Views/Users.php:19
+msgid "Last Name"
+msgstr ""
+
+#: DNS42/Views/Users.php:23
+msgid "No users found"
+msgstr ""
+
+#: DNS42/Views/Users.php:32
+msgid "Users"
+msgstr ""
+
+#: DNS42/Views/Users.php:62
+msgid "View user"
+msgstr ""
+
+#: DNS42/Views/Users.php:138
+msgid "Update user"
+msgstr ""
+
+#: DNS42/Views/Login.php:24
+msgid ""
+"The login or the password is not valid. The login and the password are case "
+"sensitive."
+msgstr ""
+
+#: DNS42/Views/Login.php:27
+msgid "You need to enable the cookies in your browser to access this website."
+msgstr ""
+
+#: DNS42/Views/Login.php:64 DNS42/Views/Login.php:84 DNS42/Views/Login.php:103
+msgid "Password Recovery"
+msgstr ""
+
+#: DNS42/Views/Login.php:124
+msgid ""
+"Welcome back! Next time, you can use your broswer options to remember the "
+"password."
+msgstr ""
