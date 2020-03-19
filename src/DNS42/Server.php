@@ -59,8 +59,10 @@ class DNS42_Server extends Gatuf_Model {
 	public function preSave ($create = false) {
 		/* Actualizar la variable de estado acorde al resultados de los pings */
 		if ($this->ipv4 != '' && $this->ipv6 != '') {
-			/* El color verde se logra con los dos pings en verde */
-			if ($this->ping4 == 'failed' && $this->ping6 == 'failed') {
+			if ($this->ping4 == '' && $this->ping6 == '') {
+				$this->estado = 0; /* No probado */
+			} else if ($this->ping4 == 'failed' && $this->ping6 == 'failed') {
+				/* El color verde se logra con los dos pings en verde */
 				$this->estado = 1; /* Rojo */
 			} else if ($this->ping4 == 'failed') {
 				$this->estado = 2; /* Advertencia */
@@ -70,15 +72,19 @@ class DNS42_Server extends Gatuf_Model {
 				$this->estado = 3;
 			}
 		} else if ($this->ipv4 != '') {
-			/* El verde se logra solo con el ping de ipv4 */
-			if ($this->ping4 == 'failed') {
+			if ($this->ping4 == '') {
+				$this->estado = 0;
+			} else if ($this->ping4 == 'failed') {
+				/* El verde se logra solo con el ping de ipv4 */
 				$this->estado = 1;
 			} else {
 				$this->estado = 3;
 			}
 		} else if ($this->ipv6 != '') {
-			/* El verde se logra solo con el ping de ipv6 */
-			if ($this->ping6 == 'failed') {
+			if ($this->ping6 == '') {
+				$this->estado = 0;
+			} else if ($this->ping6 == 'failed') {
+				/* El verde se logra solo con el ping de ipv6 */
 				$this->estado = 1;
 			} else {
 				$this->estado = 3;

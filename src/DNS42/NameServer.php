@@ -34,6 +34,18 @@ class DNS42_NameServer extends Gatuf_Model {
 			       'blank' => false,
 			       'default' => 0, /* 0 = desconocido, 1 = mal, 2 = advertencia, 3 = bien */
 			),
+			'response4' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
+			'response6' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			),
 			'open_transfer4' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',

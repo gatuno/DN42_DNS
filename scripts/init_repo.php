@@ -84,17 +84,42 @@ foreach ($files as $file) {
 				} else if ($ip == 6) {
 					$server->ipv6 = $toks[1];
 				}
+				$server->estado = 0;
 				
 				$server->create ();
+				
+				$check = new DNS42_PingCheck ();
+				$check->prioridad = 20;
+				$check->server = $server;
+				$check->create ();
 			} else {
 				/* Actualizar */
+				$updated = false;
 				if ($ip == 4) {
+					if ($server->ipv4 != $toks[1]) $updated = true;
 					$server->ipv4 = $toks[1];
 				} else if ($ip == 6) {
+					if ($server->ipv6 != $toks[1]) $updated = true;
 					$server->ipv6 = $toks[1];
 				}
 				
 				$server->update ();
+				
+				if ($updated) {
+					$sql = new Gatuf_SQL ('server=%s', $server->id);
+					$check = Gatuf::factory ('DNS42_PingCheck')->getOne ($sql->gen ());
+				
+					if (null === $check) {
+						$check = new DNS42_PingCheck ();
+						$check->prioridad = 40;
+						$check->server = $server;
+						$check->create ();
+					} else {
+						$check->prioridad = 40;
+					
+						$check->update ();
+					}
+				}
 			}
 		}
 		/* En caso contrario, es solo el nombre sin IP, es una delegación fuera de zona, ignorar, solo asociar con el dominio */
@@ -147,6 +172,11 @@ foreach ($files as $file) {
 			$ns->dominio = $dominio;
 			
 			$ns->create ();
+			
+			$check = new DNS42_NSCheck ();
+			$check->ns = $ns;
+			$check->prioridad = 20;
+			$check->create ();
 		}
 	}
 	
@@ -170,6 +200,11 @@ foreach ($pending_ns as $domain => $new_ns) {
 		$ns->dominio = $dominio;
 		
 		$ns->create ();
+		
+		$check = new DNS42_NSCheck ();
+		$check->ns = $ns;
+		$check->prioridad = 20;
+		$check->create ();
 	}
 }
 /* TODO: Recorrer todos los dominios y buscar cuáles no están activos */

@@ -51,6 +51,10 @@ class DNS42_Views_Domains {
 			$ns->parent_match6 = 0;
 			$ns->soa4 = '';
 			$ns->soa6 = '';
+			$ns->ns_list4 = '';
+			$ns->ns_list6 = '';
+			$ns->response4 = 0;
+			$ns->response6 = 0;
 			$ns->update ();
 			
 			$ns_check = new DNS42_NSCheck ();
@@ -58,6 +62,26 @@ class DNS42_Views_Domains {
 			$ns_check->prioridad = 50;
 			
 			$ns_check->create ();
+		}
+		
+		$server = $ns->get_server ();
+		
+		$sql = new Gatuf_SQL ('server=%s', $server->id);
+		$ping_check = Gatuf::factory ('DNS42_PingCheck')->getOne ($sql->gen ());
+		
+		if ($ping_check == null) {
+			$server->ping4 = '';
+			$server->ping6 = '';
+			$server->estado = 0;
+			
+			$server->update ();
+			
+			$ping_check = new DNS42_PingCheck ();
+			$ping_check->server = $server;
+			$ping_check->prioridad = 50;
+			$ping_check->estado = 0;
+			
+			$ping_check->create ();
 		}
 		
 		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver', $ns->get_dominio ()->dominio);
@@ -137,6 +161,10 @@ class DNS42_Views_Domains {
 				$ns->parent_match6 = 0;
 				$ns->soa4 = '';
 				$ns->soa6 = '';
+				$ns->ns_list4 = '';
+				$ns->ns_list6 = '';
+				$ns->response4 = 0;
+				$ns->response6 = 0;
 				
 				$ns->update ();
 			
