@@ -8,6 +8,20 @@
 {elseif $managed.delegacion == 0}
 <div class="in_progress">{trans 'Zone validation in progress. Please wait at least 1 minute and refresh the page.'}</div>
 {/if}
+{if $managed.delegacion == 2}
+<ul class="new_record">
+<li><a href="#">{trans 'New A'}</a></li>
+<li><a href="#">{trans 'New AAAA'}</a></li>
+<li><a href="#">{trans 'New CNAME'}</a></li>
+</ul><br class="br_clear_left"/>
+{/if}
+<table class="records">
+<thead><tr><th>{trans 'Name'}</th><th>{trans 'Type'}</th><th>{trans 'TTL'}</th><th>{trans 'Priority'}</th><th>{trans 'Data'}</th><th>{trans 'Delete'}</th></tr></thead>
+<tbody>{foreach $records as $r}
+	{if $r.locked}<tr class="tr_locked">{else}<tr>{/if}
+	<td>{$r.name}</td><td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td><td class="td_center">{$r.ttl}</td><td class="td_center">-</td><td>{$r.format_rdata ()}</td><td class="td_center">{if $r.locked}🔒{else}➖{/if}</td></tr>
+{/foreach}</tbody>
+</table>
 {/block}
 {block extrahead}
 <style type="text/css">
@@ -19,6 +33,238 @@
 	text-align: center;
 	border: 1px solid red;
 	background: #ffeeee;
+}
+.new_record li {
+	list-style: none;
+	float: left;
+	margin-left: 2px;
+}
+
+.new_record li a {
+	display: block;
+	padding: 1px 3px;
+	text-decoration: none;
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	white-space: nowrap;
+}
+.br_clear_left {
+	clear: left;
+}
+.td_center {
+	text-align: center;
+}
+.rrlabel {
+	color: #fff;
+	padding: 0px 3px 0px 3px;
+	margin: 1px 0px 1px 0px;
+	border: 1px solid black;
+	display: inline-block;
+}
+.records {
+	border-width: 1px 1px 1px 1px;
+	border-collapse: collapse;
+	border-style: solid;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+.records th {
+	background: #ccc;
+	border-width: 1px 1px 1px 1px;
+	border-style: solid;
+	margin: 0;
+	padding: 4px;
+}
+
+.records td {
+	border-width: 1px 1px 1px 1px;
+	border: 1px solid black;
+}
+
+.records tr:hover {
+	background: #D7D7D7;
+	cursor: pointer;
+}
+
+.tr_locked {
+	background: #fee;
+	cursor: default;
+}
+
+.rrlabel.A {
+  background-color: #000;
+  /* color: black; */
+}
+
+.rrlabel.AAAA {
+  background-color: DodgerBlue;
+  /* color: black; */
+}
+
+.rrlabel.AFSDB {
+  background-color: SaddleBrown;
+  /* color: black; */
+}
+
+.rrlabel.ALIAS {
+  background-color: Orange;
+  /* color: black; */
+}
+
+.rrlabel.CAA {
+  background-color: Yellow;
+  color: black;
+}
+
+.rrlabel.CERT {
+  background-color: lightblue;
+  color: black;
+}
+
+.rrlabel.CDNSKEY {
+  background-color: MistyRose;
+  color: black;
+}
+
+.rrlabel.CDS {
+  background-color: SlateGray;
+  /* color: black; */
+}
+
+.rrlabel.CNAME {
+  background-color: Green;
+  /* color: black; */
+}
+
+.rrlabel.DNSKEY {
+  background-color: Wheat;
+  color: black;
+}
+
+.rrlabel.DNAME {
+  background-color: SkyBlue;
+  color: black;
+}
+
+.rrlabel.DS {
+  background-color: Olive;
+  /* color: black; */
+}
+
+.rrlabel.HINFO {
+  background-color: Teal;
+  /* color: black; */
+}
+
+.rrlabel.KEY {
+  background-color:SpringGreen
+  color: black; 
+}
+
+.rrlabel.LOC {
+  background-color: Indigo
+  /* color: black; */
+}
+
+.rrlabel.MX {
+  background-color: Plum;
+  /* color: black; */
+}
+
+.rrlabel.NAPTR {
+  background-color: SpringGreen;
+  color: black;
+}
+
+.rrlabel.NS {
+  background-color: ForestGreen;
+  /* color: black; */
+}
+
+.rrlabel.NSEC {
+  background-color: SeaGreen;
+  /* color: black; */
+}
+
+.rrlabel.NSEC3 {
+  background-color: Turquoise;
+  color: black;
+}
+
+.rrlabel.NSEC3PARAM {
+  background-color: MediumSlateBlue;
+  /* color: black; */
+}
+
+.rrlabel.OPENPGPKEY {
+  background-color: RosyBrown;
+  /* color: black; */
+}
+
+.rrlabel.PTR {
+  background-color: Plum;
+  color: black;
+}
+
+.rrlabel.RP {
+  background-color: Teal;
+  /* color: black; */
+}
+
+.rrlabel.RRSIG {
+  background-color: DarkOrchid;
+  /* color: black; */
+}
+
+.rrlabel.SOA {
+  background-color: OliveDrab;
+  /* color: black; */
+}
+
+.rrlabel.SPF {
+  background-color: Gray;
+  /* color: black; */
+}
+
+.rrlabel.SSHFP {
+  background-color: LimeGreen;
+  /* color: black; */
+}
+
+.rrlabel.SRV {
+  background-color: PaleTurquoise;
+  color: black;
+}
+
+.rrlabel.TKEY {
+  background-color: SkyBlue;
+  color: black;
+}
+
+.rrlabel.TSIG {
+  background-color: Crimson;
+  /* color: black; */
+}
+
+.rrlabel.TLSA {
+  background-color: PaleVioletRed;
+  /* color: black; */
+}
+
+.rrlabel.SMIMEA {
+  background-color: LightCoral;
+  /* color: black; */
+}
+
+.rrlabel.TXT {
+  background-color: Green;
+  /* color: black; */
+}
+
+.rrlabel.URI {
+  background-color: Aqua;
+  color: black;
 }
 {/literal}
 </style>
