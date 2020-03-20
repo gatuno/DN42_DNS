@@ -1,0 +1,22 @@
+{extends 'dns42/base.html'}
+{block body}{assign $domain_name = $managed.dominio}
+<p>{blocktrans}Managing zone: {$domain_name}{/blocktrans}</p>
+
+{if $managed.good_delegation == 0}
+<div class="bad_delegation">{blocktrans}Zone failed validation test. ERROR: Delegation was not found. Please delegate to ns1.gatuno.dn42 then retry. ({$domain_name}).{/blocktrans}</div>
+{/if}
+{/block}
+{block extrahead}
+<style type="text/css">
+{literal}
+.bad_delegation {
+	color: #f00;
+	padding: 3px;
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid red;
+	background: #ffeeee;
+}
+{/literal}
+</style>
+{/block}

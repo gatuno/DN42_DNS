@@ -214,7 +214,11 @@ abstract class Net_DNS2_RR
         return $this->name . '. ' . $this->ttl . ' ' . $this->class . 
             ' ' . $this->type . ' ' . $this->rrToString();
     }
-
+    
+    public function getRRData () {
+        return $this->rrToString ();
+    }
+    
     /**
      * return a formatted string; if a string has spaces in it, then return 
      * it with double quotes around it, otherwise, return it as it was passed in.

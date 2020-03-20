@@ -141,4 +141,25 @@ $ctl[] = array (
 	'method' => 'programar_check_domain',
 );
 
+$ctl[] = array (
+	'regex' => '#^/managed/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/managed/add/master/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'agregar_master',
+);
+
+$ctl[] = array (
+	'regex' => '#^/managed/(.*)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'administrar',
+);
+
 return $ctl;

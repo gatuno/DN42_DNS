@@ -1,0 +1,27 @@
+{extends 'dns42/base.html'}
+{block body}
+<p><a href="{url 'DNS42_Views_Managed::agregar_master'}">{trans '➕ Add new domain'}</a></p>
+<p>{trans 'Active domains for this account'}</p>
+<table class="domains">
+	<thead><tr><th>{trans 'Domain'}</th></tr></thead>
+	<tbody>{foreach $domains as $d}
+	<tr><td><a href="{url 'DNS42_Views_Managed::administrar', $d.dominio}">{$d.dominio}</a></td></tr>
+	{/foreach}</tbody>
+</table>
+{/block}
+{block extrahead}
+<style type="text/css">
+{literal}
+.domains {
+	border: 1px solid #ddd;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+.domains td, .domains th {
+	padding: 8px;
+	text-align: left;
+	border: 1px solid #ddd;
+}
+{/literal}
+</style>
+{/block}
