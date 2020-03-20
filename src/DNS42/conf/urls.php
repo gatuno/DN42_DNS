@@ -156,10 +156,24 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/managed/(.*)/$#',
+	'regex' => '#^/managed/([a-z0-9-\.]+)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',
 	'method' => 'administrar',
+);
+
+$ctl[] = array (
+	'regex' => '#^/managed/([a-z0-9-\.]+)/check/delegation/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'revisar_delegacion',
+);
+
+$ctl[] = array (
+	'regex' => '#^/managed/([a-z0-9-\.]+)/delete/master/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'eliminar_master',
 );
 
 return $ctl;

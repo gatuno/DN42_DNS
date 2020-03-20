@@ -49,6 +49,32 @@ class DNS42_Views_Managed {
 		                                         $request);
 	}
 	
+	public $eliminar_master_precond = array ('Gatuf_Precondition::loginRequired');
+	public function eliminar_master ($request, $match) {
+		$managed = new DNS42_ManagedDomain ();
+		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
+		
+		if (null === ($managed->getOne($sql->gen ()))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		if ($request->method == 'POST') {
+			if ($managed->delegacion == 2) {
+				DNS42_RMQ::send_delete_domain ($managed);
+			}
+			
+			$managed->delete ();
+			
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::index');
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/eliminar.html',
+		                                         array ('page_title' => __('Delete domain'),
+		                                                'managed' => $managed),
+		                                         $request);
+	}
+	
 	public $administrar_precond = array ('Gatuf_Precondition::loginRequired');
 	public function administrar ($request, $match) {
 		$managed = new DNS42_ManagedDomain ();
@@ -65,6 +91,27 @@ class DNS42_Views_Managed {
 		                                                'managed' => $managed,
 		                                                'records' => $records),
 		                                         $request);
+	}
+	
+	public $revisar_delegacion_precond = array ('Gatuf_Precondition::loginRequired');
+	public function revisar_delegacion ($request, $match) {
+		$managed = new DNS42_ManagedDomain ();
+		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
+		
+		if (null === ($managed->getOne($sql->gen ()))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		if ($managed->delegacion == 2) {
+			$request->user->setMessage (1, __("The delegation for this zone was found and is correct. The zone is now active"));
+		} else {
+			$delegar = DNS42_RMQ::send_create_domain ($managed);
+			
+			$request->user->setMessage (1, __("The delegation check for this zone was scheduled, please wait at least 1 minute and refresh the page to see the result"));
+		}
+		
+		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 }
 

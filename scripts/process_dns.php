@@ -40,18 +40,18 @@ $connection = new AMQPStreamConnection($server, $port, $user, $pass, $vhost);
 $channel = $connection->channel();
 
 $channel->queue_declare ('dns_zone_add', false, true, false, false);
+$channel->queue_declare ('dns_zone_del', false, true, false, false);
 
-$callback = function ($msg) {
+$callback_zone_add = function ($msg) {
 	$managed = new DNS42_ManagedDomain ();
 	
 	if (false === $managed->get ($msg->body)) {
 		/* ¿El add de un dominio que no existe? Posiblemente lo eliminaron */
-		var_dump ("No existe");
 		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 		return;
 	}
 	
-	/* Ir cada nivel padre, preguntando si tengo la delegación, hasta que quede solo 1 elemento */
+	/* Ir a cada nivel padre, preguntando si tengo la delegación, hasta que quede solo 1 elemento */
 	$parent_domain = $managed->dominio;
 	$good_delegation = false;
 	
@@ -61,8 +61,6 @@ $callback = function ($msg) {
 		array_shift ($toks);
 		if (count ($toks) == 0) break;
 		$parent_domain = implode (".", $toks);
-	
-		var_dump ("Parent domain: ".$parent_domain);
 	
 		/* Conseguir los NS de este dominio */
 		$resolver = new Net_DNS2_Resolver ();
@@ -75,11 +73,9 @@ $callback = function ($msg) {
 	
 		if (false === $result) {
 			/* ¿No pude conseguir los NS del padre? Raro */
-			var_dump ("Error resolv padres");
 			continue;
 		}
 	
-		var_dump ($result);
 		$list_ips = array ();
 		foreach ($result->answer as $parent_ns) {
 			if (get_class ($parent_ns) != 'Net_DNS2_RR_NS') continue;
@@ -107,8 +103,7 @@ $callback = function ($msg) {
 				}
 			}
 		}
-		var_dump ("List to checks");
-		var_dump ($list_ips);
+		
 		foreach ($list_ips as $ip) {
 			$opts = array ('nameservers' => array ($ip));
 			$resolver2 = new Net_DNS2_Resolver ($opts);
@@ -118,7 +113,6 @@ $callback = function ($msg) {
 			} catch (Net_DNS2_Exception $err) {
 				$result2 = false;
 			}
-			var_dump ($result2);
 			if ($result2 === false) continue;
 		
 			foreach ($result2->answer as $ns) {
@@ -142,15 +136,17 @@ $callback = function ($msg) {
 		if ($good_delegation) break;
 	}
 	
-	var_dump ("Delegation");
+	var_dump ("Delegacion");
 	var_dump ($good_delegation);
-	
 	if ($good_delegation) {
 		/* Crear el archivo vacio */
 		$folder = "/etc/bind/dynamic_zones";
 		$created = create_empty_zone ($folder, $managed->dominio);
 		
 		if ($created == false) {
+			$managed->delegacion = 3;
+			$managed->update ();
+			
 			/* Si no puedo crear un archivo, no intentar crear la zona */
 			$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 			return;
@@ -167,22 +163,76 @@ $callback = function ($msg) {
 		
 		exec ($full_exec, $output, $return_code);
 		
-		var_dump ($full_exec);
-		var_dump ($output);
-		var_dump ($return_code);
-		
 		if ($return_code == 0) {
-			/* TODO: crear todos los records correspondientes */
-			$managed->good_delegation = true;
+			/* Crear todos los records correspondientes */
+			
+			/* Crear el SOA */
+			$record = new DNS42_Record ();
+			$record->ttl = 86400;
+			$record->dominio = $managed;
+			$record->name = $managed->dominio;
+			$record->type = 'SOA';
+			$serial = date ('Ymd').'00';
+			$record->rdata = sprintf ('ns1.gatuno.dn42. hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $serial);
+			$record->locked = TRUE;
+			$record->create ();
+			
+			/* Crear al menos el primer NS */
+			$record = new DNS42_Record ();
+			$record->ttl = 86400;
+			$record->dominio = $managed;
+			$record->name = $managed->dominio;
+			$record->type = 'NS';
+			$record->rdata = 'ns1.gatuno.dn42.';
+			$record->locked = TRUE;
+			$record->create ();
+			
+			$managed->delegacion = 2;
+			$managed->update ();
+		} else {
+			$managed->delegacion = 4;
 			$managed->update ();
 		}
+	} else {
+		$managed->delegacion = 1;
+		$managed->update ();
+	}
+	
+	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+};
+
+$callback_zone_del = function ($msg) {
+	$old_domain = $msg->body;
+	
+	/* Crear la zona dinámica en el master */
+	$key = Gatuf::config ('rndc_update_key');
+	$server = Gatuf::config ('rndc_update_server');
+	$port = Gatuf::config ('rndc_update_port');
+	
+	$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" delzone \"%s\" 2>&1", $key, $server, $port, $old_domain);
+	
+	exec ($full_exec, $output, $return_code);
+	
+	if ($return_code != 0) {
+		/* FIXME: Tenemos una zona pendiente. Revisar que hacer en este caso */
+	}
+	
+	/* Borrar el archivo correspondiente */
+	$folder = "/etc/bind/dynamic_zones";
+	$file_name = sprintf ("%s/%s", $folder, $old_domain);
+	
+	$deleted = unlink ($file_name);
+	
+	if ($deleted === false) {
+		/* FIXME: Otro problema, no pude eliminar el archivo */
 	}
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
 $channel->basic_qos (null, 1, null);
-$channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback);
+$channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback_zone_add);
+$channel->basic_consume ('dns_zone_del', '', false, false, false, false, $callback_zone_del);
 
 while (1) {
     $channel->wait();

@@ -45,6 +45,12 @@ class DNS42_Record extends Gatuf_Model {
 			       'blank' => false,
 			       'size' => 2048,
 			),
+			'locked' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Boolean',
+			       'blank' => false,
+			       'default' => false,
+			),
 		);
 	}
 }

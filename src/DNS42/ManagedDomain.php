@@ -35,11 +35,11 @@ class DNS42_ManagedDomain extends Gatuf_Model {
 			       'size' => 256,
 			       //'unique' => true,
 			),
-			'good_delegation' =>
+			'delegacion' =>
 			array (
-			       'type' => 'Gatuf_DB_Field_Boolean',
+			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
-			       'default' => false,
+			       'default' => 0, /* 0 = Delegación en prueba, 1 = Delegación fallida, 2 = Delegación buena */
 			),
 		);
 		
