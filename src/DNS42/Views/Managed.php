@@ -130,7 +130,15 @@ class DNS42_Views_Managed {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		$allowed = array ('A' => 'DNS42_Form_Record_A', 'AAAA' => 'DNS42_Form_Record_AAAA', 'CNAME' => 'DNS42_Form_Record_CNAME');
+		$allowed = array (
+			'A' => 'DNS42_Form_Record_A',
+			'AAAA' => 'DNS42_Form_Record_AAAA',
+			'CNAME' => 'DNS42_Form_Record_CNAME',
+			//'ALIAS' => 'DNS42_Form_Record_ALIAS', No soportado por NET_DNS2
+			'MX' => 'DNS42_Form_Record_MX',
+			'NS' => 'DNS42_Form_Record_NS',
+			'TXT' => 'DNS42_Form_Record_TXT',
+		);
 		$type = mb_strtoupper ($match[2]);
 		
 		if ($type != $match[2]) {

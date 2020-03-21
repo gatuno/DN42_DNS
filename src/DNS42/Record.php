@@ -54,9 +54,22 @@ class DNS42_Record extends Gatuf_Model {
 		);
 	}
 	
+	public function format_priority () {
+		if ($this->type == 'MX') {
+			$toks = explode (" ", $this->rdata, 2);
+			
+			return $toks[0];
+		}
+		return '-';
+	}
+	
 	public function format_rdata () {
 		if ($this->type == 'NS' || $this->type == 'CNAME') {
 			return rtrim ($this->rdata, ".");
+		} else if ($this->type == 'MX') {
+			$toks = explode (" ", $this->rdata, 2);
+			
+			return rtrim ($toks[1], ".");
 		}
 		return $this->rdata;
 	}

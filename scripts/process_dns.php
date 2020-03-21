@@ -250,13 +250,12 @@ $callback_record_add = function ($msg) {
 	
 	switch ($record->type) {
 		case 'A':
-			$line = sprintf ("%s %s IN A %s", $record->name, $record->ttl, $record->rdata);
-			break;
 		case 'AAAA':
-			$line = sprintf ("%s %s IN AAAA %s", $record->name, $record->ttl, $record->rdata);
-			break;
 		case 'CNAME':
-			$line = sprintf ("%s %s IN CNAME %s", $record->name, $record->ttl, $record->rdata);
+		case 'MX':
+		case 'NS':
+		case 'TXT':
+			$line = sprintf ("%s %s IN %s %s", $record->name, $record->ttl, $record->type, $record->rdata);
 			break;
 	}
 	$rr = Net_DNS2_RR::fromString ($line);

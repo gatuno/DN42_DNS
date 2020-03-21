@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_CNAME extends Gatuf_Form {
+class DNS42_Form_Record_TXT extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];
@@ -12,11 +12,11 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 				'initial' => '',
 		));
 		
-		$this->fields['cname'] = new Gatuf_Form_Field_Varchar (
+		$this->fields['txt'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('Hostname'),
-				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
+				'label' => __('Text data'),
+				'help_text' => __("Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple 255 character segments."),
 				'initial' => '',
 		));
 		
@@ -55,14 +55,12 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		return $name;
 	}
 	
-	public function clean_cname () {
-		$cname = $this->cleaned_data['cname'];
+	public function clean_txt () {
+		$txt = $this->cleaned_data['txt'];
 		
-		if (filter_var ($cname, FILTER_VALIDATE_DOMAIN) == false) {
-			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
-		}
+		preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $txt);
 		
-		return $cname;
+		return $txt;
 	}
 	
 	public function clean () {
@@ -72,28 +70,16 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		$name = rtrim (trim ($this->cleaned_data['name']), ".");
 		$len = strlen ($this->dominio->dominio);
 		
-		if ($name == '@') {
-			$name = $this->dominio->dominio;
-		} else if ($name != $this->dominio->dominio) {
-			/* Revisar si necesito qualificar este dominio */
-			$ending = substr ($name, -($len + 1));
+		$ending = substr ($name, -($len + 1));
 		
-			if ($ending != '.' . $this->dominio->dominio) {
-				/* Como no es un nombre calificado, agregar el dominio */
-				$name = $name . '.' . $this->dominio->dominio;
-			}
+		if ($ending == '.' . $this->dominio->dominio) {
+			/* Ya es parte del dominio, nada que hacer */
+		} else {
+			/* Como no es un nombre calificado, agregar el dominio */
+			$name = $name . '.' . $this->dominio->dominio;
 		}
 		
 		$this->cleaned_data['name'] = $name;
-		
-		/* Para el CNAME solo asegurarnos que tenga el punto al final */
-		$cname = trim ($this->cleaned_data['cname']);
-		
-		if (substr ($cname, -1) != '.') {
-			$cname = $cname . '.';
-		}
-		
-		$this->cleaned_data['cname'] = $cname;
 		
 		return $this->cleaned_data;
 	}
@@ -104,15 +90,17 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		
 		$record = new DNS42_Record ();
 		
-		$record->dominio = $this->dominio;
-		$record->name = $this->cleaned_data ['name'];
-		$record->type = 'CNAME';
-		$record->ttl = $this->cleaned_data ['ttl'];
-		$record->rdata = $this->cleaned_data ['cname'];
+		do {
+			$record->dominio = $this->dominio;
+			$record->name = $this->cleaned_data ['name'];
+			$record->type = 'TXT';
+			$txt = $this->cleaned_data ['ttl'];
+			$record->ttl = substr ($txt, 0, 255);
+			$txt = substr ($txt, 255);
+			$record->rdata = $this->cleaned_data ['txt'];
 		
-		if ($commit) {
 			$record->create ();
-		}
+		} while (strlen ($txt) > 0);
 		
 		return $record;
 	}

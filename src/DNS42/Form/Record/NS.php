@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_CNAME extends Gatuf_Form {
+class DNS42_Form_Record_NS extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];
@@ -12,11 +12,11 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 				'initial' => '',
 		));
 		
-		$this->fields['cname'] = new Gatuf_Form_Field_Varchar (
+		$this->fields['hostname'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('Hostname'),
-				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
+				'label' => __('Nameserver name'),
+				'help_text' => __("A nameserver should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
 		));
 		
@@ -55,14 +55,14 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		return $name;
 	}
 	
-	public function clean_cname () {
-		$cname = $this->cleaned_data['cname'];
+	public function clean_hostname () {
+		$hostname = $this->cleaned_data['hostname'];
 		
-		if (filter_var ($cname, FILTER_VALIDATE_DOMAIN) == false) {
+		if (filter_var ($hostname, FILTER_VALIDATE_DOMAIN) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
-		return $cname;
+		return $hostname;
 	}
 	
 	public function clean () {
@@ -86,14 +86,14 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		
 		$this->cleaned_data['name'] = $name;
 		
-		/* Para el CNAME solo asegurarnos que tenga el punto al final */
-		$cname = trim ($this->cleaned_data['cname']);
+		/* Para el hostname solo asegurarnos que tenga el punto al final */
+		$hostname = trim ($this->cleaned_data['hostname']);
 		
-		if (substr ($cname, -1) != '.') {
-			$cname = $cname . '.';
+		if (substr ($hostname, -1) != '.') {
+			$hostname = $hostname . '.';
 		}
 		
-		$this->cleaned_data['cname'] = $cname;
+		$this->cleaned_data['hostname'] = $hostname;
 		
 		return $this->cleaned_data;
 	}
@@ -106,9 +106,9 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		
 		$record->dominio = $this->dominio;
 		$record->name = $this->cleaned_data ['name'];
-		$record->type = 'CNAME';
+		$record->type = 'NS';
 		$record->ttl = $this->cleaned_data ['ttl'];
-		$record->rdata = $this->cleaned_data ['cname'];
+		$record->rdata = $this->cleaned_data ['hostname'];
 		
 		if ($commit) {
 			$record->create ();

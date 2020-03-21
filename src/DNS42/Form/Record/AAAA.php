@@ -8,7 +8,7 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 			array (
 				'required' => true,
 				'label' => __('Name'),
-				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or the hostname may be used where appropriate."),
+				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
 		));
 		
@@ -46,6 +46,8 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 	public function clean_name () {
 		$name = $this->cleaned_data['name'];
 		
+		if ($name == '@') return '@';
+		
 		if (filter_var ($name, FILTER_VALIDATE_DOMAIN) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
@@ -70,13 +72,16 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 		$name = rtrim (trim ($this->cleaned_data['name']), ".");
 		$len = strlen ($this->dominio->dominio);
 		
-		$ending = substr ($name, -($len + 1));
+		if ($name == '@') {
+			$name = $this->dominio->dominio;
+		} else if ($name != $this->dominio->dominio) {
+			/* Revisar si necesito qualificar este dominio */
+			$ending = substr ($name, -($len + 1));
 		
-		if ($ending == '.' . $this->dominio->dominio) {
-			/* Ya es parte del dominio, nada que hacer */
-		} else {
-			/* Como no es un nombre calificado, agregar el dominio */
-			$name = $name . '.' . $this->dominio->dominio;
+			if ($ending != '.' . $this->dominio->dominio) {
+				/* Como no es un nombre calificado, agregar el dominio */
+				$name = $name . '.' . $this->dominio->dominio;
+			}
 		}
 		
 		$this->cleaned_data['name'] = $name;
