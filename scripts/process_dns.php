@@ -41,6 +41,7 @@ $channel = $connection->channel();
 
 $channel->queue_declare ('dns_zone_add', false, true, false, false);
 $channel->queue_declare ('dns_zone_del', false, true, false, false);
+$channel->queue_declare ('dns_record_add', false, true, false, false);
 
 $callback_zone_add = function ($msg) {
 	$managed = new DNS42_ManagedDomain ();
@@ -230,9 +231,48 @@ $callback_zone_del = function ($msg) {
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
+$callback_record_add = function ($msg) {
+	$record = new DNS42_Record ();
+	
+	if (false === $record->get ($msg->body)) {
+		/* ¿El add de un registro que no existe? Posiblemente lo eliminaron */
+		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+		return;
+	}
+	
+	$managed = $record->get_dominio ();
+	$key = $managed->get_key ();
+	
+	$server = Gatuf::config ('rndc_update_server');
+	
+	$opts = array ('nameservers' => array ($server));
+	$updater = new Net_DNS2_Updater ($managed->dominio, $opts);
+	
+	switch ($record->type) {
+		case 'A':
+			$line = sprintf ("%s %s IN A %s", $record->name, $record->ttl, $record->rdata);
+			break;
+		case 'AAAA':
+			$line = sprintf ("%s %s IN AAAA %s", $record->name, $record->ttl, $record->rdata);
+			break;
+		case 'CNAME':
+			$line = sprintf ("%s %s IN CNAME %s", $record->name, $record->ttl, $record->rdata);
+			break;
+	}
+	$rr = Net_DNS2_RR::fromString ($line);
+	$updater->add ($rr);
+	
+	$updater->signTSIG ($key->nombre, $key->secret, $key->algo);
+	
+	$updater->update();
+	
+	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+};
+
 $channel->basic_qos (null, 1, null);
 $channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback_zone_add);
 $channel->basic_consume ('dns_zone_del', '', false, false, false, false, $callback_zone_del);
+$channel->basic_consume ('dns_record_add', '', false, false, false, false, $callback_record_add);
 
 while (1) {
     $channel->wait();

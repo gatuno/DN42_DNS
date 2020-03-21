@@ -10,9 +10,9 @@
 {/if}
 {if $managed.delegacion == 2}
 <ul class="new_record">
-<li><a href="#">{trans 'New A'}</a></li>
-<li><a href="#">{trans 'New AAAA'}</a></li>
-<li><a href="#">{trans 'New CNAME'}</a></li>
+<li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'A')}">{trans 'New A'}</a></li>
+<li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'AAAA')}">{trans 'New AAAA'}</a></li>
+<li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'CNAME')}">{trans 'New CNAME'}</a></li>
 </ul><br class="br_clear_left"/>
 {/if}
 <table class="records">

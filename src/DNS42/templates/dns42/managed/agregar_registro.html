@@ -1,0 +1,17 @@
+{extends 'dns42/base.html'}
+{block body}
+{if $form.errors}
+<div class="errors">
+	<p>{trans 'The form has errors:'}</p>
+</div>
+{/if}
+<form method="post" action=".">
+	<table>
+	<tr><td><strong>{trans 'Domain'}:</strong></td><td>{$managed.dominio}</td></tr>
+	{$form.render_table}
+		<tr>
+			<td>&nbsp;</td><td><input type="submit" value="{trans 'Add record'}" /></td>
+		</tr>
+	</table>
+</form>
+{/block}

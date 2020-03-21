@@ -140,7 +140,8 @@ $cfg['autoload_files'] = array ('/usr/share/php/PhpAmqpLib/autoload.php');
 
 # Claves de configuración para RNDC
 $cfg['rndc_update_key'] = dirname (__FILE__).'/rndc.key';
-$cfg['rndc_update_server'] = 'localhost';
+# Debe ser una IP
+$cfg['rndc_update_server'] = '127.0.0.1';
 $cfg['rndc_update_port'] = 953;
 
 $cfg['current_default_update_key'] = 'key_a';

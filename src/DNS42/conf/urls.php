@@ -176,4 +176,11 @@ $ctl[] = array (
 	'method' => 'eliminar_master',
 );
 
+$ctl[] = array (
+	'regex' => '#^/managed/([a-z0-9-\.]+)/add/record/([A-Z0-9]+)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'agregar_registro',
+);
+
 return $ctl;
