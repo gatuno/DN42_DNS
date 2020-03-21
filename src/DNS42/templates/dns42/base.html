@@ -25,12 +25,9 @@
 							<li><a href="#">Sub 2.2</a></li>
 						</ul>-->
 					</li>
-					<!--<li class="menu3"><a href="#">Op. 3</a>
-						<ul>
-							<li><a href="#">Sub 3.1</a></li>
-						</ul>
+					<li class="menu3"><a href="{url 'DNS42_Views_Managed::index'}">{trans 'Free DNS'}</a>
 					</li>
-					<li class="menu4"><a href="#">Op. 4</a>
+					<!--<li class="menu4"><a href="#">Op. 4</a>
 						<ul>
 							<li><a href="#">Sub 4.1</a></li>
 							<li><a href="#">Sub 4.2</a></li>
@@ -45,7 +42,7 @@
 				<div class="userdiv">
 				{if !$user.isAnonymous()}
 					<p class="user"><img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=30" alt=" "/>
-					<a href="#"><strong>{$user.first_name} {$user.last_name}</strong></a></p>
+					<a href="{url 'DNS42_Views_Users::cambiar_pass'}"><strong>{$user.first_name} {$user.last_name}</strong></a></p>
 					<p class="logout"><a href="{url 'DNS42_Views_Login::logout'}">&nbsp;<img class="icon" src="{media '/img/application-exit.png'}" alt="{trans 'Logout'}" />{trans 'Logout'}</a></p>
 				{else}<p class="login"><a href="{url 'DNS42_Views_Login::login', array (), array ('_redirect_after' => $uri)}">{trans 'Login'}</a></p>{/if}
 				</div>

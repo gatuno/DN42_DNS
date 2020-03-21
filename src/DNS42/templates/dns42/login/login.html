@@ -6,8 +6,8 @@
 <p>{$error}</p>
 {/if}
 <h3>{trans 'What is your login?'}</h3>
-<p><label for="id_login">{trans 'My login is'}</label><input type="text" name="login" id="id_login" value="{$login}" /></p>
-<p><label for="id_password">{trans 'My password is'}</label><input type="password" name="password" id="id_password" /></p>
+<p><label for="id_login">{trans 'My login is'}: </label><input type="text" name="login" id="id_login" value="{$login}" /></p>
+<p><label for="id_password">{trans 'My password is'}: </label><input type="password" name="password" id="id_password" /></p>
 <p><input type="submit" value="{trans 'Sign in'}" /></p>
 </form>
 {aurl 'recov_url', 'DNS42_Views_Login::passwordRecoveryAsk'}

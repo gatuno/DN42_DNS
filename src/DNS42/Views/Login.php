@@ -63,6 +63,9 @@ class DNS42_Views_Login {
 	function passwordRecoveryAsk ($request, $match) {
 		$title = __('Password Recovery');
 		
+		return Gatuf_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-temp.html',
+		                                         array ('page_title' => $title),
+		                                         $request);
 		if ($request->method == 'POST') {
 			$form = new DNS42_Form_Login_PasswordRecovery ($request->POST);
 			if ($form->isValid ()) {
@@ -80,6 +83,7 @@ class DNS42_Views_Login {
 		                                         $request);
 	}
 	
+	/*
 	function passwordRecoveryInputCode ($request, $match) {
 		$title = __('Password Recovery');
 		if ($request->method == 'POST') {
@@ -134,4 +138,5 @@ class DNS42_Views_Login {
 		                                         'form' => $form),
 		                                         $request);
 	}
+	*/
 }

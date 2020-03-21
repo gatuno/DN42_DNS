@@ -42,7 +42,7 @@ $ctl[] = array (
 	'method' => 'passwordRecoveryAsk',
 );
 
-$ctl[] = array (
+/*$ctl[] = array (
 	'regex' => '#^/password/recovery/ik/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Login',
@@ -54,7 +54,7 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'DNS42_Views_Login',
 	'method' => 'passwordRecovery',
-);
+);*/
 
 /* Gestión de usuarios */
 $ctl[] = array (
@@ -97,6 +97,14 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'DNS42_Views_Users',
 	'method' => 'cambiar_pass',
+);
+
+/* Registro de usuarios */
+$ctl[] = array (
+	'regex' => '#^/register/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Register',
+	'method' => 'register',
 );
 
 $ctl[] = array (
