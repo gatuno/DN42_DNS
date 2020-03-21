@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-18 22:44-0600\n"
-"PO-Revision-Date: 2020-03-18 22:46-0600\n"
+"POT-Creation-Date: 2020-03-20 21:33-0600\n"
+"PO-Revision-Date: 2020-03-20 21:37-0600\n"
 "Last-Translator: Félix Arreola Rodríguez <apt@gatuno.mx>\n"
 "Language-Team: \n"
 "Language: es_MX\n"
@@ -47,6 +47,8 @@ msgstr "Reiniciar contraseña de usuario"
 #: DNS42/gettexttemplates/dns42/users/agregar.html.php:3
 #: DNS42/gettexttemplates/dns42/users/reset_pass.html.php:5
 #: DNS42/gettexttemplates/dns42/users/actualizar.html.php:4
+#: DNS42/gettexttemplates/dns42/managed/agregar.html.php:3
+#: DNS42/gettexttemplates/dns42/managed/agregar_registro.html.php:3
 msgid "The form has errors:"
 msgstr ""
 
@@ -315,12 +317,145 @@ msgid "This nameserver has IPv6"
 msgstr "Este servidor de nombres tiene IPv6"
 
 #: DNS42/gettexttemplates/dns42/domains/index.html.php:9
+#: DNS42/gettexttemplates/dns42/managed/agregar_registro.html.php:4
+#: DNS42/gettexttemplates/dns42/managed/index.html.php:5
+#: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:4
+#: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:4
 msgid "Domain"
 msgstr "Dominio"
 
 #: DNS42/gettexttemplates/dns42/domains/index.html.php:10
 msgid "Nameservers"
 msgstr "Servidores de nombres"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:3
+#, php-format
+msgid "Managing zone: %%domain_name%%"
+msgstr "Administrando zona: %%domain_name%%"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:4
+#, php-format
+msgid ""
+"Zone failed validation test. ERROR: Delegation was not found. Please "
+"delegate to ns1.gatuno.dn42 then retry. (%%domain_name%%)."
+msgstr ""
+"Validación de zona fallido. ERROR: La delegación no fué encontrada. Por "
+"favor delega la zona a ns1.gatuno.dn42 y reintente. (%%domain_name%%)."
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:5
+#, php-format
+msgid "You can <a href=\"%%check_url%%\">manually schedule</a> another test"
+msgstr "Usted puede <a href=\"%%check_url%%\">reprogramar</a> otra prueba"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:6
+msgid ""
+"Zone validation in progress. Please wait at least 1 minute and refresh the "
+"page."
+msgstr ""
+"Validación de zona en progreso. Por favor espere al menos 1 minuto y "
+"refresque la página."
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:7
+msgid "New A"
+msgstr "Nuevo A"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:8
+msgid "New AAAA"
+msgstr "Nuevo AAAA"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:9
+msgid "New CNAME"
+msgstr "Nuevo CNAME"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:10
+msgid "New ALIAS"
+msgstr "Nuevo ALIAS"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:11
+msgid "New MX"
+msgstr "Nuevo MX"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:12
+msgid "New NS"
+msgstr "Nuevo NS"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:13
+msgid "New TXT"
+msgstr "Nuevo TXT"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:14
+#: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:5
+#: DNS42/Form/Record/A.php:10 DNS42/Form/Record/NS.php:10
+#: DNS42/Form/Record/MX.php:10 DNS42/Form/Record/CNAME.php:10
+#: DNS42/Form/Record/TXT.php:10 DNS42/Form/Record/AAAA.php:10
+#: DNS42/Form/Record/ALIAS.php:10 DNS42/Views/Users.php:18
+msgid "Name"
+msgstr "Nombre"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:15
+msgid "Type"
+msgstr "Tipo"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:16
+msgid "TTL"
+msgstr "TTL"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:17
+#: DNS42/Form/Record/MX.php:18
+msgid "Priority"
+msgstr "Prioridad"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:18
+msgid "Data"
+msgstr "Datos"
+
+#: DNS42/gettexttemplates/dns42/managed/ver.html.php:19
+msgid "Delete"
+msgstr "Eliminar"
+
+#: DNS42/gettexttemplates/dns42/managed/agregar.html.php:4
+msgid "Add domain!"
+msgstr "¡Agregar dominio!"
+
+#: DNS42/gettexttemplates/dns42/managed/agregar_registro.html.php:5
+msgid "Add record"
+msgstr "Agregar registro"
+
+#: DNS42/gettexttemplates/dns42/managed/index.html.php:3
+msgid "➕ Add new domain"
+msgstr "➕ Agregar nuevo dominio"
+
+#: DNS42/gettexttemplates/dns42/managed/index.html.php:4
+msgid "Active domains for this account"
+msgstr "Dominios activos para esta cuenta"
+
+#: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:3
+msgid ""
+"<strong>Warning!</strong> You are going to delete the entire zone. All the "
+"zone records will be deleted too"
+msgstr ""
+"<strong>¡Advertencia!</strong> Usted va a eliminar la zona completa. Todos "
+"los registros serán eliminados también"
+
+#: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:5
+#: DNS42/Views/Managed.php:73
+msgid "Delete domain"
+msgstr "Eliminar dominio"
+
+#: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:6
+#: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:7
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:3
+msgid "<strong>Warning!</strong> You are going to delete the following record:"
+msgstr ""
+"<strong>¡Advertencia!</strong> Usted va a eliminar el siguiente registro:"
+
+#: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:6
+#: DNS42/Views/Managed.php:212
+msgid "Delete record"
+msgstr "Eliminar registro"
 
 #: DNS42/Form/User/ChangeOwnPassword.php:12
 msgid "Your current password"
@@ -331,7 +466,6 @@ msgid "Your new password"
 msgstr "Su nueva contraseña"
 
 #: DNS42/Form/User/ChangeOwnPassword.php:21
-#: DNS42/Form/Register/Confirmation.php:72
 #: DNS42/Form/Login/PasswordReset.php:21
 msgid ""
 "Your password must be hard for other people to find it, but easy for you to "
@@ -339,14 +473,12 @@ msgid ""
 msgstr "Su contraseña debe ser difícil de adivinar, pero fácil de recordar"
 
 #: DNS42/Form/User/ChangeOwnPassword.php:29
-#: DNS42/Form/Register/Confirmation.php:82
 #: DNS42/Form/Login/PasswordReset.php:29
 msgid "Confirm your password"
 msgstr "Confirme su contraseña"
 
 #: DNS42/Form/User/ChangeOwnPassword.php:41
 #: DNS42/Form/User/ChangePassword.php:33 DNS42/Form/User/Agregar.php:93
-#: DNS42/Form/Register/Confirmation.php:120
 #: DNS42/Form/Login/PasswordReset.php:41
 msgid "The two passwords must be the same."
 msgstr "Las dos contraseñas deben coincidir."
@@ -357,9 +489,11 @@ msgstr "La contraseña introducida no coincide con nuestros registros."
 
 #: DNS42/Form/User/ChangeOwnPassword.php:52
 #: DNS42/Form/User/ChangePassword.php:41 DNS42/Form/User/Agregar.php:101
-#: DNS42/Form/User/Actualizar.php:51 DNS42/Form/Register/InputKey.php:70
-#: DNS42/Form/Register/Confirmation.php:135
-#: DNS42/Form/Login/PasswordInputKey.php:39
+#: DNS42/Form/User/Actualizar.php:51 DNS42/Form/Record/A.php:96
+#: DNS42/Form/Record/NS.php:102 DNS42/Form/Record/MX.php:112
+#: DNS42/Form/Record/CNAME.php:102 DNS42/Form/Record/TXT.php:88
+#: DNS42/Form/Record/AAAA.php:96 DNS42/Form/Record/ALIAS.php:102
+#: DNS42/Form/Managed/Agregar.php:40 DNS42/Form/Login/PasswordInputKey.php:39
 #: DNS42/Form/Login/PasswordReset.php:72
 msgid "Cannot save an invalid form."
 msgstr ""
@@ -377,12 +511,10 @@ msgid "Username"
 msgstr "Usuario"
 
 #: DNS42/Form/User/Agregar.php:17 DNS42/Form/User/Actualizar.php:12
-#: DNS42/Form/Register/Confirmation.php:48
 msgid "First name"
 msgstr "Nombre"
 
 #: DNS42/Form/User/Agregar.php:25 DNS42/Form/User/Actualizar.php:20
-#: DNS42/Form/Register/Confirmation.php:58
 msgid "Last name"
 msgstr "Apellido"
 
@@ -410,64 +542,189 @@ msgstr "La contraseña para el usuario"
 msgid "The selected username already exists"
 msgstr "El nombre de usuario ya existe"
 
-#: DNS42/Form/Register/InputKey.php:35
-msgid "The confirmation key"
-msgstr ""
-
-#: DNS42/Form/Register/InputKey.php:48 DNS42/Form/Register/Confirmation.php:97
+#: DNS42/Form/Record/A.php:11 DNS42/Form/Record/NS.php:11
+#: DNS42/Form/Record/MX.php:11 DNS42/Form/Record/CNAME.php:11
+#: DNS42/Form/Record/TXT.php:11 DNS42/Form/Record/AAAA.php:11
+#: DNS42/Form/Record/ALIAS.php:11
 msgid ""
-"We are sorry but this confirmation key is not valid. Maybe you should "
-"directly copy/paste it from your confirmation email."
+"A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may "
+"be used where appropriate."
 msgstr ""
+"El nombre solo debe contener letras A-Z, a-z, 0-9, _, -, o .. '@' o el "
+"nombre del dominio puede ser utilizado."
 
-#: DNS42/Form/Register/Register.php:37
-msgid "Your login name"
-msgstr ""
+#: DNS42/Form/Record/A.php:18
+msgid "IPv4 Address"
+msgstr "Dirección IPv4"
 
-#: DNS42/Form/Register/Register.php:50
-msgid "Your email address"
-msgstr ""
-
-#: DNS42/Form/Register/Register.php:52
-msgid "We will use this to verify your account and other goodies"
-msgstr ""
-
-#: DNS42/Form/Register/Register.php:58
-msgid "I accept the terms and conditions of this site"
-msgstr ""
-
-#: DNS42/Form/Register/Register.php:75
-#, php-format
-msgid "The login name \"%s\" is already in use, please choose a different one"
-msgstr ""
-
-#: DNS42/Form/Register/Register.php:85
-msgid "We know that is boring, but you must accept the terms and conditions"
-msgstr ""
-
-#: DNS42/Form/Register/Register.php:96
-#, php-format
-msgid "The email \"%s\" is already in use"
-msgstr "El correo \"%s\" ya está en uso"
-
-#: DNS42/Form/Register/Register.php:144
-msgid "Site - Confirm your account"
-msgstr ""
-
-#: DNS42/Form/Register/Confirmation.php:39
-msgid "Your confirmation key"
-msgstr ""
-
-#: DNS42/Form/Register/Confirmation.php:69
-#: DNS42/Form/Login/PasswordReset.php:18
-msgid "Your password"
-msgstr "Su contraseña"
-
-#: DNS42/Form/Register/Confirmation.php:109
+#: DNS42/Form/Record/A.php:19
 msgid ""
-"This account has already been confirmed. Maybe should you try to recover "
-"your password using the help link."
+"An IPv4 address must be a decimal dotted quad string, for example: "
+"'192.168.123.10'"
 msgstr ""
+
+#: DNS42/Form/Record/A.php:24 DNS42/Form/Record/NS.php:24
+#: DNS42/Form/Record/MX.php:34 DNS42/Form/Record/CNAME.php:24
+#: DNS42/Form/Record/TXT.php:24 DNS42/Form/Record/AAAA.php:24
+#: DNS42/Form/Record/ALIAS.php:24
+msgid "24 hours (86400)"
+msgstr "24 horas (86400)"
+
+#: DNS42/Form/Record/A.php:25 DNS42/Form/Record/NS.php:25
+#: DNS42/Form/Record/MX.php:35 DNS42/Form/Record/CNAME.php:25
+#: DNS42/Form/Record/TXT.php:25 DNS42/Form/Record/AAAA.php:25
+#: DNS42/Form/Record/ALIAS.php:25
+msgid "12 hours (43200)"
+msgstr "12 horas (43200)"
+
+#: DNS42/Form/Record/A.php:26 DNS42/Form/Record/NS.php:26
+#: DNS42/Form/Record/MX.php:36 DNS42/Form/Record/CNAME.php:26
+#: DNS42/Form/Record/TXT.php:26 DNS42/Form/Record/AAAA.php:26
+#: DNS42/Form/Record/ALIAS.php:26
+msgid "8 hours (28800)"
+msgstr "8 horas (28800)"
+
+#: DNS42/Form/Record/A.php:27 DNS42/Form/Record/NS.php:27
+#: DNS42/Form/Record/MX.php:37 DNS42/Form/Record/CNAME.php:27
+#: DNS42/Form/Record/TXT.php:27 DNS42/Form/Record/AAAA.php:27
+#: DNS42/Form/Record/ALIAS.php:27
+msgid "4 hours (14400)"
+msgstr "4 horas (14400)"
+
+#: DNS42/Form/Record/A.php:28 DNS42/Form/Record/NS.php:28
+#: DNS42/Form/Record/MX.php:38 DNS42/Form/Record/CNAME.php:28
+#: DNS42/Form/Record/TXT.php:28 DNS42/Form/Record/AAAA.php:28
+#: DNS42/Form/Record/ALIAS.php:28
+msgid "2 hours (7200)"
+msgstr "2 horas (7200)"
+
+#: DNS42/Form/Record/A.php:29 DNS42/Form/Record/NS.php:29
+#: DNS42/Form/Record/MX.php:39 DNS42/Form/Record/CNAME.php:29
+#: DNS42/Form/Record/TXT.php:29 DNS42/Form/Record/AAAA.php:29
+#: DNS42/Form/Record/ALIAS.php:29
+msgid "1 hour (3600)"
+msgstr "1 hora (3600)"
+
+#: DNS42/Form/Record/A.php:30 DNS42/Form/Record/NS.php:30
+#: DNS42/Form/Record/MX.php:40 DNS42/Form/Record/CNAME.php:30
+#: DNS42/Form/Record/TXT.php:30 DNS42/Form/Record/AAAA.php:30
+#: DNS42/Form/Record/ALIAS.php:30
+msgid "30 minutes (1800)"
+msgstr "30 minutos (1800)"
+
+#: DNS42/Form/Record/A.php:31 DNS42/Form/Record/NS.php:31
+#: DNS42/Form/Record/MX.php:41 DNS42/Form/Record/CNAME.php:31
+#: DNS42/Form/Record/TXT.php:31 DNS42/Form/Record/AAAA.php:31
+#: DNS42/Form/Record/ALIAS.php:31
+msgid "15 minutes (900)"
+msgstr "15 minutos (900)"
+
+#: DNS42/Form/Record/A.php:32 DNS42/Form/Record/NS.php:32
+#: DNS42/Form/Record/MX.php:42 DNS42/Form/Record/CNAME.php:32
+#: DNS42/Form/Record/TXT.php:32 DNS42/Form/Record/AAAA.php:32
+#: DNS42/Form/Record/ALIAS.php:32
+msgid "5 minutes (300)"
+msgstr "5 minutos (300)"
+
+#: DNS42/Form/Record/A.php:38 DNS42/Form/Record/NS.php:38
+#: DNS42/Form/Record/MX.php:48 DNS42/Form/Record/CNAME.php:38
+#: DNS42/Form/Record/TXT.php:38 DNS42/Form/Record/AAAA.php:38
+#: DNS42/Form/Record/ALIAS.php:38
+msgid "TTL (Time to live)"
+msgstr "TTL (Tiempo de vida)"
+
+#: DNS42/Form/Record/A.php:39 DNS42/Form/Record/NS.php:39
+#: DNS42/Form/Record/MX.php:49 DNS42/Form/Record/CNAME.php:39
+#: DNS42/Form/Record/TXT.php:39 DNS42/Form/Record/AAAA.php:39
+#: DNS42/Form/Record/ALIAS.php:39
+msgid ""
+"The TTL (time to live) indicates how long a DNS record is valid for - and "
+"therefore when the address needs to be rechecked."
+msgstr ""
+"El TTL (tiempo de vida) indica por cuanto tiempo es válido un registro DNS, "
+"y por lo tanto cuando la dirección tiene que ser vuelta a revisar."
+
+#: DNS42/Form/Record/A.php:52 DNS42/Form/Record/NS.php:52
+#: DNS42/Form/Record/NS.php:62 DNS42/Form/Record/MX.php:62
+#: DNS42/Form/Record/MX.php:72 DNS42/Form/Record/CNAME.php:52
+#: DNS42/Form/Record/CNAME.php:62 DNS42/Form/Record/TXT.php:52
+#: DNS42/Form/Record/AAAA.php:52 DNS42/Form/Record/ALIAS.php:52
+#: DNS42/Form/Record/ALIAS.php:62
+msgid "Invalid domain name"
+msgstr "Nombre de dominio inválido"
+
+#: DNS42/Form/Record/A.php:62
+msgid "Invalid IPv4 Address"
+msgstr "Dirección IPv4 inválida"
+
+#: DNS42/Form/Record/NS.php:18
+msgid "Nameserver name"
+msgstr "Servidor de nombres"
+
+#: DNS42/Form/Record/NS.php:19
+msgid ""
+"A nameserver should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."
+msgstr ""
+
+#: DNS42/Form/Record/MX.php:19
+msgid ""
+"To differentiate them, each MX record has a priority (lower the number, "
+"higher the priority). The MX record with the highest priority is the actual "
+"target computer where mail boxes are located. '10' is a good default."
+msgstr ""
+"Para diferenciarlos, cada registro MX tiene una prioridad (menor el número, "
+"mayor la prioridad). El registro MX con la mayor prioridad es el servidor "
+"donde se encuentran los buzones de correo. '10' es el valor por defecto."
+
+#: DNS42/Form/Record/MX.php:28 DNS42/Form/Record/CNAME.php:18
+#: DNS42/Form/Record/ALIAS.php:18
+msgid "Hostname"
+msgstr "Hostname"
+
+#: DNS42/Form/Record/MX.php:29
+msgid ""
+"A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. "
+"An mx may never be an ip/ipv6 address, and must not point to a cname. "
+"Entering incorrect information here can negatively impact your ability to "
+"receive and in some cases send mail."
+msgstr ""
+
+#: DNS42/Form/Record/CNAME.php:19 DNS42/Form/Record/ALIAS.php:19
+msgid ""
+"A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."
+msgstr ""
+
+#: DNS42/Form/Record/TXT.php:18
+msgid "Text data"
+msgstr ""
+
+#: DNS42/Form/Record/TXT.php:19
+msgid ""
+"Text data may only contain printable ASCII characters. Very long lines will "
+"be automatically broken into multiple 255 character segments."
+msgstr ""
+
+#: DNS42/Form/Record/AAAA.php:18
+msgid "IPv6 Address"
+msgstr "Dirección IPv6"
+
+#: DNS42/Form/Record/AAAA.php:19
+msgid ""
+"An IPv6 address must a coloned hex IPv6 address string, for example: '2001:"
+"db8::c0ff:e:e'"
+msgstr ""
+
+#: DNS42/Form/Record/AAAA.php:62
+msgid "Invalid IPv6 Address"
+msgstr "Dirección IPv6 inválida"
+
+#: DNS42/Form/Managed/Agregar.php:12
+msgid "Domain Name"
+msgstr "Nombre de dominio"
+
+#: DNS42/Form/Managed/Agregar.php:26
+msgid "This DNS zone already exists in this server"
+msgstr "Esta zona DNS ya existe en este servidor"
 
 #: DNS42/Form/Login/PasswordInputKey.php:9
 #: DNS42/Form/Login/PasswordReset.php:12
@@ -488,6 +745,10 @@ msgid ""
 "recovery sequence. For security reasons, the verification key is only valid "
 "3h."
 msgstr ""
+
+#: DNS42/Form/Login/PasswordReset.php:18
+msgid "Your password"
+msgstr "Su contraseña"
 
 #: DNS42/Form/Login/PasswordReset.php:44
 msgid ""
@@ -518,6 +779,41 @@ msgstr ""
 msgid "Password Recovery - ?"
 msgstr ""
 
+#: DNS42/Views/Managed.php:12 DNS42/Views/Managed.php:90
+msgid "Free DNS Management"
+msgstr ""
+
+#: DNS42/Views/Managed.php:19
+msgid "Add new domain"
+msgstr "Agregar nuevo dominio"
+
+#: DNS42/Views/Managed.php:26
+msgid "Configuration Error. Missing default update key"
+msgstr ""
+
+#: DNS42/Views/Managed.php:106
+msgid ""
+"The delegation for this zone was found and is correct. The zone is now active"
+msgstr ""
+"La delegación de zona ya es correcta. La zona ahora se encuentra activa"
+
+#: DNS42/Views/Managed.php:110
+msgid ""
+"The delegation check for this zone was scheduled, please wait at least 1 "
+"minute and refresh the page to see the result"
+msgstr ""
+"La revisión de la delegación de zona fué programada, por favor espera al "
+"menos 1 minuto y refresca la página para ver el resultado"
+
+#: DNS42/Views/Managed.php:127
+msgid "You can't create records. Please first check zone delegation."
+msgstr "No puede crear registros. Primero revise la delegación de la zona."
+
+#: DNS42/Views/Managed.php:156
+#, php-format
+msgid "Add record %s"
+msgstr "Agregar registro tipo %s"
+
 #: DNS42/Views/Index.php:8
 msgid "Start page"
 msgstr "Página de inicio"
@@ -539,10 +835,6 @@ msgstr "Lista de usuarios"
 #: DNS42/Views/Users.php:17
 msgid "User"
 msgstr "Usuario"
-
-#: DNS42/Views/Users.php:18
-msgid "Name"
-msgstr "Nombre"
 
 #: DNS42/Views/Users.php:19
 msgid "Last Name"
@@ -587,3 +879,6 @@ msgid ""
 msgstr ""
 "¡Bienvenido! La próxima vez, puedes utilizar tu navegador para recordar la "
 "contraseña."
+
+#~ msgid "The email \"%s\" is already in use"
+#~ msgstr "El correo \"%s\" ya está en uso"

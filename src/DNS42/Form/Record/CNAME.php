@@ -21,15 +21,15 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		));
 		
 		$ttl_values = array (
-			'24 hours (86400)' => 86400,
-			'12 hours (43200)' => 43200,
-			'8 hours (28800)' => 28800,
-			'4 hours (14400)' => 14400,
-			'2 hours (7200)' => 7200,
-			'1 hour (3600)' => 3600,
-			'30 minutes (1800)' => 1800,
-			'15 minutes (900)' => 900,
-			'5 minutes (300)' => 300,
+			__('24 hours (86400)') => 86400,
+			__('12 hours (43200)') => 43200,
+			__('8 hours (28800)') => 28800,
+			__('4 hours (14400)') => 14400,
+			__('2 hours (7200)') => 7200,
+			__('1 hour (3600)') => 3600,
+			__('30 minutes (1800)') => 1800,
+			__('15 minutes (900)') => 900,
+			__('5 minutes (300)') => 300,
 		);
 		
 		$this->fields['ttl'] = new Gatuf_Form_Field_Integer (
