@@ -23,7 +23,7 @@
 <thead><tr><th>{trans 'Name'}</th><th>{trans 'Type'}</th><th>{trans 'TTL'}</th><th>{trans 'Priority'}</th><th>{trans 'Data'}</th><th>{trans 'Delete'}</th></tr></thead>
 <tbody>{foreach $records as $r}
 	{if $r.locked}<tr class="tr_locked">{else}<tr>{/if}
-	<td>{$r.name}</td><td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td><td class="td_center">{$r.ttl}</td><td class="td_center">{$r.format_priority()}</td><td>{$r.format_rdata ()}</td><td class="td_center {if $r.locked}td_locked{else}td_delete{/if}">{if $r.locked}🔒{else}➖{/if}</td></tr>
+	<td>{$r.name}</td><td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td><td class="td_center">{$r.ttl}</td><td class="td_center">{$r.format_priority()}</td><td>{$r.format_rdata ()}</td><td class="td_center {if $r.locked}td_locked{else}td_delete{/if}">{if $r.locked}🔒{else}<a href="{url 'DNS42_Views_Managed::eliminar_registro', $r.id}">➖</a>{/if}</td></tr>
 {/foreach}</tbody>
 </table>
 {/block}
@@ -65,6 +65,10 @@
 .td_delete:hover {
 	background: red;
 }
+.td_delete a {
+	text-decoration: none;
+}
+
 .rrlabel {
 	color: #fff;
 	padding: 0px 3px 0px 3px;

@@ -42,6 +42,7 @@ $channel = $connection->channel();
 $channel->queue_declare ('dns_zone_add', false, true, false, false);
 $channel->queue_declare ('dns_zone_del', false, true, false, false);
 $channel->queue_declare ('dns_record_add', false, true, false, false);
+$channel->queue_declare ('dns_record_del', false, true, false, false);
 
 $callback_zone_add = function ($msg) {
 	$managed = new DNS42_ManagedDomain ();
@@ -268,10 +269,54 @@ $callback_record_add = function ($msg) {
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
+$callback_record_del = function ($msg) {
+	$toks = explode (" ", $msg->body, 4);
+	
+	$managed = new DNS42_ManagedDomain ();
+	
+	if (false === $managed->get ($toks[0])) {
+		/* ¿No existe el dominio?, raro */
+		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+		return;
+	}
+	
+	$record_type = $toks[2];
+	$record_name = $toks[1];
+	$record_value = $toks[3];
+	
+	$key = $managed->get_key ();
+	
+	$server = Gatuf::config ('rndc_update_server');
+	
+	$opts = array ('nameservers' => array ($server));
+	$updater = new Net_DNS2_Updater ($managed->dominio, $opts);
+	
+	switch ($record_type) {
+		case 'A':
+		case 'AAAA':
+		case 'CNAME':
+		case 'MX':
+		case 'NS':
+		case 'TXT':
+			$line = sprintf ("%s 300 IN %s %s", $record_name, $record_type, $record_value);
+			break;
+	}
+	
+	$rr = Net_DNS2_RR::fromString ($line);
+	$updater->delete ($rr);
+	
+	$updater->signTSIG ($key->nombre, $key->secret, $key->algo);
+	
+	$updater->update();
+	
+	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+};
+
 $channel->basic_qos (null, 1, null);
 $channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback_zone_add);
 $channel->basic_consume ('dns_zone_del', '', false, false, false, false, $callback_zone_del);
 $channel->basic_consume ('dns_record_add', '', false, false, false, false, $callback_record_add);
+$channel->basic_consume ('dns_record_del', '', false, false, false, false, $callback_record_del);
 
 while (1) {
     $channel->wait();

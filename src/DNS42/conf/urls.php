@@ -183,4 +183,11 @@ $ctl[] = array (
 	'method' => 'agregar_registro',
 );
 
+$ctl[] = array (
+	'regex' => '#^/managed/delete/record/(\d+)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'eliminar_registro',
+);
+
 return $ctl;

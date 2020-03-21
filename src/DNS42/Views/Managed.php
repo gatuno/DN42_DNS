@@ -176,5 +176,43 @@ class DNS42_Views_Managed {
 		                                                'form' => $form),
 		                                         $request);
 	}
+	
+	public $eliminar_registro_precond = array ('Gatuf_Precondition::loginRequired');
+	public function eliminar_registro ($request, $match) {
+		$record = new DNS42_Record ();
+		
+		if (false === ($record->get($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$managed = $record->get_dominio ();
+		$user = $managed->get_user ();
+		
+		if ($request->user->id != $user->id) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		if ($record->locked) {
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		if ($request->method == 'POST') {
+			if ($managed->delegacion == 2) {
+				DNS42_RMQ::send_del_record ($record);
+			}
+			
+			$record->delete ();
+			
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/eliminar_registro.html',
+		                                         array ('page_title' => __('Delete record'),
+		                                                'record' => $record,
+		                                                'managed' => $managed),
+		                                         $request);
+	}
 }
 
