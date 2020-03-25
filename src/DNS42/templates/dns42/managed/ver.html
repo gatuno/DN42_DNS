@@ -8,7 +8,9 @@
 {elseif $managed.delegacion == 0}
 <div class="in_progress">{trans 'Zone validation in progress. Please wait at least 1 minute and refresh the page.'}</div>
 {/if}
-{if $managed.delegacion == 2}
+{if $managed.delegacion != 2}
+<p>{trans 'You can create records on the domain, but the zone will became active in the DNS until delegation works.'}</p>
+{/if}
 <ul class="new_record">
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'A')}">{trans 'New A'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'AAAA')}">{trans 'New AAAA'}</a></li>
@@ -25,9 +27,6 @@
 	<td>{$r.name}</td><td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td><td class="td_center">{$r.ttl}</td><td class="td_center">{$r.format_priority()}</td><td>{$r.format_rdata ()}</td><td class="td_center {if $r.locked}td_locked{else}td_delete{/if}">{if $r.locked}🔒{else}<a href="{url 'DNS42_Views_Managed::eliminar_registro', $r.id}">➖</a>{/if}</td></tr>
 {/foreach}</tbody>
 </table>
-{else}
-<p>You can't create records until the zone delegation works.</p>
-{/if}
 {/block}
 {block extrahead}
 <style type="text/css">

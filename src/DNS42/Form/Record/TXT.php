@@ -70,13 +70,16 @@ class DNS42_Form_Record_TXT extends Gatuf_Form {
 		$name = rtrim (trim ($this->cleaned_data['name']), ".");
 		$len = strlen ($this->dominio->dominio);
 		
-		$ending = substr ($name, -($len + 1));
+		if ($name == '@') {
+			$name = $this->dominio->dominio;
+		} else if ($name != $this->dominio->dominio) {
+			/* Revisar si necesito qualificar este dominio */
+			$ending = substr ($name, -($len + 1));
 		
-		if ($ending == '.' . $this->dominio->dominio) {
-			/* Ya es parte del dominio, nada que hacer */
-		} else {
-			/* Como no es un nombre calificado, agregar el dominio */
-			$name = $name . '.' . $this->dominio->dominio;
+			if ($ending != '.' . $this->dominio->dominio) {
+				/* Como no es un nombre calificado, agregar el dominio */
+				$name = $name . '.' . $this->dominio->dominio;
+			}
 		}
 		
 		$this->cleaned_data['name'] = $name;

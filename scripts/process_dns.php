@@ -166,31 +166,16 @@ $callback_zone_add = function ($msg) {
 		exec ($full_exec, $output, $return_code);
 		
 		if ($return_code == 0) {
+			$records = $managed->get_records_list ();
+			
 			/* Crear todos los records correspondientes */
-			
-			/* Crear el SOA */
-			$record = new DNS42_Record ();
-			$record->ttl = 86400;
-			$record->dominio = $managed;
-			$record->name = $managed->dominio;
-			$record->type = 'SOA';
-			$serial = date ('Ymd').'00';
-			$record->rdata = sprintf ('ns1.gatuno.dn42. hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $serial);
-			$record->locked = TRUE;
-			$record->create ();
-			
-			/* Crear al menos el primer NS */
-			$record = new DNS42_Record ();
-			$record->ttl = 86400;
-			$record->dominio = $managed;
-			$record->name = $managed->dominio;
-			$record->type = 'NS';
-			$record->rdata = 'ns1.gatuno.dn42.';
-			$record->locked = TRUE;
-			$record->create ();
-			
 			$managed->delegacion = 2;
 			$managed->update ();
+			
+			/* Ahora, crear todos los registros pendientes */
+			foreach ($records as $r) {
+				$delegar = DNS42_RMQ::send_add_record ($r);
+			}
 		} else {
 			$managed->delegacion = 4;
 			$managed->update ();
@@ -227,6 +212,16 @@ $callback_zone_del = function ($msg) {
 	
 	if ($deleted === false) {
 		/* FIXME: Otro problema, no pude eliminar el archivo */
+		var_dump ("Could not delete $file_name");
+	}
+	
+	$file_name = sprintf ("%s/%s.jnl", $folder, $old_domain);
+	
+	$deleted = unlink ($file_name);
+	
+	if ($deleted === false) {
+		/* FIXME: Otro problema, no pude eliminar el archivo */
+		var_dump ("Could not delete $file_name");
 	}
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
@@ -241,6 +236,11 @@ $callback_record_add = function ($msg) {
 		return;
 	}
 	
+	if ($record->locked == true) {
+		/* Omitir, es uno de los registros internos que no necesitan creación */
+		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+		return;
+	}
 	$managed = $record->get_dominio ();
 	$key = $managed->get_key ();
 	

@@ -33,6 +33,27 @@ class DNS42_Views_Managed {
 			if ($form->isValid ()) {
 				$managed = $form->save ();
 				
+				/* Crear el SOA */
+				$record = new DNS42_Record ();
+				$record->ttl = 86400;
+				$record->dominio = $managed;
+				$record->name = $managed->dominio;
+				$record->type = 'SOA';
+				$serial = date ('Ymd').'00';
+				$record->rdata = sprintf ('ns1.gatuno.dn42. hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $serial);
+				$record->locked = TRUE;
+				$record->create ();
+			
+				/* Crear al menos el primer NS */
+				$record = new DNS42_Record ();
+				$record->ttl = 86400;
+				$record->dominio = $managed;
+				$record->name = $managed->dominio;
+				$record->type = 'NS';
+				$record->rdata = 'ns1.gatuno.dn42.';
+				$record->locked = TRUE;
+				$record->create ();
+				
 				$delegar = DNS42_RMQ::send_create_domain ($managed);
 				
 				/* TODO: Revisar delegar */
@@ -124,10 +145,7 @@ class DNS42_Views_Managed {
 		}
 		
 		if ($managed->delegacion != 2) {
-			$request->user->setMessage (2, __("You can't create records. Please first check zone delegation."));
-			
-			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
-			return new Gatuf_HTTP_Response_Redirect ($url);
+			$request->user->setMessage (3, __('You can create records on the domain, but the zone will became active in the DNS until delegation works.'));
 		}
 		
 		$allowed = array (
@@ -161,7 +179,9 @@ class DNS42_Views_Managed {
 			if ($form->isValid ()) {
 				$record = $form->save ();
 				
-				$delegar = DNS42_RMQ::send_add_record ($record);
+				if ($managed->delegacion == 2) {
+					$delegar = DNS42_RMQ::send_add_record ($record);
+				}
 				
 				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
 				return new Gatuf_HTTP_Response_Redirect ($url);
