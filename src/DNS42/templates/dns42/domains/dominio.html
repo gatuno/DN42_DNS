@@ -18,19 +18,21 @@
 		<td class="td_{$klass}">{if $n.response4 == 0}{trans 'Not tested'}{elseif $n.response4 == 1}{trans 'Bad'}{elseif $n.response4 == 2}{trans 'Correct'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Returned NS list'}</td>
-		<td>{$n.ns_list4}</td></tr>
+		<td>{if $n.ns_list4 != ''}{$n.ns_list4}{else}{trans '(empty or no response)'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Parent NS match'}</td>
 		{assign $klass = $n.klass_field ('parent_match4')}
-		<td class="td_{$klass}">{if $n.parent_match4 == 0}{trans 'Not tested'}{elseif $n.parent_match4 == 1}{trans 'Bad'}{elseif $n.parent_match4 == 2}{trans 'Correct'}{/if}</td></tr>
+		<td class="td_{$klass}">{if $n.parent_match4 == 0}{trans 'Not tested'}{elseif $n.parent_match4 == 1}{trans 'Bad'}{elseif $n.parent_match4 == 2}{trans 'Correct'}{elseif $n.parent_match4 == 3}{trans 'Skipped'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Authoritative response from this NS'}</td>
 		{assign $klass = $n.klass_field ('autoritative4')}
-		<td class="td_{$klass}">{if $n.autoritative4 == 0}{trans 'Not tested'}{elseif $n.autoritative4 == 1}{trans 'Bad'}{elseif $n.autoritative4 == 2}{trans 'Correct'}{/if}</td></tr>
+		<td class="td_{$klass}">{if $n.autoritative4 == 0}{trans 'Not tested'}{elseif $n.autoritative4 == 1}{trans 'Bad'}{elseif $n.autoritative4 == 2}{trans 'Correct'}{elseif $n.autoritative4 == 3}{trans 'Skipped'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Full transfer'}</td>
 		{assign $klass = $n.klass_field ('open_transfer4')}
-		<td class="td_{$klass}">{if $n.open_transfer4 == 0}{trans 'Not tested'}{elseif $n.open_transfer4 == 1}{trans 'Bad. Full transfer allowed'}{elseif $n.open_transfer4 == 2}{trans 'Correct'}{/if}</td></tr>
+		<td class="td_{$klass}">{if $n.open_transfer4 == 0}{trans 'Not tested'}{elseif $n.open_transfer4 == 1}{trans 'Bad (Full transfer allowed)'}{elseif $n.open_transfer4 == 2}{trans 'Correct'}{elseif $n.open_transfer4 == 3}{trans 'Skipped'}{/if}</td></tr>
+		
+		<tr><td colspan="2"><a href="{url 'DNS42_Views_Domains::explicacion'}">{trans 'Explanation for the tests'}</a></td></tr>
 		
 		</tbody>
 		</table>
@@ -49,19 +51,21 @@
 		<td class="td_{$klass}">{if $n.response6 == 0}{trans 'Not tested'}{elseif $n.response6 == 1}{trans 'Bad'}{elseif $n.response6 == 2}{trans 'Correct'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Returned NS list'}</td>
-		<td>{$n.ns_list6}</td></tr>
+		<td>{if $n.ns_list6 != ''}{$n.ns_list6}{else}{trans '(empty or no response)'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Parent NS match'}</td>
 		{assign $klass = $n.klass_field ('parent_match6')}
-		<td class="td_{$klass}">{if $n.parent_match6 == 0}{trans 'Not tested'}{elseif $n.parent_match6 == 1}{trans 'Bad'}{elseif $n.parent_match6 == 2}{trans 'Correct'}{/if}</td></tr>
+		<td class="td_{$klass}">{if $n.parent_match6 == 0}{trans 'Not tested'}{elseif $n.parent_match6 == 1}{trans 'Bad'}{elseif $n.parent_match6 == 2}{trans 'Correct'}{elseif $n.parent_match6 == 3}{trans 'Skipped'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Authoritative response from this NS'}</td>
 		{assign $klass = $n.klass_field ('autoritative6')}
-		<td class="td_{$klass}">{if $n.autoritative6 == 0}{trans 'Not tested'}{elseif $n.autoritative6 == 1}{trans 'Bad'}{elseif $n.autoritative6 == 2}{trans 'Correct'}{/if}</td></tr>
+		<td class="td_{$klass}">{if $n.autoritative6 == 0}{trans 'Not tested'}{elseif $n.autoritative6 == 1}{trans 'Bad'}{elseif $n.autoritative6 == 2}{trans 'Correct'}{elseif $n.autoritative4 == 3}{trans 'Skipped'}{/if}</td></tr>
 		
 		<tr><td>{trans 'Full transfer'}</td>
 		{assign $klass = $n.klass_field ('open_transfer6')}
-		<td class="td_{$klass}">{if $n.open_transfer6 == 0}{trans 'Not tested'}{elseif $n.open_transfer6 == 1}{trans 'Bad. Full transfer allowed'}{elseif $n.open_transfer6 == 2}{trans 'Correct'}{/if}</td></tr>
+		<td class="td_{$klass}">{if $n.open_transfer6 == 0}{trans 'Not tested'}{elseif $n.open_transfer6 == 1}{trans 'Bad (Full transfer allowed)'}{elseif $n.open_transfer6 == 2}{trans 'Correct'}{elseif $n.open_transfer6 == 3}{trans 'Skipped'}{/if}</td></tr>
+		
+		<tr><td colspan="2"><a href="{url 'DNS42_Views_Domains::explicacion'}">{trans 'Explanation for the tests'}</a></td></tr>
 		
 		</tbody>
 		</table>
@@ -87,6 +91,9 @@
 }
 .td_warn {
 	background-color: lightgoldenrodyellow;
+}
+.td_skipped {
+	background-color: lightgray;
 }
 .test_list {
 	border: 1px solid #ddd;

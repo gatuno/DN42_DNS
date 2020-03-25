@@ -195,8 +195,14 @@ class DNS42_Views_Domains {
 			}
 		}
 		
-		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver', $ns->get_dominio ()->dominio);
+		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver', $dominio->dominio);
 		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
+	public function explicacion ($request, $match) {
+		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/tests.html',
+		                                         array('page_title' => __('Domain tests')),
+		                                         $request);
 	}
 }
 

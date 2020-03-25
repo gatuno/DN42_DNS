@@ -115,14 +115,21 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/server/(.*)/$#',
+	'regex' => '#^/server/([a-z0-9-\.]+)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Domains',
 	'method' => 'ver_server',
 );
 
 $ctl[] = array (
-	'regex' => '#^/domain/(.*)/$#',
+	'regex' => '#^/domain/explain/test/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Domains',
+	'method' => 'explicacion',
+);
+
+$ctl[] = array (
+	'regex' => '#^/domain/([a-z0-9-\.]+)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Domains',
 	'method' => 'ver',
@@ -136,14 +143,14 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/check/ping/(.*)/$#',
+	'regex' => '#^/check/ping/([a-z0-9-\.]+)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Domains',
 	'method' => 'programar_check_ping',
 );
 
 $ctl[] = array (
-	'regex' => '#^/check/domain/(.*)/$#',
+	'regex' => '#^/check/domain/([a-z0-9-\.]+)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Domains',
 	'method' => 'programar_check_domain',

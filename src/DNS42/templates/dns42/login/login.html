@@ -12,6 +12,8 @@
 </form>
 {aurl 'recov_url', 'DNS42_Views_Login::passwordRecoveryAsk'}
 <p>{blocktrans}Have you forgotten you password? Try <a href="{$recov_url}">recovering</a>{/blocktrans}</p>
+{aurl 'register_url', 'DNS42_Views_Register::register'}
+<p>{blocktrans}New user? Please <a href="{$register_url}">register</a> yourself.{/blocktrans}</p>
 {/block}
 {block javascript}
 <script type="text/javascript">

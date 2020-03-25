@@ -1,6 +1,8 @@
 {extends 'dns42/base.html'}
 {block body}
 <p>{trans 'List of .dn42 domains'}</p>
+<p>{blocktrans}This report is generated from all the info from the git DN42 registry. The report gets in sync with the registry every 12 hours. The checks on nameservers or all the nameservers of a domain can be requested manually and will be done in the next 5 or 10 minutes.{/blocktrans}</p>
+<p>{blocktrans}If there is a domain with no nameservers, it means one of two things, either there is no IP address for the corresponding nameserver in the registry, or the nameserver is outside the dn42 domain{/blocktrans}</p>
 {amedia 'v4_icon', '/img/ipv4_icon.png'}{amedia 'v6_icon', '/img/ipv6_icon.png'}
 <table class="explain"><tr><td class="td_good explain_b"></td><td> = {trans 'Ping response'}</td></tr></table>
 <table class="explain"><tr><td class="td_warn explain_b"></td><td> = {trans 'Partial ping response'}</td></tr></table>

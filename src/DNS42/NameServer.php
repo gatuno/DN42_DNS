@@ -50,25 +50,25 @@ class DNS42_NameServer extends Gatuf_Model {
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
-			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien, 3 = omitido */
 			),
 			'open_transfer6' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
-			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien, 3 = omitido */
 			),
 			'autoritative4' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
-			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien, 3 = omitido */
 			),
 			'autoritative6' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
-			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien */
+			       'default' => 0, /* 0 = no-probado, 1 = mal, 2 = bien, 3 = omitido */
 			),
 			'parent_match4' =>
 			array (
@@ -125,6 +125,8 @@ class DNS42_NameServer extends Gatuf_Model {
 				return 'bad';
 			case 2:
 				return 'good';
+			case 3:
+				return 'skipped';
 			default:
 				return 'unknown';
 		}

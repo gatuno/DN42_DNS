@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-20 21:16-0600\n"
+"POT-Creation-Date: 2020-03-23 14:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,6 +77,61 @@ msgstr ""
 msgid "Reset password"
 msgstr ""
 
+#: DNS42/gettexttemplates/dns42/register/index.html.php:3
+msgid ""
+"Read the <a id=\"showterms\" href=\"#theterms\">terms and conditions</a> – "
+"basically <em>\"Please be nice, we respect you\"</em>."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/index.html.php:4
+msgid "Oops, please check the provided login and email address to register."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/index.html.php:5
+#: DNS42/Views/Register.php:8
+msgid "Create your account"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/index.html.php:6
+#: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:6
+#: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:7
+msgid "Cancel"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/terms.html.php:3
+msgid ""
+"This is a free DNS service, exclusive for the DN42 network. Any service "
+"abuse will provoke an account suspension."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/terms.html.php:4
+msgid "Terms and conditions of use"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/terms.html.php:5
+msgid "About your email"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/terms.html.php:6
+msgid ""
+"We may use your email for password recovery purpose. We use your email to "
+"display a gravatar from gravatar.com"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/terms.html.php:7
+msgid "About your other personal info"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/terms.html.php:8
+msgid ""
+"We don't share any of your personal data with anybody. It is used only for "
+"display purposes."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/register/terms.html.php:9
+msgid "About our service"
+msgstr ""
+
 #: DNS42/gettexttemplates/dns42/base.html.php:3
 msgid "Home"
 msgstr ""
@@ -86,20 +141,32 @@ msgid "Domains"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/base.html.php:5
+msgid "Free DNS"
+msgstr ""
+
 #: DNS42/gettexttemplates/dns42/base.html.php:6
+#: DNS42/gettexttemplates/dns42/base.html.php:7
 msgid "Logout"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/base.html.php:7
+#: DNS42/gettexttemplates/dns42/base.html.php:8
 msgid "Login"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/base.html.php:8
+#: DNS42/gettexttemplates/dns42/base.html.php:9
 msgid "Foot page"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/index.html.php:3
 msgid "Welcome text here"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/recuperarcontra-temp.html.php:3
+msgid ""
+"We are sorry, but right now, there is no password recovery service. We "
+"usually would sent an email with a link to reset your password, BUT, our "
+"email service is currently out of service. Please send an email to A p T "
+"[AT] G a t u n o [.] M X (Remove spaces) to reset your password."
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/login/recuperarcontra-ask.html.php:3
@@ -119,18 +186,23 @@ msgid ""
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/login/login.html.php:4
-msgid "What is your login?"
+#, php-format
+msgid "New user? Please <a href=\"%%register_url%%\">register</a> yourself."
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/login/login.html.php:5
-msgid "My login is"
+msgid "What is your login?"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/login/login.html.php:6
+msgid "My login is"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/login/login.html.php:7
 msgid "My password is"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/login/login.html.php:7 DNS42/Views/Login.php:43
+#: DNS42/gettexttemplates/dns42/login/login.html.php:8 DNS42/Views/Login.php:43
 msgid "Sign in"
 msgstr ""
 
@@ -195,81 +267,166 @@ msgid "Schedule check for this nameserver with this domain"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:5
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:25
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:30
 msgid "Test"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:6
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:26
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:31
 msgid "Result"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:7
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:27
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:32
 #: DNS42/gettexttemplates/dns42/domains/ns.html.php:5
 #: DNS42/gettexttemplates/dns42/domains/ns.html.php:7
 msgid "Ping"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:8
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:28
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:33
 msgid "DNS Response"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:9
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:14
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:18
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:22
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:29
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:15
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:20
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:25
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:34
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:38
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:42
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:40
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:45
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:50
 msgid "Not tested"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:10
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:15
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:19
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:30
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:16
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:21
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:35
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:39
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:41
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:46
 msgid "Bad"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:11
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:16
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:20
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:24
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:31
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:17
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:22
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:27
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:36
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:40
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:44
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:42
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:47
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:52
 msgid "Correct"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:12
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:32
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:37
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:8
 msgid "Returned NS list"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/dominio.html.php:13
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:33
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:38
+msgid "(empty or no response)"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:14
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:39
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:10
 msgid "Parent NS match"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:17
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:37
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:18
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:23
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:28
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:43
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:48
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:53
+msgid "Skipped"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:19
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:44
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:12
 msgid "Authoritative response from this NS"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:21
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:41
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:24
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:49
 msgid "Full transfer"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:23
-#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:43
-msgid "Bad. Full transfer allowed"
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:26
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:51
+msgid "Bad (Full transfer allowed)"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/dominio.html.php:29
+msgid "Explanation for the tests"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:3
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:3
+msgid ""
+"This report is generated from all the info from the git DN42 registry. The "
+"report gets in sync with the registry every 12 hours. The checks on "
+"nameservers or all the nameservers of a domain can be requested manually and "
+"will be done in the next 5 or 10 minutes."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:4
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:4
+msgid ""
+"If there is a domain with no nameservers, it means one of two things, either "
+"there is no IP address for the corresponding nameserver in the registry, or "
+"the nameserver is outside the dn42 domain"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:5
+msgid "The tests run are the described next:"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:6
+msgid "DNS probe response (DNS Response, for short)"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:7
+msgid ""
+"We try to get SOA record for your domain. If the DNS response fails, the "
+"other test are skipped."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:9
+msgid ""
+"We query the NS records for your domain. We list every nameserver returned "
+"by your server, in no particular order."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:11
+msgid ""
+"The returned nameserver list by your server SHOULD match the nameserver list "
+"of the parent zone. If the this test fails, you should check that the list "
+"nameservers in the registry are up-to-date."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:13
+msgid ""
+"Your nameserver should response in a 'authoritative' way. This means, to "
+"have the authoritative flag active in the response. An authoritative DNS "
+"Server means that it is the ultimate authority for reporting DNS records for "
+"that domain."
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:14
+msgid "DNS Open Zone Transfer (Full transfer, for short)"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/domains/tests.html.php:15
+msgid ""
+"That means we asked for the information in your entire DNS zone and your DNS "
+"server gave it to us. This is generally considered a security issue as it "
+"can reveal host names/sub-domains or other DNS records that you don't want "
+"disseminated to the public."
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/domains/ns.html.php:3
@@ -288,39 +445,39 @@ msgstr ""
 msgid "Domains associated with this nameserver"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:3
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:5
 msgid "List of .dn42 domains"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:4
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:6
 msgid "Ping response"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:5
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:7
 msgid "Partial ping response"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:6
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:8
 msgid "No ping response"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:7
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:9
 msgid "This nameserver has IPv4"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:8
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:10
 msgid "This nameserver has IPv6"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:9
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:11
 #: DNS42/gettexttemplates/dns42/managed/agregar_registro.html.php:4
-#: DNS42/gettexttemplates/dns42/managed/index.html.php:5
+#: DNS42/gettexttemplates/dns42/managed/index.html.php:6
 #: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:4
 #: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:4
 msgid "Domain"
 msgstr ""
 
-#: DNS42/gettexttemplates/dns42/domains/index.html.php:10
+#: DNS42/gettexttemplates/dns42/domains/index.html.php:12
 msgid "Nameservers"
 msgstr ""
 
@@ -414,10 +571,16 @@ msgid "Add record"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/managed/index.html.php:3
-msgid "➕ Add new domain"
+msgid ""
+"<strong>Warning!</strong>: Beta service. May broke sometimes. Please report "
+"bugs to apt [AT] gatuno [DOT] mx"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/managed/index.html.php:4
+msgid "➕ Add new domain"
+msgstr ""
+
+#: DNS42/gettexttemplates/dns42/managed/index.html.php:5
 msgid "Active domains for this account"
 msgstr ""
 
@@ -430,11 +593,6 @@ msgstr ""
 #: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:5
 #: DNS42/Views/Managed.php:73
 msgid "Delete domain"
-msgstr ""
-
-#: DNS42/gettexttemplates/dns42/managed/eliminar.html.php:6
-#: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:7
-msgid "Cancel"
 msgstr ""
 
 #: DNS42/gettexttemplates/dns42/managed/eliminar_registro.html.php:3
@@ -454,21 +612,21 @@ msgstr ""
 msgid "Your new password"
 msgstr ""
 
-#: DNS42/Form/User/ChangeOwnPassword.php:21
+#: DNS42/Form/User/ChangeOwnPassword.php:21 DNS42/Form/Register/Register.php:81
 #: DNS42/Form/Login/PasswordReset.php:21
 msgid ""
 "Your password must be hard for other people to find it, but easy for you to "
 "remember."
 msgstr ""
 
-#: DNS42/Form/User/ChangeOwnPassword.php:29
+#: DNS42/Form/User/ChangeOwnPassword.php:29 DNS42/Form/Register/Register.php:91
 #: DNS42/Form/Login/PasswordReset.php:29
 msgid "Confirm your password"
 msgstr ""
 
 #: DNS42/Form/User/ChangeOwnPassword.php:41
 #: DNS42/Form/User/ChangePassword.php:33 DNS42/Form/User/Agregar.php:93
-#: DNS42/Form/Login/PasswordReset.php:41
+#: DNS42/Form/Register/Register.php:148 DNS42/Form/Login/PasswordReset.php:41
 msgid "The two passwords must be the same."
 msgstr ""
 
@@ -482,7 +640,8 @@ msgstr ""
 #: DNS42/Form/Record/NS.php:102 DNS42/Form/Record/MX.php:112
 #: DNS42/Form/Record/CNAME.php:102 DNS42/Form/Record/TXT.php:88
 #: DNS42/Form/Record/AAAA.php:96 DNS42/Form/Record/ALIAS.php:102
-#: DNS42/Form/Managed/Agregar.php:40 DNS42/Form/Login/PasswordInputKey.php:39
+#: DNS42/Form/Register/Register.php:163 DNS42/Form/Managed/Agregar.php:40
+#: DNS42/Form/Login/PasswordInputKey.php:39
 #: DNS42/Form/Login/PasswordReset.php:72
 msgid "Cannot save an invalid form."
 msgstr ""
@@ -500,10 +659,12 @@ msgid "Username"
 msgstr ""
 
 #: DNS42/Form/User/Agregar.php:17 DNS42/Form/User/Actualizar.php:12
+#: DNS42/Form/Register/Register.php:57
 msgid "First name"
 msgstr ""
 
 #: DNS42/Form/User/Agregar.php:25 DNS42/Form/User/Actualizar.php:20
+#: DNS42/Form/Register/Register.php:67
 msgid "Last name"
 msgstr ""
 
@@ -548,6 +709,69 @@ msgstr ""
 msgid ""
 "An IPv4 address must be a decimal dotted quad string, for example: "
 "'192.168.123.10'"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:24 DNS42/Form/Record/NS.php:24
+#: DNS42/Form/Record/MX.php:34 DNS42/Form/Record/CNAME.php:24
+#: DNS42/Form/Record/TXT.php:24 DNS42/Form/Record/AAAA.php:24
+#: DNS42/Form/Record/ALIAS.php:24
+msgid "24 hours (86400)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:25 DNS42/Form/Record/NS.php:25
+#: DNS42/Form/Record/MX.php:35 DNS42/Form/Record/CNAME.php:25
+#: DNS42/Form/Record/TXT.php:25 DNS42/Form/Record/AAAA.php:25
+#: DNS42/Form/Record/ALIAS.php:25
+msgid "12 hours (43200)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:26 DNS42/Form/Record/NS.php:26
+#: DNS42/Form/Record/MX.php:36 DNS42/Form/Record/CNAME.php:26
+#: DNS42/Form/Record/TXT.php:26 DNS42/Form/Record/AAAA.php:26
+#: DNS42/Form/Record/ALIAS.php:26
+msgid "8 hours (28800)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:27 DNS42/Form/Record/NS.php:27
+#: DNS42/Form/Record/MX.php:37 DNS42/Form/Record/CNAME.php:27
+#: DNS42/Form/Record/TXT.php:27 DNS42/Form/Record/AAAA.php:27
+#: DNS42/Form/Record/ALIAS.php:27
+msgid "4 hours (14400)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:28 DNS42/Form/Record/NS.php:28
+#: DNS42/Form/Record/MX.php:38 DNS42/Form/Record/CNAME.php:28
+#: DNS42/Form/Record/TXT.php:28 DNS42/Form/Record/AAAA.php:28
+#: DNS42/Form/Record/ALIAS.php:28
+msgid "2 hours (7200)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:29 DNS42/Form/Record/NS.php:29
+#: DNS42/Form/Record/MX.php:39 DNS42/Form/Record/CNAME.php:29
+#: DNS42/Form/Record/TXT.php:29 DNS42/Form/Record/AAAA.php:29
+#: DNS42/Form/Record/ALIAS.php:29
+msgid "1 hour (3600)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:30 DNS42/Form/Record/NS.php:30
+#: DNS42/Form/Record/MX.php:40 DNS42/Form/Record/CNAME.php:30
+#: DNS42/Form/Record/TXT.php:30 DNS42/Form/Record/AAAA.php:30
+#: DNS42/Form/Record/ALIAS.php:30
+msgid "30 minutes (1800)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:31 DNS42/Form/Record/NS.php:31
+#: DNS42/Form/Record/MX.php:41 DNS42/Form/Record/CNAME.php:31
+#: DNS42/Form/Record/TXT.php:31 DNS42/Form/Record/AAAA.php:31
+#: DNS42/Form/Record/ALIAS.php:31
+msgid "15 minutes (900)"
+msgstr ""
+
+#: DNS42/Form/Record/A.php:32 DNS42/Form/Record/NS.php:32
+#: DNS42/Form/Record/MX.php:42 DNS42/Form/Record/CNAME.php:32
+#: DNS42/Form/Record/TXT.php:32 DNS42/Form/Record/AAAA.php:32
+#: DNS42/Form/Record/ALIAS.php:32
+msgid "5 minutes (300)"
 msgstr ""
 
 #: DNS42/Form/Record/A.php:38 DNS42/Form/Record/NS.php:38
@@ -637,6 +861,48 @@ msgstr ""
 msgid "Invalid IPv6 Address"
 msgstr ""
 
+#: DNS42/Form/Register/Register.php:37
+msgid "Your login name"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:50
+msgid "Your email address"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:52
+msgid "Right now, the email is used for gravatar."
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:78 DNS42/Form/Login/PasswordReset.php:18
+msgid "Your password"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:103
+msgid "I accept the terms and conditions of this site"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:114
+msgid "The login may only have letters, numbers or _"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:120
+#, php-format
+msgid "The login name \"%s\" is already in use, please choose a different one"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:130
+msgid "We know that is boring, but you must accept the terms and conditions"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:141
+#, php-format
+msgid "The email \"%s\" is already in use"
+msgstr ""
+
+#: DNS42/Form/Register/Register.php:196
+msgid "Free DNS Management - Confirm your account"
+msgstr ""
+
 #: DNS42/Form/Managed/Agregar.php:12
 msgid "Domain Name"
 msgstr ""
@@ -663,10 +929,6 @@ msgid ""
 "Sorry, but this verification key has expired, please restart the password "
 "recovery sequence. For security reasons, the verification key is only valid "
 "3h."
-msgstr ""
-
-#: DNS42/Form/Login/PasswordReset.php:18
-msgid "Your password"
 msgstr ""
 
 #: DNS42/Form/Login/PasswordReset.php:44
@@ -744,6 +1006,14 @@ msgstr ""
 msgid "Server %s"
 msgstr ""
 
+#: DNS42/Views/Domains.php:204
+msgid "Domain tests"
+msgstr ""
+
+#: DNS42/Views/Register.php:19
+msgid "Welcome!"
+msgstr ""
+
 #: DNS42/Views/Users.php:14
 msgid "List of users"
 msgstr ""
@@ -782,12 +1052,6 @@ msgstr ""
 msgid "You need to enable the cookies in your browser to access this website."
 msgstr ""
 
-#: DNS42/Views/Login.php:64 DNS42/Views/Login.php:84 DNS42/Views/Login.php:103
+#: DNS42/Views/Login.php:64
 msgid "Password Recovery"
-msgstr ""
-
-#: DNS42/Views/Login.php:124
-msgid ""
-"Welcome back! Next time, you can use your broswer options to remember the "
-"password."
 msgstr ""
