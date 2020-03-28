@@ -1,54 +1,36 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="author" content="Félix Arreola Rodríguez" />
-	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css" />
+	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css_" />
+	<link rel="stylesheet" href="{media}/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="{media}/css/bootstrap-grid.min.css" >
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<!-- <link rel="stylesheet" media="print" type="text/css" href="{media}/css/print.css" /> -->
 	{block extrahead}{/block}
 	<title>DNS42 - {$page_title}</title>
 </head>
 <body>
+	<ul class="nav nav-tabs" id="mainnav" role="tablist">
+		<li class="nav-item"><a class="nav-link {if $page_title == 'Start page'}active{/if}" href="{url 'DNS42_Views_Index::index'}">{trans 'Home'}</a></li>
+		<li class="nav-item"><a class="nav-link {if $page_title == 'Domains'}active{/if}" href="{url 'DNS42_Views_Domains::index'}">{trans 'Domains'}</a></li>
+		<li class="nav-item"><a class="nav-link {if $page_title == 'Free DNS Management'}active{/if}" href="{url 'DNS42_Views_Managed::index'}">{trans 'Free DNS'}</a></li>
+		<li class="nav-item">&nbsp;</a></li>
+		<li class="nav-item">
+		{if !$user.isAnonymous()}
+		<li class="nav-item" >
+			<a class="nav-link {if $page_title == 'Change my password'}active{/if}" href="{url 'DNS42_Views_Users::cambiar_pass'}">
+			<img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=22" alt=" "/>
+			{$user.first_name} {$user.last_name}</a></li>{/if}
+		<li class="nav-item">
+		{if !$user.isAnonymous()}
+		<a class="nav-link {if $page_title == 'Sign in'}active{/if}" href="{url 'DNS42_Views_Login::logout'}">&nbsp;<img height="22" class="icon" src="{media '/img/application-exit.png'}" alt="{trans 'Logout'}" />{trans 'Logout'}</a>
+		{else}<a class="nav-link {if $page_title == 'Sign in'}active{/if}" href="{url 'DNS42_Views_Login::login', array (), array ('_redirect_after' => $uri)}">{trans 'Login'}</a>{/if}
+</li>
+</ul>
 	<div id="wrapper">
-	<div class="topmenu">
-		<table class="topmenu-table"><tr>
-			<td>
-				<ul class="nav">
-					<li class="menu1"><a href="{url 'DNS42_Views_Index::index'}">{trans 'Home'}</a>
-						<!--<ul>
-							<li><a href="#">Sub 1.1</a></li>
-						</ul>-->
-					</li>
-					<li class="menu2"><a href="{url 'DNS42_Views_Domains::index'}">{trans 'Domains'}</a>
-						<!-- <ul>
-							<li><a href="#">Sub 2.1</a></li>
-							<li><a href="#">Sub 2.2</a></li>
-						</ul>-->
-					</li>
-					<li class="menu3"><a href="{url 'DNS42_Views_Managed::index'}">{trans 'Free DNS'}</a>
-					</li>
-					<!--<li class="menu4"><a href="#">Op. 4</a>
-						<ul>
-							<li><a href="#">Sub 4.1</a></li>
-							<li><a href="#">Sub 4.2</a></li>
-							<li><a href="#">Sub 4.3</a></li>
-							<li><a href="#">Sub 4.4</a></li>
-						</ul>
-					</li>
-					<li class="menu5"><a href="#">Op. 5</a></li>-->
-				</ul>
-			</td>
-			<td><!-- Esta es la información del usuario -->
-				<div class="userdiv">
-				{if !$user.isAnonymous()}
-					<p class="user"><img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=30" alt=" "/>
-					<a href="{url 'DNS42_Views_Users::cambiar_pass'}"><strong>{$user.first_name} {$user.last_name}</strong></a></p>
-					<p class="logout"><a href="{url 'DNS42_Views_Login::logout'}">&nbsp;<img class="icon" src="{media '/img/application-exit.png'}" alt="{trans 'Logout'}" />{trans 'Logout'}</a></p>
-				{else}<p class="login"><a href="{url 'DNS42_Views_Login::login', array (), array ('_redirect_after' => $uri)}">{trans 'Login'}</a></p>{/if}
-				</div>
-			</td>
-		</tr></table>
-	</div>
 	{block extratopbody}{/block}
 	{if $user and $user.id}{getmsgs $user}{/if}
 	<h1 class="titulo">{$page_title}</h1>

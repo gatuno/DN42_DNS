@@ -4,18 +4,21 @@
 <p>{blocktrans}This report is generated from all the info from the git DN42 registry. The report gets in sync with the registry every 12 hours. The checks on nameservers or all the nameservers of a domain can be requested manually and will be done in the next 5 or 10 minutes.{/blocktrans}</p>
 <p>{blocktrans}If there is a domain with no nameservers, it means one of two things, either there is no IP address for the corresponding nameserver in the registry, or the nameserver is outside the dn42 domain{/blocktrans}</p>
 {amedia 'v4_icon', '/img/ipv4_icon.png'}{amedia 'v6_icon', '/img/ipv6_icon.png'}
-<table class="explain"><tr><td class="td_good explain_b"></td><td> = {trans 'Ping response'}</td></tr></table>
-<table class="explain"><tr><td class="td_warn explain_b"></td><td> = {trans 'Partial ping response'}</td></tr></table>
-<table class="explain"><tr><td class="td_bad explain_b"></td><td> = {trans 'No ping response'}</td></tr></table>
-<table class="explain"><tr><td><img src="{$v4_icon}" /></td><td> = {trans 'This nameserver has IPv4'}</td></tr></table>
-<table class="explain"><tr><td><img src="{$v6_icon}" /></td><td> = {trans 'This nameserver has IPv6'}</td></tr></table>
-<table class="domains">
+<table class="explain"><tr><td class="td_good explain_b"></td><td> = {trans 'Ping response'}</td>
+<td class="td_warning explain_b"></td><td> = {trans 'not all response'}</td>
+<td><img src="{$v4_icon}" /></td><td> = {trans 'This nameserver has IPv4'}</td>
+<td><img src="{$v6_icon}" /></td><td> = {trans 'This nameserver has IPv6'}</td></tr></table>
+<table class="table table-striped">
 	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Nameservers'}</th></tr></thead>
 	<tbody>{foreach $domains as $d}
 	<tr><td><a href="{url 'DNS42_Views_Domains::ver', $d.dominio}">{$d.dominio}</a></td>{assign $nss = $d->get_ns_list ()}
 	<td class="ns_td"><table class="ns"><tr>
 	{foreach $nss as $ns}{assign $server = $ns.get_server ()}
-		<td class="td_{$server.estado_as_string ()}"><a href="{url 'DNS42_Views_Domains::ver_server', $server.nombre}">{$server.nombre}</a>{if $server.ipv4 != ''} <img src="{$v4_icon}" title="{$server.ipv4}" />{/if}{if $server.ipv6 != ''} <img src="{$v6_icon}" title="{$server.ipv6}" />{/if}</td>
+		<td><a href="{url 'DNS42_Views_Domains::ver_server', $server.nombre}">{$server.nombre}</a></td>
+		{if $server.ipv4 != ''}
+		<td class="td_{$server.estado4_as_string ()}"><img src="{$v4_icon}" title="{$server.ipv4}" /></td>{/if}
+		{if $server.ipv6 != ''}
+		<td class="td_{$server.estado6_as_string ()}"><img src="{$v6_icon}" title="{$server.ipv6}" /></td>{/if}
 	{/foreach}
 	</tr></table></td>
 	</tr>
@@ -28,7 +31,6 @@
 .explain {
 	border-collapse: collapse;
 	border-spacing: 0;
-	display: inline-table;
 	margin-bottom: 15px;
 	margin-left: 15px;
 	margin-right: 15px;
