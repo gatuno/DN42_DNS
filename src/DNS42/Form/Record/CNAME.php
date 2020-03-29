@@ -84,6 +84,10 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 			}
 		}
 		
+		if ($name == $this->dominio->dominio) {
+			throw new Gatuf_Form_Invalid (__('CNAME at zone apex is not allowed. (rfc1912 & rfc2181)'));
+		}
+		
 		$this->cleaned_data['name'] = $name;
 		
 		/* Para el CNAME solo asegurarnos que tenga el punto al final */

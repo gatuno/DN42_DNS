@@ -152,7 +152,6 @@ class DNS42_Views_Managed {
 			'A' => 'DNS42_Form_Record_A',
 			'AAAA' => 'DNS42_Form_Record_AAAA',
 			'CNAME' => 'DNS42_Form_Record_CNAME',
-			//'ALIAS' => 'DNS42_Form_Record_ALIAS', No soportado por NET_DNS2
 			'MX' => 'DNS42_Form_Record_MX',
 			'NS' => 'DNS42_Form_Record_NS',
 			'TXT' => 'DNS42_Form_Record_TXT',

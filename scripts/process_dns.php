@@ -258,6 +258,12 @@ $callback_record_add = function ($msg) {
 		case 'TXT':
 			$line = sprintf ("%s %s IN %s %s", $record->name, $record->ttl, $record->type, $record->rdata);
 			break;
+		default:
+			var_dump ("Unsupported record type '".$record->type."' and data: '".$record->rdata."'");
+			$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+			
+			return;
+			break;
 	}
 	$rr = Net_DNS2_RR::fromString ($line);
 	$updater->add ($rr);
@@ -299,6 +305,12 @@ $callback_record_del = function ($msg) {
 		case 'NS':
 		case 'TXT':
 			$line = sprintf ("%s 300 IN %s %s", $record_name, $record_type, $record_value);
+			break;
+		default:
+			var_dump ("Unsupported record type '".$record->type."' and data: '".$record->rdata."'");
+			$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+			
+			return;
 			break;
 	}
 	
