@@ -8,6 +8,8 @@ Gatuf_Despachador::loadControllers(Gatuf::config('dns42_views'));
 
 restore_error_handler ();
 
+Gatuf::loadFunction ('Gatuf_DB_closeConnection');
+
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 function create_empty_zone ($folder, $domain) {
@@ -39,15 +41,23 @@ $vhost = Gatuf::config ('amqp_dns_vhost', '/');
 $connection = new AMQPStreamConnection($server, $port, $user, $pass, $vhost);
 $channel = $connection->channel();
 
-$channel->queue_declare ('dns_zone_add', false, true, false, false);
-$channel->queue_declare ('dns_zone_del', false, true, false, false);
-$channel->queue_declare ('dns_record_add', false, true, false, false);
-$channel->queue_declare ('dns_record_del', false, true, false, false);
-
-$callback_zone_add = function ($msg) {
+$callback_zone_add_master = function ($msg) {
 	$managed = new DNS42_ManagedDomain ();
 	
 	if (false === $managed->get ($msg->body)) {
+		// Cerrar la base de datos para evitar desconexiones por timeout
+		Gatuf_DB_closeConnection ();
+		
+		/* ¿El add de un dominio que no existe? Posiblemente lo eliminaron */
+		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+		return;
+	}
+	
+	if (!$managed->maestra) {
+		/* Si no es zona maestra, ignorar */
+		// Cerrar la base de datos para evitar desconexiones por timeout
+		Gatuf_DB_closeConnection ();
+		
 		/* ¿El add de un dominio que no existe? Posiblemente lo eliminaron */
 		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 		return;
@@ -149,6 +159,9 @@ $callback_zone_add = function ($msg) {
 			$managed->delegacion = 3;
 			$managed->update ();
 			
+			// Cerrar la base de datos para evitar desconexiones por timeout
+			Gatuf_DB_closeConnection ();
+			
 			/* Si no puedo crear un archivo, no intentar crear la zona */
 			$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 			return;
@@ -161,7 +174,7 @@ $callback_zone_add = function ($msg) {
 		
 		$update_key = $managed->get_key ();
 		
-		$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type master; file \"/etc/bind/dynamic_zones/%s\"; allow-update { key %s; }; };' 2>&1", $key, $server, $port, $managed->dominio, $managed->dominio, $update_key->nombre);
+		$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type master; file \"%s/%s\"; allow-update { key %s; }; notify yes; also-notify { slave_notifies; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $managed->dominio, $update_key->nombre);
 		
 		exec ($full_exec, $output, $return_code);
 		
@@ -176,6 +189,9 @@ $callback_zone_add = function ($msg) {
 			foreach ($records as $r) {
 				$delegar = DNS42_RMQ::send_add_record ($r);
 			}
+			
+			/* Ahora, notificar a los esclavos que por favor creen la zona dns esclava */
+			DNS42_RMQ::send_notify_slaves_from_master ($managed);
 		} else {
 			$managed->delegacion = 4;
 			$managed->update ();
@@ -185,6 +201,39 @@ $callback_zone_add = function ($msg) {
 		$managed->update ();
 	}
 	
+	// Cerrar la base de datos para evitar desconexiones por timeout
+	Gatuf_DB_closeConnection ();
+	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+};
+
+$callback_zone_slave_check_delegation = function ($msg) {
+	$managed = new DNS42_ManagedDomain ();
+	
+	if (false === $managed->get ($msg->body)) {
+		// Cerrar la base de datos para evitar desconexiones por timeout
+		Gatuf_DB_closeConnection ();
+		
+		/* ¿El add de un dominio que no existe? Posiblemente lo eliminaron */
+		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+		return;
+	}
+	
+	if ($managed->maestra) {
+		// Cerrar la base de datos para evitar desconexiones por timeout
+		Gatuf_DB_closeConnection ();
+		
+		/* ¿El add de un dominio que no existe? Posiblemente lo eliminaron */
+		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+		return;
+	}
+	/* Ir a cada nivel padre, preguntando si tengo la delegación, hasta que quede solo 1 elemento */
+	$parent_domain = $managed->dominio;
+	$good_delegation = false;
+	
+	/* TODO: Decidir cómo probar la transferencia AXFR */
+	
+	// Cerrar la base de datos para evitar desconexiones por timeout
+	Gatuf_DB_closeConnection ();
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
@@ -224,6 +273,9 @@ $callback_zone_del = function ($msg) {
 		var_dump ("Could not delete $file_name");
 	}
 	
+	// Cerrar la base de datos para evitar desconexiones por timeout
+	Gatuf_DB_closeConnection ();
+	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
@@ -231,12 +283,18 @@ $callback_record_add = function ($msg) {
 	$record = new DNS42_Record ();
 	
 	if (false === $record->get ($msg->body)) {
+		// Cerrar la base de datos para evitar desconexiones por timeout
+		Gatuf_DB_closeConnection ();
+		
 		/* ¿El add de un registro que no existe? Posiblemente lo eliminaron */
 		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 		return;
 	}
 	
 	if ($record->locked == true) {
+		// Cerrar la base de datos para evitar desconexiones por timeout
+		Gatuf_DB_closeConnection ();
+		
 		/* Omitir, es uno de los registros internos que no necesitan creación */
 		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 		return;
@@ -259,6 +317,9 @@ $callback_record_add = function ($msg) {
 			$line = sprintf ("%s %s IN %s %s", $record->name, $record->ttl, $record->type, $record->rdata);
 			break;
 		default:
+			// Cerrar la base de datos para evitar desconexiones por timeout
+			Gatuf_DB_closeConnection ();
+			
 			var_dump ("Unsupported record type '".$record->type."' and data: '".$record->rdata."'");
 			$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 			
@@ -266,11 +327,18 @@ $callback_record_add = function ($msg) {
 			break;
 	}
 	$rr = Net_DNS2_RR::fromString ($line);
+	var_dump ("Going to update");
+	var_dump ($rr);
 	$updater->add ($rr);
 	
 	$updater->signTSIG ($key->nombre, $key->secret, $key->algo);
 	
-	$updater->update();
+	$response = $updater->update();
+	var_dump ("Update Response");
+	var_dump ($response);
+	
+	// Cerrar la base de datos para evitar desconexiones por timeout
+	Gatuf_DB_closeConnection ();
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
@@ -281,6 +349,9 @@ $callback_record_del = function ($msg) {
 	$managed = new DNS42_ManagedDomain ();
 	
 	if (false === $managed->get ($toks[0])) {
+		// Cerrar la base de datos para evitar desconexiones por timeout
+		Gatuf_DB_closeConnection ();
+		
 		/* ¿No existe el dominio?, raro */
 		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 		return;
@@ -307,6 +378,9 @@ $callback_record_del = function ($msg) {
 			$line = sprintf ("%s 300 IN %s %s", $record_name, $record_type, $record_value);
 			break;
 		default:
+			// Cerrar la base de datos para evitar desconexiones por timeout
+			Gatuf_DB_closeConnection ();
+			
 			var_dump ("Unsupported record type '".$record->type."' and data: '".$record->rdata."'");
 			$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 			
@@ -319,14 +393,39 @@ $callback_record_del = function ($msg) {
 	
 	$updater->signTSIG ($key->nombre, $key->secret, $key->algo);
 	
-	$updater->update();
+	$response = $updater->update();
+	var_dump ("Update Response");
+	var_dump ($response);
+	
+	// Cerrar la base de datos para evitar desconexiones por timeout
+	Gatuf_DB_closeConnection ();
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
+$channel->queue_declare ('dns_zone_add', false, true, false, false);
+$channel->queue_declare ('dns_zone_slave_add', false, true, false, false);
+$channel->queue_declare ('dns_record_add', false, true, false, false);
+$channel->queue_declare ('dns_record_del', false, true, false, false);
+$channel->exchange_declare('dns_zone_del', 'fanout', false, false, false);
+
 $channel->basic_qos (null, 1, null);
-$channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback_zone_add);
-$channel->basic_consume ('dns_zone_del', '', false, false, false, false, $callback_zone_del);
+/* El DNS Maestro procesa, las zonas agregadas maestras, mas todas las zonas esclavas, y agregar y quitar registros */
+
+/*list($queue_name, ,) = $channel->queue_declare("");
+$channel->queue_bind($queue_name, 'dns_zone_all_slaves_add');
+
+// Esta queue está conectada al exchange de agregar zonas
+$channel->basic_consume ($queue_name, '', false, false, false, false, $callback_zone_add_slave)*/
+
+list($queue_name, ,) = $channel->queue_declare("");
+$channel->queue_bind($queue_name, 'dns_zone_del');
+
+// Esta queue está conectada al exchange de quitar zonas
+$channel->basic_consume ($queue_name, '', false, false, false, false, $callback_zone_del);
+
+$channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback_zone_add_master);
+$channel->basic_consume ('dns_zone_slave_add', '', false, false, false, false, $callback_zone_slave_check_delegation);
 $channel->basic_consume ('dns_record_add', '', false, false, false, false, $callback_record_add);
 $channel->basic_consume ('dns_record_del', '', false, false, false, false, $callback_record_del);
 
