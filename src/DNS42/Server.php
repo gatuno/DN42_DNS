@@ -118,5 +118,12 @@ class DNS42_Server extends Gatuf_Model {
 				return 'unknown';
 		}
 	}
+	public function short_ns ($dominio = "") {
+		if ($dominio != "" && substr($this->nombre, -strlen($dominio)) === $dominio)
+		{
+			return substr($this->nombre, 0, strlen($this->nombre) - strlen($dominio)) . "<>" ;
+		}
+		return $this->nombre;
+	}
 }
 

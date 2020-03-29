@@ -7,14 +7,15 @@
 <table class="explain"><tr><td class="td_good explain_b"></td><td> = {trans 'Ping response'}</td>
 <td class="td_bad explain_b"></td><td> = {trans 'No ping response'}</td>
 <td><img src="{$v4_icon}" /></td><td> = {trans 'This nameserver has IPv4'}</td>
-<td><img src="{$v6_icon}" /></td><td> = {trans 'This nameserver has IPv6'}</td></tr></table>
+<td><img src="{$v6_icon}" /></td><td> = {trans 'This nameserver has IPv6'}</td>
+<td>&lt;&gt; = {trans 'remove equal domain'}</td></tr></table>
 <table class="table table-striped">
 	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Nameservers'}</th></tr></thead>
 	<tbody>{foreach $domains as $d}
 	<tr><td><a href="{url 'DNS42_Views_Domains::ver', $d.dominio}">{$d.dominio}</a></td>{assign $nss = $d->get_ns_list ()}
 	<td class="ns_td"><table class="ns"><tr>
 	{foreach $nss as $ns}{assign $server = $ns.get_server ()}
-		<td><a href="{url 'DNS42_Views_Domains::ver_server', $server.nombre}">{$server.nombre}</a></td>
+	<td><a href="{url 'DNS42_Views_Domains::ver_server', $server.nombre}">{$server.short_ns($d.dominio)}</a></td>
 		{if $server.ipv4 != ''}
 		<td class="td_{$server.estado4_as_string ()}"><img src="{$v4_icon}" title="{$server.ipv4}" /></td>{/if}
 		{if $server.ipv6 != ''}
