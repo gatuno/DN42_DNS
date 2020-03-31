@@ -1,7 +1,7 @@
 <?php
 
 Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
-Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+Gatuf::loadFunction('DNS42_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Register {
 	function register ($request, $match) {
@@ -30,7 +30,7 @@ class DNS42_Views_Register {
 		$context = new Gatuf_Template_Context (array());
 		$tmpl = new Gatuf_Template('dns42/register/terms.html');
 		$terms = Gatuf_Template::markSafe($tmpl->render($context));
-		return Gatuf_Shortcuts_RenderToResponse('dns42/register/index.html', 
+		return DNS42_Shortcuts_RenderToResponse('dns42/register/index.html',
 		                                         array ('page_title' => $title,
 		                                         'form' => $form,
 		                                         'terms' => $terms),

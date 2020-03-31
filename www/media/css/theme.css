@@ -113,7 +113,12 @@ td .icon {
 	padding: 15px 15px;
 	display: block;
 	text-decoration: none;
-	/*color: #ffffff;*/
+	color: #ffffff;
+}
+
+/* Specific styles for the default theme */
+.nav-link {
+	color: #000000 !important;
 }
 
 /* Colores especiales */

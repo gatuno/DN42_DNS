@@ -1,7 +1,7 @@
 <?php
 
 Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
-Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+Gatuf::loadFunction('DNS42_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Users {
 	public $index_precond = array ('Gatuf_Precondition::adminRequired');
@@ -28,7 +28,7 @@ class DNS42_Views_Users {
 		
 		$pag->setFromRequest ($request);
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/users/index.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/users/index.html',
 		                                         array('page_title' => __('Users'),
 		                                         'paginador' => $pag),
 		                                         $request);
@@ -51,7 +51,7 @@ class DNS42_Views_Users {
 			$form = new DNS42_Form_User_Agregar (null);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/users/agregar.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/users/agregar.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);
@@ -67,7 +67,7 @@ class DNS42_Views_Users {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/users/ver.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/users/ver.html',
 		                                         array ('page_title' => $title,
 		                                                'c_user' => $user),
 		                                         $request);
@@ -91,7 +91,7 @@ class DNS42_Views_Users {
 		}
 		
 		$request->active_tab = 'user';
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/users/cambiar_mi_pass.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/users/cambiar_mi_pass.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);
@@ -127,7 +127,7 @@ class DNS42_Views_Users {
 			$form = new DNS42_Form_User_ChangePassword (null, array ('user' => $user));
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/users/reset_pass.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/users/reset_pass.html',
 		                                         array ('page_title' => $title,
 		                                                'c_user' => $user,
 		                                                'form' => $form),
@@ -162,7 +162,7 @@ class DNS42_Views_Users {
 			$form = new DNS42_Form_User_Actualizar (null, array ('user' => $user));
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/users/actualizar.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/users/actualizar.html',
 		                                         array ('page_title' => $title,
 		                                                'c_user' => $user,
 		                                                'form' => $form),
