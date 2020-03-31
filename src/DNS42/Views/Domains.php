@@ -1,13 +1,14 @@
 <?php
 
 Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
-Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+Gatuf::loadFunction('DNS42_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Domains {
 	public function index ($request, $match) {
 		$domains = Gatuf::factory ('DNS42_Domain')->getList ();
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/index.html',
+		$request->active_tab = 'domains';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/domains/index.html',
 		                                         array('page_title' => __('Domains'),
 		                                         'domains' => $domains),
 		                                         $request);
@@ -25,7 +26,8 @@ class DNS42_Views_Domains {
 		
 		$ns = $dominio->get_ns_list ();
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/dominio.html',
+		$request->active_tab = 'domains';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/domains/dominio.html',
 		                                         array('page_title' => $page_title,
 		                                         'ns' => $ns,
 		                                         'dominio' => $dominio),
@@ -100,7 +102,8 @@ class DNS42_Views_Domains {
 		
 		$ns = $server->get_domains_list ();
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/ns.html',
+		$request->active_tab = 'domains';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/domains/ns.html',
 		                                         array('page_title' => $page_title,
 		                                         'ns' => $ns,
 		                                         'server' => $server),
@@ -200,7 +203,8 @@ class DNS42_Views_Domains {
 	}
 	
 	public function explicacion ($request, $match) {
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/tests.html',
+		$request->active_tab = 'domains';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/domains/tests.html',
 		                                         array('page_title' => __('Domain tests')),
 		                                         $request);
 	}

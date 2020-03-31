@@ -1,7 +1,7 @@
 <?php
 
 Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
-Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+Gatuf::loadFunction('DNS42_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Login {
 	function login ($request, $match, $success_url = '', $extra_context=array()) {
@@ -39,10 +39,13 @@ class DNS42_Views_Login {
 			}
 		}
 		/* Mostrar el formulario de login */
+		$request->active_tab = 'login';
 		$request->session->createTestCookie ();
-		$context = new Gatuf_Template_Context_Request ($request, array ('page_title' => __('Sign in'), '_redirect_after' => $success_url, 'error' => $error));
-		$tmpl = new Gatuf_Template ('dns42/login/login.html');
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		return DNS42_Shortcuts_RenderToResponse ('dns42/login/login.html',
+		                                         array ('page_title' => __('Sign in'),
+		                                         '_redirect_after' => $success_url,
+		                                         'error' => $error),
+		                                         $request);
 	}
 	
 	function logout ($request, $match) {
@@ -63,7 +66,7 @@ class DNS42_Views_Login {
 	function passwordRecoveryAsk ($request, $match) {
 		$title = __('Password Recovery');
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-temp.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-temp.html',
 		                                         array ('page_title' => $title),
 		                                         $request);
 		if ($request->method == 'POST') {
@@ -77,7 +80,7 @@ class DNS42_Views_Login {
 			$form = new DNS42_Form_Login_PasswordRecovery ();
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-ask.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-ask.html',
 		                                         array ('page_title' => $title,
 		                                         'form' => $form),
 		                                         $request);
@@ -97,7 +100,7 @@ class DNS42_Views_Login {
 		 	$form = new DNS42_Form_Login_PasswordInputKey ();
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-inputkey.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-inputkey.html',
 		                                         array ('page_title' => $title,
 		                                         'form' => $form),
 		                                         $request);
@@ -132,7 +135,7 @@ class DNS42_Views_Login {
 		} else {
 			$form = new DNS42_Form_Login_PasswordReset (null, $extra);
 		}
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-reset.html',
+		return DNS42_Shortcuts_RenderToResponse ('dns42/login/recuperarcontra-reset.html',
 		                                         array ('page_title' => $title,
 		                                         'new_user' => $user,
 		                                         'form' => $form),

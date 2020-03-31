@@ -116,6 +116,11 @@ td .icon {
 	color: #ffffff;
 }
 
+/* Specific styles for the default theme */
+.nav-link {
+	color: #000000 !important;
+}
+
 /* Colores especiales */
 .nav .menu1:hover, .nav .menu1 li:hover {
 	background-color: #4F38C6;

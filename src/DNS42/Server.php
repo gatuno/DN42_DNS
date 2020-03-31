@@ -92,6 +92,18 @@ class DNS42_Server extends Gatuf_Model {
 		}
 	}
 	
+	public function estado4_as_string () {
+		if ($this->ping4 == 'failed') {
+			return 'bad';
+		}
+		return 'good';
+	}
+	public function estado6_as_string () {
+		if ($this->ping6 == 'failed') {
+			return 'bad';
+		}
+		return 'good';
+	}
 	public function estado_as_string () {
 		switch ($this->estado) {
 			case 0:
@@ -105,6 +117,13 @@ class DNS42_Server extends Gatuf_Model {
 			default:
 				return 'unknown';
 		}
+	}
+	public function short_ns ($dominio = "") {
+		if ($dominio != "" && substr($this->nombre, -strlen($dominio)) === $dominio)
+		{
+			return substr($this->nombre, 0, strlen($this->nombre) - strlen($dominio)) . "<>" ;
+		}
+		return $this->nombre;
 	}
 }
 

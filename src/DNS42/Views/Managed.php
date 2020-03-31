@@ -1,14 +1,15 @@
 <?php
 
 Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
-Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+Gatuf::loadFunction('DNS42_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Managed {
 	public $index_precond = array ('Gatuf_Precondition::loginRequired');
 	public function index ($request, $match) {
 		$domains = $request->user->get_managed_domains_list ();
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/index.html',
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/index.html',
 		                                         array('page_title' => __('Free DNS Management'),
 		                                         'domains' => $domains),
 		                                         $request);
@@ -64,7 +65,8 @@ class DNS42_Views_Managed {
 			$form = new DNS42_Form_Managed_Agregar (null, $extra);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/agregar.html',
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/agregar.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);
@@ -90,7 +92,8 @@ class DNS42_Views_Managed {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/eliminar.html',
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/eliminar.html',
 		                                         array ('page_title' => __('Delete domain'),
 		                                                'managed' => $managed),
 		                                         $request);
@@ -107,7 +110,8 @@ class DNS42_Views_Managed {
 		
 		$records = $managed->get_records_list ();
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/ver.html',
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/ver.html',
 		                                         array ('page_title' => __('Free DNS Management'),
 		                                                'managed' => $managed,
 		                                                'records' => $records),
@@ -189,7 +193,8 @@ class DNS42_Views_Managed {
 			$form = new $form_type (null, $extra);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/agregar_registro.html',
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/agregar_registro.html',
 		                                         array ('page_title' => $title,
 		                                                'managed' => $managed,
 		                                                'form' => $form),
@@ -227,7 +232,8 @@ class DNS42_Views_Managed {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('dns42/managed/eliminar_registro.html',
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/eliminar_registro.html',
 		                                         array ('page_title' => __('Delete record'),
 		                                                'record' => $record,
 		                                                'managed' => $managed),

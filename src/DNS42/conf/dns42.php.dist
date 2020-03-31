@@ -111,7 +111,10 @@ $cfg['bounce_email'] = '';
 $cfg['middleware_classes'] = array(
 	'Gatuf_Middleware_Session',
 	'Gatuf_Middleware_Translation',
+	'DNS42_Middleware',
 );
+
+$cfg['themes'] = array ('default', 'gatuno');
 
 # Usuario personalizado
 //$cfg['gatuf_custom_user'] = 'DNS42_User';
@@ -145,5 +148,7 @@ $cfg['rndc_update_server'] = '127.0.0.1';
 $cfg['rndc_update_port'] = 953;
 
 $cfg['current_default_update_key'] = 'key_a';
+
+$cfg['template_context_processors'] = array ('DNS42_Middleware_ContextPreProcessor');
 
 return $cfg;
