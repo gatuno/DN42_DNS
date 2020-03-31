@@ -58,7 +58,8 @@
 	</div>
 	<div class="footer do-not-print">
 		<div class="footer-content">
-		<p>{trans 'Foot page'}</p>
+		{aurl 'theme_default', 'DNS42_Views_Index::cambiar_tema', array ('default')}
+		<p>{trans 'Foot page'}. {blocktrans}Switch to <a href="{$theme_default}">new theme</a>{/blocktrans}</p>
 		<!-- IPv6-test.com button BEGIN --><!--<a href='http://ipv6-test.com/validate.php?url=referer'><img src='http://ipv6-test.com/button-ipv6-80x15.png' alt='ipv6 ready' title='ipv6 ready' border='0' /></a>--><!-- IPv6-test.com button END --><!-- &nbsp;<a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>-->
 		</div>
 	</div>
