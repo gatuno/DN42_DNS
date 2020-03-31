@@ -1,25 +1,4 @@
 {extends 'dns42/base.html'}
 {block body}
 <p>{trans 'Welcome text here'}</p>
-
-Number auf Domains: {$domains} <br/>
-Domains with IP4, IPv6 and IPv4+6
-<div class="progress">
-	<div class="progress-bar" role="progressbar" style="width: {$nsip4}%" aria-valuenow="{$nsip4}" aria-valuemin="0" aria-valuemax="100"></div>
-	<div class="progress-bar bg-success" role="progressbar" style="width: {$nsip6}%" aria-valuenow="{$nsip6}" aria-valuemin="0" aria-valuemax="100"></div>
-	<div class="progress-bar bg-warning" role="progressbar" style="width: {$nsip46}%" aria-valuenow="{$nsip46}" aria-valuemin="0" aria-valuemax="100"></div>
-</div>
-
-Active IPv4 NS
-<div class="progress">
-	<div class="progress-bar bg-success" role="progressbar" style="width: {$onip4}%" aria-valuenow="{$onip4}" aria-valuemin="0" aria-valuemax="100"></div>
-	<div class="progress-bar bg-danger" role="progressbar" style="width: {$offip4}%" aria-valuenow="{$offip4}" aria-valuemin="0" aria-valuemax="100"></div>
-</div>
-
-Active IPv6 NS
-<div class="progress">
-	<div class="progress-bar bg-success" role="progressbar" style="width: {$onip6}%" aria-valuenow="{$onip6}" aria-valuemin="0" aria-valuemax="100"></div>
-	<div class="progress-bar bg-danger" role="progressbar" style="width: {$offip6}%" aria-valuenow="{$offip6}" aria-valuemin="0" aria-valuemax="100"></div>
-</div>
-
 {/block}

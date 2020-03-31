@@ -1,32 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="{$language_code}">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="author" content="Félix Arreola Rodríguez" />
 	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css" />
 	<link rel="stylesheet" href="{media}/css/bootstrap.min.css" >
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<!-- <link rel="stylesheet" media="print" type="text/css" href="{media}/css/print.css" /> -->
 	{block extrahead}{/block}
 	<title>DNS42 - {$page_title}</title>
 </head>
 <body>
 	<ul class="nav nav-tabs" id="mainnav" role="tablist">
-		<li class="nav-item"><a class="nav-link {if $page_title == 'Start page'}active{/if}" href="{url 'DNS42_Views_Index::index'}">{trans 'Home'}</a></li>
-		<li class="nav-item"><a class="nav-link {if $page_title == 'Domains'}active{/if}" href="{url 'DNS42_Views_Domains::index'}">{trans 'Domains'}</a></li>
-		<li class="nav-item"><a class="nav-link {if $page_title == 'Free DNS Management'}active{/if}" href="{url 'DNS42_Views_Managed::index'}">{trans 'Free DNS'}</a></li>
+		<li class="nav-item"><a class="nav-link{if $active_tab == 'home'} active{/if}" href="{url 'DNS42_Views_Index::index'}">{trans 'Home'}</a></li>
+		<li class="nav-item"><a class="nav-link{if $active_tab == 'domains'} active{/if}" href="{url 'DNS42_Views_Domains::index'}">{trans 'Domains'}</a></li>
+		<li class="nav-item"><a class="nav-link{if $active_tab == 'free_dns'} active{/if}" href="{url 'DNS42_Views_Managed::index'}">{trans 'Free DNS'}</a></li>
 		<li class="nav-item">&nbsp;</a></li>
 		<li class="nav-item">
 		{if !$user.isAnonymous()}
 		<li class="nav-item" >
-			<a class="nav-link {if $page_title == 'Change my password'}active{/if}" href="{url 'DNS42_Views_Users::cambiar_pass'}">
+			<a class="nav-link{if $active_tab == 'user'} active{/if}" href="{url 'DNS42_Views_Users::cambiar_pass'}">
 			<img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=22" alt=" "/>
 			{$user.first_name} {$user.last_name}</a></li>{/if}
 		<li class="nav-item">
 		{if !$user.isAnonymous()}
-		<a class="nav-link {if $page_title == 'Sign in'}active{/if}" href="{url 'DNS42_Views_Login::logout'}">&nbsp;<img height="22" class="icon" src="{media '/img/application-exit.png'}" alt="{trans 'Logout'}" />{trans 'Logout'}</a>
-		{else}<a class="nav-link {if $page_title == 'Sign in'}active{/if}" href="{url 'DNS42_Views_Login::login', array (), array ('_redirect_after' => $uri)}">{trans 'Login'}</a>{/if}
+		<a class="nav-link" href="{url 'DNS42_Views_Login::logout'}">&nbsp;<img height="22" class="icon" src="{media '/img/application-exit.png'}" alt="{trans 'Logout'}" />{trans 'Logout'}</a>
+		{else}<a class="nav-link{if $active_tab == 'login'} active{/if}" href="{url 'DNS42_Views_Login::login', array (), array ('_redirect_after' => $uri)}">{trans 'Login'}</a>{/if}
 </li>
 </ul>
 	<div id="wrapper">
