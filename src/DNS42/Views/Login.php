@@ -39,6 +39,7 @@ class DNS42_Views_Login {
 			}
 		}
 		/* Mostrar el formulario de login */
+		$request->active_tab = 'login';
 		$request->session->createTestCookie ();
 		$context = new Gatuf_Template_Context_Request ($request, array ('page_title' => __('Sign in'), '_redirect_after' => $success_url, 'error' => $error));
 		$tmpl = new Gatuf_Template ('dns42/login/login.html');

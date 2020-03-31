@@ -90,6 +90,7 @@ class DNS42_Views_Users {
 			$form = new DNS42_Form_User_ChangeOwnPassword (null, array ('user' => $request->user));
 		}
 		
+		$request->active_tab = 'user';
 		return Gatuf_Shortcuts_RenderToResponse ('dns42/users/cambiar_mi_pass.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),

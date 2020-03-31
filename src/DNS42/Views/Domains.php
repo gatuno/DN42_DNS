@@ -7,6 +7,7 @@ class DNS42_Views_Domains {
 	public function index ($request, $match) {
 		$domains = Gatuf::factory ('DNS42_Domain')->getList ();
 		
+		$request->active_tab = 'domains';
 		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/index.html',
 		                                         array('page_title' => __('Domains'),
 		                                         'domains' => $domains),
@@ -25,6 +26,7 @@ class DNS42_Views_Domains {
 		
 		$ns = $dominio->get_ns_list ();
 		
+		$request->active_tab = 'domains';
 		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/dominio.html',
 		                                         array('page_title' => $page_title,
 		                                         'ns' => $ns,
@@ -100,6 +102,7 @@ class DNS42_Views_Domains {
 		
 		$ns = $server->get_domains_list ();
 		
+		$request->active_tab = 'domains';
 		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/ns.html',
 		                                         array('page_title' => $page_title,
 		                                         'ns' => $ns,
@@ -200,6 +203,7 @@ class DNS42_Views_Domains {
 	}
 	
 	public function explicacion ($request, $match) {
+		$request->active_tab = 'domains';
 		return Gatuf_Shortcuts_RenderToResponse ('dns42/domains/tests.html',
 		                                         array('page_title' => __('Domain tests')),
 		                                         $request);
