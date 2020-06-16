@@ -4,9 +4,9 @@
 <p><a href="{url 'DNS42_Views_Managed::agregar_master'}">{trans '➕ Add new domain'}</a></p>
 <p>{trans 'Active domains for this account'}</p>
 <table class="domains">
-	<thead><tr><th>{trans 'Domain'}</th></tr></thead>
+	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Action'}</th></tr></thead>
 	<tbody>{foreach $domains as $d}
-	<tr><td><a href="{url 'DNS42_Views_Managed::administrar', $d.dominio}">{$d.dominio}</a></td></tr>
+	<tr><td><a href="{url 'DNS42_Views_Managed::administrar', $d.dominio}">{$d.dominio}</a></td><td>{if $d.maestra}<a href="{url 'DNS42_Views_Managed::eliminar_master', $d.dominio}">{trans 'Delete domain'}</a>{/if}</tr>
 	{/foreach}</tbody>
 </table>
 {/block}

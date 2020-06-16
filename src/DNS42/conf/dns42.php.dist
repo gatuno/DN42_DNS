@@ -141,8 +141,18 @@ $cfg['amqp_dns_vhost'] = '/';
 # URL para cargar la libreria de PHPAmqplib
 $cfg['autoload_files'] = array ('/usr/share/php/PhpAmqpLib/autoload.php');
 
+# ---------------------------------
 # Claves de configuración para RNDC
-$cfg['rndc_update_key'] = dirname (__FILE__).'/rndc.key';
+# ---------------------------------
+
+# Tipo de Servidor al que actualizaré, puede ser master o slave
+$cfg['rndc_type'] = 'master';
+
+# El nombre debe ser único entre los otros servidores
+$cfg['rndc_name'] = 'machine_name';
+
+# La llave de actualizacion para mandar comandos al BIND
+$cfg['rndc_update_key'] = dirname (__FILE__).'/machine_name.key';
 # Debe ser una IP
 $cfg['rndc_update_server'] = '127.0.0.1';
 $cfg['rndc_update_port'] = 953;

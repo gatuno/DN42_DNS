@@ -41,6 +41,18 @@ class DNS42_ManagedDomain extends Gatuf_Model {
 			       'blank' => false,
 			       'default' => 0, /* 0 = Delegación en prueba, 1 = Delegación fallida, 2 = Delegación buena */
 			),
+			'maestra' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Boolean',
+			       'blank' => false,
+			       'default' => true, /* TRUE = zona DNS maestra administrada por nosotros, false = somos zona esclava */
+			),
+			'reversa' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Boolean',
+			       'blank' => false,
+			       'default' => false, /* TRUE = zona dns inversa, solo aplica para las zonas */
+			),
 		);
 		
 		$this->default_order = 'dominio ASC';

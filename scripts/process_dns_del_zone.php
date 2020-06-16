@@ -1,0 +1,62 @@
+#!/usr/bin/php
+<?php
+
+require dirname(__FILE__).'/../src/DNS42/conf/path.php';
+require 'Gatuf.php';
+Gatuf::start(dirname(__FILE__).'/../src/DNS42/conf/dns42.php');
+Gatuf_Despachador::loadControllers(Gatuf::config('dns42_views'));
+
+restore_error_handler ();
+
+require 'process_dns_common.php';
+
+function zone_del ($old_managed_domain_name) {
+	/* Crear la zona dinámica en el master */
+	$key = Gatuf::config ('rndc_update_key');
+	$server = Gatuf::config ('rndc_update_server');
+	$port = Gatuf::config ('rndc_update_port');
+	
+	$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" delzone \"%s\" 2>&1", $key, $server, $port, $old_managed_domain_name);
+	
+	exec ($full_exec, $output, $return_code);
+	
+	if ($return_code != 0) {
+		/* FIXME: Tenemos una zona pendiente. Revisar que hacer en este caso */
+		printf ("Could not delete zone %s by using rndc.\n", $old_managed_domain_name);
+		printf ("Exec: %s\n", $full_exec);
+		printf ("Output: %s\n", $output);
+		printf ("Return code: %s\n", $return_code);
+	}
+	
+	/* Borrar el archivo correspondiente */
+	$folder = "/etc/bind/dynamic_zones";
+	$file_name = sprintf ("%s/%s", $folder, $old_managed_domain_name);
+	
+	$deleted = unlink ($file_name);
+	
+	if ($deleted === false) {
+		/* FIXME: Otro problema, no pude eliminar el archivo */
+		var_dump ("Could not delete $file_name");
+	}
+	
+	$file_name = sprintf ("%s/%s.jnl", $folder, $old_managed_domain_name);
+	
+	$deleted = unlink ($file_name);
+	
+	if ($deleted === false) {
+		/* FIXME: Otro problema, no pude eliminar el archivo */
+		var_dump ("Could not delete $file_name");
+	}
+	
+	return true;
+}
+
+if (!isset ($argv[1])) {
+	printf ("Argument managed_domain_name required\n");
+	
+	return 1;
+}
+
+$res = zone_del ($argv[1]);
+
+return 0;
