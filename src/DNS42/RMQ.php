@@ -47,16 +47,11 @@ class DNS42_RMQ {
 		
 		$channel = $connection->channel();
 		
-		$channel->exchange_declare('dns_zone_all_slaves_add', 'fanout', false, false, false);
 		$channel->exchange_declare('dns_zone_master_slave_add', 'fanout', false, false, false);
 		
 		$msg = new AMQPMessage ($managed->id, array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT));
 		
-		if ($managed->maestra) {
-			$channel->basic_publish ($msg, 'dns_zone_master_slave_add');
-		} else {
-			$channel->basic_publish ($msg, 'dns_zone_all_slaves_add');
-		}
+		$channel->basic_publish ($msg, 'dns_zone_master_slave_add');
 		
 		$channel->close();
 		$connection->close();

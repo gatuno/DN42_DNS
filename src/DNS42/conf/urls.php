@@ -107,6 +107,14 @@ $ctl[] = array (
 	'method' => 'register',
 );
 
+/* URL para cambiar el tema */
+$ctl[] = array (
+	'regex' => '#^/change/theme/(.*)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Index',
+	'method' => 'cambiar_tema',
+);
+
 $ctl[] = array (
 	'regex' => '#^/dns/$#',
 	'base' => $base,
