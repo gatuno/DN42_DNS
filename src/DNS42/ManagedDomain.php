@@ -53,9 +53,20 @@ class DNS42_ManagedDomain extends Gatuf_Model {
 			       'blank' => false,
 			       'default' => false, /* TRUE = zona dns inversa, solo aplica para las zonas */
 			),
+			'prefix' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 256,
+			       //'unique' => true,
+			),
 		);
 		
 		$this->default_order = 'dominio ASC';
+	}
+	
+	public function prefix_nice () {
+		return str_replace ('_', '/', $this->prefix);
 	}
 }
 

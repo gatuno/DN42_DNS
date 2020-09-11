@@ -116,7 +116,8 @@ class Net_DNS2_Updater extends Net_DNS2
      */
     private function _checkName($name)
     {
-        if (!preg_match('/' . $this->_packet->question[0]->qname . '$/', $name)) {
+        
+        if (!preg_match('/' . preg_quote ($this->_packet->question[0]->qname, '/') . '$/', $name)) {
             
             throw new Net_DNS2_Exception(
                 'name provided (' . $name . ') does not match zone name (' .

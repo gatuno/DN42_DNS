@@ -48,7 +48,7 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		
 		if ($name == '@') return '@';
 		
-		if (filter_var ($name, FILTER_VALIDATE_DOMAIN) == false) {
+		if (filter_var ($name, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
@@ -58,7 +58,7 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 	public function clean_cname () {
 		$cname = $this->cleaned_data['cname'];
 		
-		if (filter_var ($cname, FILTER_VALIDATE_DOMAIN) == false) {
+		if (filter_var ($cname, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		

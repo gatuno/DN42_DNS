@@ -10,22 +10,95 @@ restore_error_handler ();
 
 require 'process_dns_common.php';
 
-function zone_add_master ($managed_domain_id) {
-	$managed = new DNS42_ManagedDomain ();
-	
-	if (false === $managed->get ($managed_domain_id)) {
-		return false;
-	}
-	
-	if (!$managed->maestra) {
-		/* Si no es zona maestra, ignorar */
-		return false;
-	}
-	
-	/* Ir a cada nivel padre, preguntando si tengo la delegación, hasta que quede solo 1 elemento */
+function check_reverse ($managed) {
+	$parent_prefix = $managed->prefix;
 	$parent_domain = $managed->dominio;
-	$good_delegation = false;
+	$prefixes = array (
+		array (
+			'type' => 4,
+			'network' => '172.20.0.0/14',
+			'nserver' => array ('172.20.129.1', 'fd42:4242:2601:ac53::1', 'fda6:2474:15a4::54', '172.20.1.254', 'fd42:5d71:219:1:216:3eff:fe1e:22d6', '172.20.14.34', 'fdcf:8538:9ad5:1111::2'),
+		),
+		array (
+			'type' => 6,
+			'network' => 'fd00::/8',
+			'nserver' => array ('172.20.129.1', 'fd42:4242:2601:ac53::1', 'fda6:2474:15a4::54', '172.20.1.254', 'fd42:5d71:219:1:216:3eff:fe1e:22d6', '172.20.14.34', 'fdcf:8538:9ad5:1111::2'),
+		),
+	);
 	
+	$toks = explode ('_', $parent_prefix);
+	
+	if (count ($toks) != 2) {
+		return false;
+	}
+	
+	$network = $toks[0];
+	$mask = $toks[1];
+	
+	if (filter_var ($network, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) == true) {
+		$type = 4;
+	} else if (filter_var ($network, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) == true) {
+		$type = 6;
+	}
+	
+	$found = false;
+	$ns_list = null;
+	foreach ($prefixes as $block) {
+		if ($block['type'] != $type) continue;
+		
+		if ($type == 4) {
+			$found = DNS42_Utils::checkIp4 ($network, $block['network']);
+		} else if ($type == 6) {
+			$found = DNS42_Utils::checkIp6 ($network, $block['network']);
+		}
+		
+		if ($found) {
+			$ns_list = $block['nserver'];
+			break;
+		}
+	}
+	
+	if ($found == false) {
+		return false;
+	}
+	
+	
+	/* Recorrer cada nameserver, preguntando por la delegación */
+	foreach ($ns_list as $ns) {
+		/* Conseguir los NS de esta zona inversa */
+		$resolver = new Net_DNS2_Resolver (array ('nameservers' => array ($ns)));
+		
+		try {
+			$result = $resolver->query ($parent_domain, 'NS');
+		} catch (Net_DNS2_Exception $err) {
+			$result = false;
+		}
+		
+		if (false === $result) {
+			/* ¿No pude conseguir los NS del padre? Raro */
+			continue;
+		}
+		
+		foreach ($result->answer as $ns) {
+			if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
+			if ($ns->nsdname == 'ns1.gatuno.dn42') {
+				return true;
+			}
+		}
+	
+		foreach ($result->authority as $ns) {
+			if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
+			if ($ns->nsdname == 'ns1.gatuno.dn42') {
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+function check_master ($managed) {
+	$parent_domain = $managed->dominio;
 	while (1) {
 		/* Primer tarea, revisar que los NS primarios del padre hayan sido delegados a mi */
 		$toks = explode (".", $parent_domain);
@@ -89,22 +162,42 @@ function zone_add_master ($managed_domain_id) {
 			foreach ($result2->answer as $ns) {
 				if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
 				if ($ns->nsdname == 'ns1.gatuno.dn42') {
-					$good_delegation = true;
-					break;
+					return true;
 				}
 			}
 		
 			foreach ($result2->authority as $ns) {
 				if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
 				if ($ns->nsdname == 'ns1.gatuno.dn42') {
-					$good_delegation = true;
-					break;
+					return true;
 				}
 			}
 		
-			if ($good_delegation) break;
 		}
-		if ($good_delegation) break;
+	}
+	
+	return false;
+}
+
+function zone_add_master ($managed_domain_id) {
+	$managed = new DNS42_ManagedDomain ();
+	
+	if (false === $managed->get ($managed_domain_id)) {
+		return false;
+	}
+	
+	if (!$managed->maestra) {
+		/* Si no es zona maestra, ignorar */
+		return false;
+	}
+	
+	/* Ir a cada nivel padre, preguntando si tengo la delegación, hasta que quede solo 1 elemento */
+	$good_delegation = false;
+	
+	if ($managed->reversa) {
+		$good_delegation = check_reverse ($managed);
+	} else {
+		$good_delegation = check_master ($managed);
 	}
 	
 	var_dump ("Delegacion");
@@ -128,7 +221,17 @@ function zone_add_master ($managed_domain_id) {
 		
 		$update_key = $managed->get_key ();
 		
-		$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type master; file \"%s/%s\"; allow-update { key %s; }; notify yes; also-notify { slave_notifies; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $managed->dominio, $update_key->nombre);
+		if ($managed->reversa) {
+			$filename = str_replace ('/', '_', $managed->dominio);
+		} else {
+			$filename = $managed->dominio;
+		}
+		
+		if (strpos ($managed->dominio, '/') !== false) {
+			$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone '\"%s\"' '{type master; file \"%s/%s\"; allow-update { key %s; }; notify yes; also-notify { slave_notifies; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $filename, $update_key->nombre);
+		} else {
+			$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type master; file \"%s/%s\"; allow-update { key %s; }; notify yes; also-notify { slave_notifies; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $filename, $update_key->nombre);
+		}
 		
 		exec ($full_exec, $output, $return_code);
 		

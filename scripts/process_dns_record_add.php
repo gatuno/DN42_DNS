@@ -38,6 +38,7 @@ function record_add ($record_id) {
 		case 'MX':
 		case 'NS':
 		case 'TXT':
+		case 'PTR':
 			$line = sprintf ("%s %s IN %s %s", $record->name, $record->ttl, $record->type, $record->rdata);
 			break;
 		default:

@@ -1,7 +1,8 @@
 <?php
 
 function create_empty_zone ($folder, $domain) {
-	$file_name = sprintf ("%s/%s", $folder, $domain);
+	$basename = str_replace ('/', '_', $domain);
+	$file_name = sprintf ("%s/%s", $folder, $basename);
 	$fp = fopen ($file_name, "w");
 	
 	if ($fp === false) {

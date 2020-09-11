@@ -4,7 +4,8 @@
 
 {if $managed.delegacion == 1}
 <div class="bad_delegation">{blocktrans}Zone failed validation test. ERROR: Delegation was not found. Please delegate to ns1.gatuno.dn42 then retry. ({$domain_name}).{/blocktrans}</div>
-<p>{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', $managed.dominio}{blocktrans}You can <a href="{$check_url}">manually schedule</a> another test{/blocktrans}</p>
+<p>
+{if $managed.reversa}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', $managed.prefix}{else}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', $managed.dominio}{/if}{blocktrans}You can <a href="{$check_url}">manually schedule</a> another test{/blocktrans}</p>
 {elseif $managed.delegacion == 0}
 <div class="in_progress">{trans 'Zone validation in progress. Please wait at least 1 minute and refresh the page.'}</div>
 {/if}
@@ -12,12 +13,19 @@
 <p>{trans 'You can create records on the domain, but the zone will became active in the DNS until delegation works.'}</p>
 {/if}
 <ul class="new_record">
+{if $managed.reversa}
+<li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.prefix, 'CNAME')}">{trans 'New CNAME'}</a></li>
+<li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.prefix, 'NS')}">{trans 'New NS'}</a></li>
+<li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.prefix, 'PTR')}">{trans 'New PTR'}</a></li>
+<li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.prefix, 'TXT')}">{trans 'New TXT'}</a></li>
+{else}
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'A')}">{trans 'New A'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'AAAA')}">{trans 'New AAAA'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'CNAME')}">{trans 'New CNAME'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'MX')}">{trans 'New MX'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'NS')}">{trans 'New NS'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'TXT')}">{trans 'New TXT'}</a></li>
+{/if}
 </ul><br class="br_clear_left"/>
 <table class="records">
 <thead><tr><th>{trans 'Name'}</th><th>{trans 'Type'}</th><th>{trans 'TTL'}</th><th>{trans 'Priority'}</th><th>{trans 'Data'}</th><th>{trans 'Delete'}</th></tr></thead>

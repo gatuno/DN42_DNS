@@ -32,6 +32,7 @@ function record_del ($managed_name, $record_name, $record_type, $record_value) {
 		case 'MX':
 		case 'NS':
 		case 'TXT':
+		case 'PTR':
 			$line = sprintf ("%s 300 IN %s %s", $record_name, $record_type, $record_value);
 			break;
 		default:

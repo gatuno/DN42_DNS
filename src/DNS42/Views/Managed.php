@@ -78,7 +78,12 @@ class DNS42_Views_Managed {
 		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
 		
 		if (null === ($managed->getOne($sql->gen ()))) {
-			throw new Gatuf_HTTP_Error404 ();
+			/* Prodría ser una zona inversa */
+			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
+			
+			if (null === ($managed->getOne($sql->gen ()))) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
 		}
 		
 		if ($request->method == 'POST') {
@@ -93,8 +98,9 @@ class DNS42_Views_Managed {
 		}
 		
 		$request->active_tab = 'free_dns';
+		$title = $managed->reversa ? __('Delete reverse zone') : __('Delete domain');
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/eliminar.html',
-		                                         array ('page_title' => __('Delete domain'),
+		                                         array ('page_title' => $title,
 		                                                'managed' => $managed),
 		                                         $request);
 	}
@@ -105,7 +111,12 @@ class DNS42_Views_Managed {
 		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
 		
 		if (null === ($managed->getOne($sql->gen ()))) {
-			throw new Gatuf_HTTP_Error404 ();
+			/* Prodría ser una zona inversa */
+			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
+			
+			if (null === ($managed->getOne($sql->gen ()))) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
 		}
 		
 		$records = $managed->get_records_list ();
@@ -124,7 +135,12 @@ class DNS42_Views_Managed {
 		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
 		
 		if (null === ($managed->getOne($sql->gen ()))) {
-			throw new Gatuf_HTTP_Error404 ();
+			/* Prodría ser una zona inversa */
+			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
+			
+			if (null === ($managed->getOne($sql->gen ()))) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
 		}
 		
 		if ($managed->delegacion == 2) {
@@ -135,7 +151,11 @@ class DNS42_Views_Managed {
 			$request->user->setMessage (1, __("The delegation check for this zone was scheduled, please wait at least 1 minute and refresh the page to see the result"));
 		}
 		
-		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+		if ($managed->reversa) {
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+		} else {
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+		}
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
@@ -145,14 +165,19 @@ class DNS42_Views_Managed {
 		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
 		
 		if (null === ($managed->getOne($sql->gen ()))) {
-			throw new Gatuf_HTTP_Error404 ();
+			/* Prodría ser una zona inversa */
+			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
+			
+			if (null === ($managed->getOne($sql->gen ()))) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
 		}
 		
 		if ($managed->delegacion != 2) {
 			$request->user->setMessage (3, __('You can create records on the domain, but the zone will became active in the DNS until delegation works.'));
 		}
 		
-		$allowed = array (
+		$allowed_normal = array (
 			'A' => 'DNS42_Form_Record_A',
 			'AAAA' => 'DNS42_Form_Record_AAAA',
 			'CNAME' => 'DNS42_Form_Record_CNAME',
@@ -160,6 +185,13 @@ class DNS42_Views_Managed {
 			'NS' => 'DNS42_Form_Record_NS',
 			'TXT' => 'DNS42_Form_Record_TXT',
 		);
+		$allowed_reverse = array (
+			'CNAME' => 'DNS42_Form_Record_CNAME',
+			'PTR' => 'DNS42_Form_Record_PTR',
+			'NS' => 'DNS42_Form_Record_NS',
+			'TXT' => 'DNS42_Form_Record_TXT',
+		);
+		
 		$type = mb_strtoupper ($match[2]);
 		
 		if ($type != $match[2]) {
@@ -168,12 +200,20 @@ class DNS42_Views_Managed {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		if (!array_key_exists ($type, $allowed)) {
-			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
-			return new Gatuf_HTTP_Response_Redirect ($url);
+		if ($managed->reversa == false) {
+			if (!array_key_exists ($type, $allowed_normal)) {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+			$form_type = $allowed_normal[$type];
+		} else {
+			if (!array_key_exists ($type, $allowed_reverse)) {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+			$form_type = $allowed_reverse[$type];
 		}
 		
-		$form_type = $allowed[$type];
 		$title = sprintf (__('Add record %s'), $type);
 		$extra = array ('dominio' => $managed);
 		if ($request->method == 'POST') {
@@ -186,7 +226,11 @@ class DNS42_Views_Managed {
 					$delegar = DNS42_RMQ::send_add_record ($record);
 				}
 				
-				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+				if ($managed->reversa) {
+					$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+				} else {
+					$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+				}
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
@@ -217,7 +261,11 @@ class DNS42_Views_Managed {
 		}
 		
 		if ($record->locked) {
-			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			if ($managed->reversa) {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+			} else {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			}
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
@@ -228,7 +276,11 @@ class DNS42_Views_Managed {
 			
 			$record->delete ();
 			
-			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			if ($managed->reversa) {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+			} else {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			}
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
@@ -237,6 +289,62 @@ class DNS42_Views_Managed {
 		                                         array ('page_title' => __('Delete record'),
 		                                                'record' => $record,
 		                                                'managed' => $managed),
+		                                         $request);
+	}
+	
+	public $agregar_reversa_precond = array ('Gatuf_Precondition::loginRequired');
+	public function agregar_reversa ($request, $match) {
+		$title = __('Add new reverse');
+		
+		$key_name = Gatuf::config ('current_default_update_key', '');
+		$sql = new Gatuf_SQL ('nombre=%s', $key_name);
+		$key = Gatuf::factory ('DNS42_UpdateKey')->getOne ($sql->gen ());
+		
+		if ($key === null) {
+			throw new Exception (__('Configuration Error. Missing default update key'));
+		}
+		
+		$extra = array ('user' => $request->user, 'key' => $key);
+		if ($request->method == 'POST') {
+			$form = new DNS42_Form_Managed_AgregarInversa ($request->POST, $extra);
+			
+			if ($form->isValid ()) {
+				$managed = $form->save ();
+				
+				/* Crear el SOA */
+				$record = new DNS42_Record ();
+				$record->ttl = 86400;
+				$record->dominio = $managed;
+				$record->name = $managed->dominio;
+				$record->type = 'SOA';
+				$serial = date ('Ymd').'00';
+				$record->rdata = sprintf ('ns1.gatuno.dn42. hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $serial);
+				$record->locked = TRUE;
+				$record->create ();
+			
+				/* Crear al menos el primer NS */
+				$record = new DNS42_Record ();
+				$record->ttl = 86400;
+				$record->dominio = $managed;
+				$record->name = $managed->dominio;
+				$record->type = 'NS';
+				$record->rdata = 'ns1.gatuno.dn42.';
+				$record->locked = TRUE;
+				$record->create ();
+				
+				$delegar = DNS42_RMQ::send_create_domain ($managed);
+				
+				/* TODO: Revisar delegar */
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new DNS42_Form_Managed_AgregarInversa (null, $extra);
+		}
+		
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/agregar_reversa.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
 		                                         $request);
 	}
 }

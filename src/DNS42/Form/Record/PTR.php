@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_NS extends Gatuf_Form {
+class DNS42_Form_Record_PTR extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];
@@ -15,8 +15,8 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 		$this->fields['hostname'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('Nameserver name'),
-				'help_text' => __("A nameserver should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
+				'label' => __('Host name'),
+				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
 		));
 		
@@ -97,6 +97,7 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 		
 		return $this->cleaned_data;
 	}
+	
 	public function save ($commit = true) {
 		if (!$this->isValid()) {
 			throw new Exception (__('Cannot save an invalid form.'));
@@ -106,7 +107,7 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 		
 		$record->dominio = $this->dominio;
 		$record->name = $this->cleaned_data ['name'];
-		$record->type = 'NS';
+		$record->type = 'PTR';
 		$record->ttl = $this->cleaned_data ['ttl'];
 		$record->rdata = $this->cleaned_data ['hostname'];
 		

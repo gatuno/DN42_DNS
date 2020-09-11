@@ -179,28 +179,35 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/managed/([a-z0-9-\.]+)/$#',
+	'regex' => '#^/managed/add/reverse/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'agregar_reversa',
+);
+
+$ctl[] = array (
+	'regex' => '#^/managed/([a-z0-9-\.:_]+)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',
 	'method' => 'administrar',
 );
 
 $ctl[] = array (
-	'regex' => '#^/managed/([a-z0-9-\.]+)/check/delegation/$#',
+	'regex' => '#^/managed/([a-z0-9-\.:_]+)/check/delegation/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',
 	'method' => 'revisar_delegacion',
 );
 
 $ctl[] = array (
-	'regex' => '#^/managed/([a-z0-9-\.]+)/delete/master/$#',
+	'regex' => '#^/managed/([a-z0-9-\.:_]+)/delete/master/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',
 	'method' => 'eliminar_master',
 );
 
 $ctl[] = array (
-	'regex' => '#^/managed/([a-z0-9-\.]+)/add/record/([A-Z0-9]+)/$#',
+	'regex' => '#^/managed/([a-z0-9-\.:_]+)/add/record/([A-Z0-9]+)/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',
 	'method' => 'agregar_registro',

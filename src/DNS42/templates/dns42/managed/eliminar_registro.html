@@ -3,7 +3,7 @@
 <p>{blocktrans}<strong>Warning!</strong> You are going to delete the following record:{/blocktrans}</p>
 <form method="post" action=".">
 	<table>
-	<tr><td>{trans 'Domain'}: </td><td>{$managed.dominio}</td></tr>
+	<tr><td>{trans 'Domain'}: </td><td>{if $managed.reversa}{$managed.prefix_nice ()}{else}{$managed.dominio}{/if}</td></tr>
 	<tr><td>{trans 'Name'}: </td><td>{$record.name} {$record.type} {$record.rdata}</td></tr>
 		<tr>
 			<td>&nbsp;</td><td><input type="submit" value="{trans 'Delete record'}" /> - <a href="{url 'DNS42_Views_Managed::administrar', $managed.dominio}">{trans 'Cancel'}</a></td>

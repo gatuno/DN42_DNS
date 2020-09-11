@@ -2,11 +2,17 @@
 {block body}
 <p>{blocktrans}<strong>Warning!</strong>: Beta service. May broke sometimes. Please report bugs to apt [AT] gatuno [DOT] mx{/blocktrans}</p>
 <p><a href="{url 'DNS42_Views_Managed::agregar_master'}">{trans '➕ Add new domain'}</a></p>
+<p><a href="{url 'DNS42_Views_Managed::agregar_reversa'}">{trans '➕ Add new reverse zone'}</a></p>
 <p>{trans 'Active domains for this account'}</p>
 <table class="domains">
 	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Action'}</th></tr></thead>
 	<tbody>{foreach $domains as $d}
-	<tr><td><a href="{url 'DNS42_Views_Managed::administrar', $d.dominio}">{$d.dominio}</a></td><td>{if $d.maestra}<a href="{url 'DNS42_Views_Managed::eliminar_master', $d.dominio}">{trans 'Delete domain'}</a>{/if}</tr>
+	<tr><td>{if $d.reversa}
+	<a href="{url 'DNS42_Views_Managed::administrar', $d.prefix}">{$d.prefix_nice()}</a>
+	{else}
+	<a href="{url 'DNS42_Views_Managed::administrar', $d.dominio}">{$d.dominio}</a>
+	{/if}
+	</td><td>{if $d.maestra}{if $d.reversa}<a href="{url 'DNS42_Views_Managed::eliminar_master', $d.prefix}">{else}<a href="{url 'DNS42_Views_Managed::eliminar_master', $d.dominio}">{/if}{trans 'Delete domain'}</a>{/if}</tr>
 	{/foreach}</tbody>
 </table>
 {/block}

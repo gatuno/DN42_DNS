@@ -3,9 +3,9 @@
 <p>{blocktrans}<strong>Warning!</strong> You are going to delete the entire zone. All the zone records will be deleted too{/blocktrans}</p>
 <form method="post" action=".">
 	<table>
-	<tr><td>{trans 'Domain'}: </td><td>{$managed.dominio}</td></tr>
+	<tr><td>{if $managed.reversa}{trans 'Reverse zone'}{else}{trans 'Domain'}{/if}: </td><td>{if $managed.reversa}{$managed.prefix_nice()}{else}{$managed.dominio}{/if}</td></tr>
 		<tr>
-			<td>&nbsp;</td><td><input type="submit" value="{trans 'Delete domain'}" /> - <a href="{url 'DNS42_Views_Managed::index'}">{trans 'Cancel'}</a></td>
+			<td>&nbsp;</td><td><input type="submit" value="{if $managed.reversa}{trans 'Delete reverse zone'}{else}{trans 'Delete domain'}{/if}" /> - <a href="{url 'DNS42_Views_Managed::index'}">{trans 'Cancel'}</a></td>
 		</tr>
 	</table>
 </form>

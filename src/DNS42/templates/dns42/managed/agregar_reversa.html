@@ -1,0 +1,18 @@
+{extends 'dns42/base.html'}
+{block body}
+{if $form.errors}
+<div class="errors">
+	<p>{trans 'The form has errors:'}</p>
+</div>
+{/if}
+<p>{blocktrans}<strong>Warning!</strong>: Beta service. May broke sometimes. Please report bugs to apt [AT] gatuno [DOT] mx{/blocktrans}</p><p>{blocktrans}To serve your inverse zone from this free service, you need to delegate your IP block to ns1.gatuno.dn42. Please ensure that DN42 registry is already updated. DN42 root zones could take a little more to be updated.{/blocktrans}</p>
+<p>{blocktrans}To manage a reverse zone using the simplified method, please provide the prefix in the box below. IPv6 will be handed as a standard ip6.arpa zone. IPv4 will be handled in the DN42 format (RFC2317).{/blocktrans}</p>
+<form method="post" action=".">
+	<table>
+	{$form.render_table}
+		<tr>
+			<td>&nbsp;</td><td><input type="submit" value="{trans 'Add reverse zone!'}" /></td>
+		</tr>
+	</table>
+</form>
+{/block}

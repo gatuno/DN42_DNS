@@ -19,6 +19,11 @@ class DNS42_Form_Managed_Agregar extends Gatuf_Form {
 		$dominio = $this->cleaned_data['domain'];
 		
 		$dominio = rtrim (trim ($dominio), '.');
+		
+		if (filter_var ($dominio, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
+			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
+		}
+		
 		$sql = new Gatuf_SQL ('dominio=%s', $dominio);
 		$managed = Gatuf::factory ('DNS42_ManagedDomain')->getList (array ('filter' => $sql->gen (), 'count' => true));
 		
