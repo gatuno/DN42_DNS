@@ -86,7 +86,7 @@ class DNS42_Views_Domains {
 			$ping_check->create ();
 		}
 		
-		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver', $ns->get_dominio ()->dominio);
+		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver', array ($ns->get_dominio ()->dominio));
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
@@ -136,7 +136,7 @@ class DNS42_Views_Domains {
 			$ping_check->create ();
 		}
 		
-		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver_server', $server->nombre);
+		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver_server', array ($server->nombre));
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
@@ -198,7 +198,7 @@ class DNS42_Views_Domains {
 			}
 		}
 		
-		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver', $dominio->dominio);
+		$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Domains::ver', array ($dominio->dominio));
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	

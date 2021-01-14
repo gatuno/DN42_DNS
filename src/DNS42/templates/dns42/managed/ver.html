@@ -5,7 +5,7 @@
 {if $managed.delegacion == 1}
 <div class="bad_delegation">{blocktrans}Zone failed validation test. ERROR: Delegation was not found. Please delegate to ns1.gatuno.dn42 then retry. ({$domain_name}).{/blocktrans}</div>
 <p>
-{if $managed.reversa}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', $managed.prefix}{else}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', $managed.dominio}{/if}{blocktrans}You can <a href="{$check_url}">manually schedule</a> another test{/blocktrans}</p>
+{if $managed.reversa}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', array ($managed.prefix)}{else}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', array ($managed.dominio)}{/if}{blocktrans}You can <a href="{$check_url}">manually schedule</a> another test{/blocktrans}</p>
 {elseif $managed.delegacion == 0}
 <div class="in_progress">{trans 'Zone validation in progress. Please wait at least 1 minute and refresh the page.'}</div>
 {/if}
