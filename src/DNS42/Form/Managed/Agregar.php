@@ -48,7 +48,7 @@ class DNS42_Form_Managed_Agregar extends Gatuf_Form {
 		$managed = new DNS42_ManagedDomain ();
 		
 		$managed->dominio = $this->cleaned_data['domain'];
-		$managed->user = $this->user;
+		$managed->owner = $this->user;
 		$managed->key = $this->key;
 		$managed->good_delegation = false;
 		

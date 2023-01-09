@@ -36,7 +36,16 @@ function zone_add_master_slave ($managed_domain_id) {
 	$server = Gatuf::config ('rndc_update_server');
 	$port = Gatuf::config ('rndc_update_port');
 	
-	$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type slave; file \"%s/%s\"; masters { 172.22.200.9; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $managed->dominio);
+	/* Recuperar la IP del master */
+	$masters = Gatuf::config ('rndc_master', array ());
+	if (count ($masters) == 0) {
+		throw new Exception (__('Configuration Error. There should be only 1 master'));
+	}
+	
+	$master_name = array_key_first ($masters);
+	$master_ip = $masters[$master_name];
+	
+	$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type slave; file \"%s/%s\"; masters { %s; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $managed->dominio, $master_ip);
 	
 	exec ($full_exec, $output, $return_code);
 	

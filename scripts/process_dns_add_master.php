@@ -227,10 +227,16 @@ function zone_add_master ($managed_domain_id) {
 			$filename = $managed->dominio;
 		}
 		
+		$slaves = Gatuf::config ('rndc_slaves', array ());
+		$notify_ips = '';
+		foreach ($slaves as $slave_name => $slave_ip) {
+			$notify_ips .= $slave_ip.'; ';
+		}
+		
 		if (strpos ($managed->dominio, '/') !== false) {
-			$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone '\"%s\"' '{type master; file \"%s/%s\"; allow-update { key %s; }; notify yes; also-notify { slave_notifies; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $filename, $update_key->nombre);
+			$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone '\"%s\"' '{type master; file \"%s/%s\"; allow-update { key %s; }; notify explicit; also-notify { %s }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $filename, $update_key->nombre, $notify_ips);
 		} else {
-			$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type master; file \"%s/%s\"; allow-update { key %s; }; notify yes; also-notify { slave_notifies; }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $filename, $update_key->nombre);
+			$full_exec = sprintf ("/usr/sbin/rndc -k \"%s\" -s \"%s\" -p \"%s\" addzone \"%s\" '{type master; file \"%s/%s\"; allow-update { key %s; }; notify explicit; also-notify { %s }; };' 2>&1", $key, $server, $port, $managed->dominio, $folder, $filename, $update_key->nombre, $notify_ips);
 		}
 		
 		exec ($full_exec, $output, $return_code);

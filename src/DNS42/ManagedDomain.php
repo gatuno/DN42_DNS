@@ -21,9 +21,16 @@ class DNS42_ManagedDomain extends Gatuf_Model {
 			       'model' => 'DNS42_UpdateKey',
 			       'relate_name' => 'managed_domains',
 			),
-			'user' =>
+			'owner' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'blank' => false,
+			       'model' => 'Gatuf_User',
+			       'relate_name' => 'owned_domains',
+			),
+			'users' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Manytomany',
 			       'blank' => false,
 			       'model' => 'Gatuf_User',
 			       'relate_name' => 'managed_domains',

@@ -4,14 +4,51 @@ Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
 Gatuf::loadFunction('DNS42_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Managed {
+	public static recover_domain ($domain_name, $user) {
+		$managed = new DNS42_ManagedDomain ();
+		$sql = new Gatuf_SQL ('dominio=%s', array ($match[1]));
+		
+		if (null === ($managed->getOne($sql->gen ()))) {
+			/* Prodría ser una zona inversa */
+			$sql = new Gatuf_SQL ('prefix=%s', array ($match[1]));
+			
+			if (null === ($managed->getOne($sql->gen ()))) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
+		}
+		/* Revisar si es el dueño del dominio */
+		if ($managed->owner == $user->id) {
+			return $managed;
+		}
+		
+		/* En caso contrario, recuperar quién puede administrar este dominio */
+		$allowed_users = $managed->get_users_list ();
+		foreach ($allowed_users as $one) {
+			if ($user->id == $one->id) {
+				return $managed;
+			}
+		}
+		
+		throw new Gatuf_HTTP_Error404 ();
+	}
+	
 	public $index_precond = array ('Gatuf_Precondition::loginRequired');
 	public function index ($request, $match) {
+		$all_domains = array ();
+		
+		$domains = $request->user->get_owned_domains_list ();
+		foreach ($domains as $d) {
+			$all_domains[$d->id] = $d;
+		}
 		$domains = $request->user->get_managed_domains_list ();
+		foreach ($domains as $d) {
+			$all_domains[$d->id] = $d;
+		}
 		
 		$request->active_tab = 'free_dns';
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/index.html',
 		                                         array('page_title' => __('Free DNS Management'),
-		                                         'domains' => $domains),
+		                                         'domains' => $all_domains),
 		                                         $request);
 	}
 	
@@ -34,6 +71,17 @@ class DNS42_Views_Managed {
 			if ($form->isValid ()) {
 				$managed = $form->save ();
 				
+				/* Antes de crear el SOA, revisar de mi configuración cuál es el master que tengo para agregarlo al SOA */
+				$masters = Gatuf::config ('rndc_master', array ());
+				if (count ($masters) != 1) {
+					throw new Exception (__('Configuration Error. There should be only 1 master'));
+				}
+				
+				$master_name = array_key_first ($masters);
+				if (substr ($master_name, -1) != '.') {
+					$master_name .= '.';
+				}
+				
 				/* Crear el SOA */
 				$record = new DNS42_Record ();
 				$record->ttl = 86400;
@@ -41,19 +89,36 @@ class DNS42_Views_Managed {
 				$record->name = $managed->dominio;
 				$record->type = 'SOA';
 				$serial = date ('Ymd').'00';
-				$record->rdata = sprintf ('ns1.gatuno.dn42. hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $serial);
+				$record->rdata = sprintf ('%s hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $master_name, $serial);
 				$record->locked = TRUE;
 				$record->create ();
 			
-				/* Crear al menos el primer NS */
+				/* Crear al menos el registro NS correspondiente al maestro */
 				$record = new DNS42_Record ();
 				$record->ttl = 86400;
 				$record->dominio = $managed;
 				$record->name = $managed->dominio;
 				$record->type = 'NS';
-				$record->rdata = 'ns1.gatuno.dn42.';
+				$record->rdata = $master_name;
 				$record->locked = TRUE;
 				$record->create ();
+				
+				/* Si existen esclavos, agregar los registros NS correspondientes */
+				$slaves = Gatuf::config ('rndc_slaves', array ());
+				foreach ($slaves as $slave_name => $slave_ip) {
+					if (substr ($slave_name, -1) != '.') {
+						$slave_name .= '.';
+					}
+					
+					$record = new DNS42_Record ();
+					$record->ttl = 86400;
+					$record->dominio = $managed;
+					$record->name = $managed->dominio;
+					$record->type = 'NS';
+					$record->rdata = $slave_name;
+					$record->locked = FALSE;
+					$record->create ();
+				}
 				
 				$delegar = DNS42_RMQ::send_create_domain ($managed);
 				
@@ -75,11 +140,11 @@ class DNS42_Views_Managed {
 	public $eliminar_master_precond = array ('Gatuf_Precondition::loginRequired');
 	public function eliminar_master ($request, $match) {
 		$managed = new DNS42_ManagedDomain ();
-		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
+		$sql = new Gatuf_SQL ('dominio=%s AND owner=%s', array ($match[1], $request->user->id));
 		
 		if (null === ($managed->getOne($sql->gen ()))) {
 			/* Prodría ser una zona inversa */
-			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
+			$sql = new Gatuf_SQL ('prefix=%s AND owner=%s', array ($match[1], $request->user->id));
 			
 			if (null === ($managed->getOne($sql->gen ()))) {
 				throw new Gatuf_HTTP_Error404 ();
@@ -107,17 +172,7 @@ class DNS42_Views_Managed {
 	
 	public $administrar_precond = array ('Gatuf_Precondition::loginRequired');
 	public function administrar ($request, $match) {
-		$managed = new DNS42_ManagedDomain ();
-		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
-		
-		if (null === ($managed->getOne($sql->gen ()))) {
-			/* Prodría ser una zona inversa */
-			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
-			
-			if (null === ($managed->getOne($sql->gen ()))) {
-				throw new Gatuf_HTTP_Error404 ();
-			}
-		}
+		$managed = recover_domain ($match[1], $request->user);
 		
 		$records = $managed->get_records_list ();
 		
@@ -132,11 +187,11 @@ class DNS42_Views_Managed {
 	public $revisar_delegacion_precond = array ('Gatuf_Precondition::loginRequired');
 	public function revisar_delegacion ($request, $match) {
 		$managed = new DNS42_ManagedDomain ();
-		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
+		$sql = new Gatuf_SQL ('dominio=%s AND owner=%s', array ($match[1], $request->user->id));
 		
 		if (null === ($managed->getOne($sql->gen ()))) {
 			/* Prodría ser una zona inversa */
-			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
+			$sql = new Gatuf_SQL ('prefix=%s AND owner=%s', array ($match[1], $request->user->id));
 			
 			if (null === ($managed->getOne($sql->gen ()))) {
 				throw new Gatuf_HTTP_Error404 ();
@@ -161,17 +216,7 @@ class DNS42_Views_Managed {
 	
 	public $agregar_registro_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregar_registro ($request, $match) {
-		$managed = new DNS42_ManagedDomain ();
-		$sql = new Gatuf_SQL ('dominio=%s AND user=%s', array ($match[1], $request->user->id));
-		
-		if (null === ($managed->getOne($sql->gen ()))) {
-			/* Prodría ser una zona inversa */
-			$sql = new Gatuf_SQL ('prefix=%s AND user=%s', array ($match[1], $request->user->id));
-			
-			if (null === ($managed->getOne($sql->gen ()))) {
-				throw new Gatuf_HTTP_Error404 ();
-			}
-		}
+		$managed = recover_domain ($match[1], $request->user);
 		
 		if ($managed->delegacion != 2) {
 			$request->user->setMessage (3, __('You can create records on the domain, but the zone will became active in the DNS until delegation works.'));
@@ -254,10 +299,19 @@ class DNS42_Views_Managed {
 		}
 		
 		$managed = $record->get_dominio ();
-		$user = $managed->get_user ();
 		
-		if ($request->user->id != $user->id) {
-			throw new Gatuf_HTTP_Error404 ();
+		if ($request->user->id != $managed->owner) {
+			/* La otra posibilidad es que es sea un sub-administrador */
+			$found = false;
+			$allowed_users = $managed->get_users_list ();
+			foreach ($allowed_users as $one) {
+				if ($one->id == $request->user->id) {
+					$found = true;
+				}
+			}
+			if (!$found) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
 		}
 		
 		if ($record->locked) {
@@ -311,6 +365,17 @@ class DNS42_Views_Managed {
 			if ($form->isValid ()) {
 				$managed = $form->save ();
 				
+				/* Antes de crear el SOA, revisar de mi configuración cuál es el master que tengo para agregarlo al SOA */
+				$masters = Gatuf::config ('rndc_master', array ());
+				if (count ($masters) != 1) {
+					throw new Exception (__('Configuration Error. There should be only 1 master'));
+				}
+				
+				$master_name = array_key_first ($masters);
+				if (substr ($master_name, -1) != '.') {
+					$master_name .= '.';
+				}
+				
 				/* Crear el SOA */
 				$record = new DNS42_Record ();
 				$record->ttl = 86400;
@@ -318,7 +383,7 @@ class DNS42_Views_Managed {
 				$record->name = $managed->dominio;
 				$record->type = 'SOA';
 				$serial = date ('Ymd').'00';
-				$record->rdata = sprintf ('ns1.gatuno.dn42. hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $serial);
+				$record->rdata = sprintf ('%s hostmaster.gatuno.dn42. %s 10800 1800 604800 86400', $master_name, $serial);
 				$record->locked = TRUE;
 				$record->create ();
 			
@@ -328,9 +393,26 @@ class DNS42_Views_Managed {
 				$record->dominio = $managed;
 				$record->name = $managed->dominio;
 				$record->type = 'NS';
-				$record->rdata = 'ns1.gatuno.dn42.';
+				$record->rdata = $master_name;
 				$record->locked = TRUE;
 				$record->create ();
+				
+				/* Si existen esclavos, agregar los registros NS correspondientes */
+				$slaves = Gatuf::config ('rndc_slaves', array ());
+				foreach ($slaves as $slave_name => $slave_ip) {
+					if (substr ($slave_name, -1) != '.') {
+						$slave_name .= '.';
+					}
+					
+					$record = new DNS42_Record ();
+					$record->ttl = 86400;
+					$record->dominio = $managed;
+					$record->name = $managed->dominio;
+					$record->type = 'NS';
+					$record->rdata = $slave_name;
+					$record->locked = FALSE;
+					$record->create ();
+				}
 				
 				$delegar = DNS42_RMQ::send_create_domain ($managed);
 				
