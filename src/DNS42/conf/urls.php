@@ -116,55 +116,6 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/dns/$#',
-	'base' => $base,
-	'model' => 'DNS42_Views_Domains',
-	'method' => 'index',
-);
-
-$ctl[] = array (
-	'regex' => '#^/server/([a-z0-9-\.]+)/$#',
-	'base' => $base,
-	'model' => 'DNS42_Views_Domains',
-	'method' => 'ver_server',
-);
-
-$ctl[] = array (
-	'regex' => '#^/domain/explain/test/$#',
-	'base' => $base,
-	'model' => 'DNS42_Views_Domains',
-	'method' => 'explicacion',
-);
-
-$ctl[] = array (
-	'regex' => '#^/domain/([a-z0-9-\.]+)/$#',
-	'base' => $base,
-	'model' => 'DNS42_Views_Domains',
-	'method' => 'ver',
-);
-
-$ctl[] = array (
-	'regex' => '#^/check/ns/(\d+)/$#',
-	'base' => $base,
-	'model' => 'DNS42_Views_Domains',
-	'method' => 'programar_check_ns',
-);
-
-$ctl[] = array (
-	'regex' => '#^/check/ping/([a-z0-9-\.]+)/$#',
-	'base' => $base,
-	'model' => 'DNS42_Views_Domains',
-	'method' => 'programar_check_ping',
-);
-
-$ctl[] = array (
-	'regex' => '#^/check/domain/([a-z0-9-\.]+)/$#',
-	'base' => $base,
-	'model' => 'DNS42_Views_Domains',
-	'method' => 'programar_check_domain',
-);
-
-$ctl[] = array (
 	'regex' => '#^/managed/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',

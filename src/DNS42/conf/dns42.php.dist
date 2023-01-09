@@ -128,9 +128,6 @@ $cfg['installed_apps'] = array('Gatuf', 'DNS42');
 $cfg['gatuf_log_file'] = '/tmp/gatuf.log';
 Gatuf_Log::$level = Gatuf_Log::ALL;
 
-$cfg['dn42_registry_repo'] = dirname(__FILE__).'/../../../registry';
-$cfg['dn42_ping_method'] = 'exec'; /* Can be exec, socket */
-
 /* Configuración de la cola de despache de acciones de dominios */
 $cfg['amqp_dns_server'] = 'localhost';
 $cfg['amqp_dns_user'] = 'guest';
