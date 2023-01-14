@@ -40,7 +40,7 @@ function zone_del ($old_managed_domain_name) {
 	$folder = "/etc/bind/dynamic_zones";
 	$file_name = sprintf ("%s/%s", $folder, $basename);
 	
-	$deleted = unlink ($file_name);
+	$deleted = @unlink ($file_name);
 	
 	if ($deleted === false) {
 		/* FIXME: Otro problema, no pude eliminar el archivo */
@@ -49,7 +49,7 @@ function zone_del ($old_managed_domain_name) {
 	
 	$file_name = sprintf ("%s/%s.jnl", $folder, $basename);
 	
-	$deleted = unlink ($file_name);
+	$deleted = @unlink ($file_name);
 	
 	if ($deleted === false) {
 		/* FIXME: Otro problema, no pude eliminar el archivo */

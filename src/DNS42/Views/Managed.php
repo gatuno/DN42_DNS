@@ -4,13 +4,13 @@ Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
 Gatuf::loadFunction('DNS42_Shortcuts_RenderToResponse');
 
 class DNS42_Views_Managed {
-	public static recover_domain ($domain_name, $user) {
+	public static function recover_domain ($domain_name, $user) {
 		$managed = new DNS42_ManagedDomain ();
-		$sql = new Gatuf_SQL ('dominio=%s', array ($match[1]));
+		$sql = new Gatuf_SQL ('dominio=%s', array ($domain_name));
 		
 		if (null === ($managed->getOne($sql->gen ()))) {
 			/* Prodría ser una zona inversa */
-			$sql = new Gatuf_SQL ('prefix=%s', array ($match[1]));
+			$sql = new Gatuf_SQL ('prefix=%s', array ($domain_name));
 			
 			if (null === ($managed->getOne($sql->gen ()))) {
 				throw new Gatuf_HTTP_Error404 ();
@@ -130,9 +130,19 @@ class DNS42_Views_Managed {
 			$form = new DNS42_Form_Managed_Agregar (null, $extra);
 		}
 		
+		$masters = Gatuf::config ('rndc_master', array ());
+		if (count ($masters) != 1) {
+			throw new Exception (__('Configuration Error. There should be only 1 master'));
+		}
+		$slaves = Gatuf::config ('rndc_slaves', array ());
+		$master_name = array_key_first ($masters);
+		$slave_names = implode (', ', array_keys ($slaves));
+		
 		$request->active_tab = 'free_dns';
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/agregar.html',
 		                                         array ('page_title' => $title,
+		                                                'master_name' => $master_name,
+		                                                'slave_names' => $slave_names,
 		                                                'form' => $form),
 		                                         $request);
 	}
@@ -172,15 +182,28 @@ class DNS42_Views_Managed {
 	
 	public $administrar_precond = array ('Gatuf_Precondition::loginRequired');
 	public function administrar ($request, $match) {
-		$managed = recover_domain ($match[1], $request->user);
+		$managed = self::recover_domain ($match[1], $request->user);
 		
-		$records = $managed->get_records_list ();
+		$all_records = array ();
+		
+		/* Primero los registros bloqueados */
+		$order_type = array ('SOA', 'NS', 'A', 'AAAA', 'SPF', 'MX', 'CNAME', 'CAA', 'PTR', 'SRV', 'TXT', 'LOC', 'SSHFP');
+		foreach ($order_type as $type) {
+			$sql = new Gatuf_SQL ('type=%s', array ($type));
+			$records = $managed->get_records_list (array ('filter' => $sql->gen (), 'order' => 'locked DESC, name ASC, rdata ASC'));
+			$all_records = array_merge ($all_records, $records->getArrayCopy ());
+		}
+		
+		$where = 'type NOT IN ('.implode (', ', array_fill (0, count ($order_type), '%s')).')';
+		$sql = new Gatuf_SQL ($where, $order_type);
+		$records = $managed->get_records_list (array ('filter' => $sql->gen (), 'order' => 'locked DESC, name ASC, rdata ASC'));
+		$all_records = array_merge ($all_records, $records->getArrayCopy ());
 		
 		$request->active_tab = 'free_dns';
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/ver.html',
 		                                         array ('page_title' => __('Free DNS Management'),
 		                                                'managed' => $managed,
-		                                                'records' => $records),
+		                                                'records' => $all_records),
 		                                         $request);
 	}
 	
@@ -216,7 +239,7 @@ class DNS42_Views_Managed {
 	
 	public $agregar_registro_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregar_registro ($request, $match) {
-		$managed = recover_domain ($match[1], $request->user);
+		$managed = self::recover_domain ($match[1], $request->user);
 		
 		if ($managed->delegacion != 2) {
 			$request->user->setMessage (3, __('You can create records on the domain, but the zone will became active in the DNS until delegation works.'));

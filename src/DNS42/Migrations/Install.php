@@ -2,11 +2,6 @@
 
 function DNS42_Migrations_Install_setup ($params=null) {
 	$models = array (
-		'DNS42_Domain',
-		'DNS42_Server',
-		'DNS42_NameServer',
-		'DNS42_PingCheck',
-		'DNS42_NSCheck',
 		'DNS42_ManagedDomain',
 		'DNS42_Record',
 		'DNS42_UpdateKey',
@@ -27,11 +22,6 @@ function DNS42_Migrations_Install_setup ($params=null) {
 
 function DNS42_Migrations_Install_teardown ($params=null) {
 	$models = array (
-		'DNS42_Domain',
-		'DNS42_Server',
-		'DNS42_NameServer',
-		'DNS42_PingCheck',
-		'DNS42_NSCheck',
 		'DNS42_ManagedDomain',
 		'DNS42_Record',
 		'DNS42_UpdateKey',

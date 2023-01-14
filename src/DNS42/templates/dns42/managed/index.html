@@ -8,11 +8,11 @@
 	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Action'}</th></tr></thead>
 	<tbody>{foreach $domains as $d}
 	<tr><td>{if $d.reversa}
-	<a href="{url 'DNS42_Views_Managed::administrar', $d.prefix}">{$d.prefix_nice()}</a>
+	<a href="{url 'DNS42_Views_Managed::administrar', array ($d.prefix)}">{$d.prefix_nice()}</a>
 	{else}
-	<a href="{url 'DNS42_Views_Managed::administrar', $d.dominio}">{$d.dominio}</a>
+	<a href="{url 'DNS42_Views_Managed::administrar', array ($d.dominio)}">{$d.dominio}</a>
 	{/if}
-	</td><td>{if $d.maestra}{if $d.reversa}<a href="{url 'DNS42_Views_Managed::eliminar_master', $d.prefix}">{else}<a href="{url 'DNS42_Views_Managed::eliminar_master', $d.dominio}">{/if}{trans 'Delete domain'}</a>{/if}</tr>
+	</td><td>{if $d.maestra && $d.owner == $user.id}{if $d.reversa}<a href="{url 'DNS42_Views_Managed::eliminar_master', array ($d.prefix)}">{else}<a href="{url 'DNS42_Views_Managed::eliminar_master', array ($d.dominio)}">{/if}{trans 'Delete domain'}</a>{/if}</tr>
 	{/foreach}</tbody>
 </table>
 {/block}

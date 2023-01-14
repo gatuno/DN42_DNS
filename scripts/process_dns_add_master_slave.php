@@ -22,9 +22,17 @@ function zone_add_master_slave ($managed_domain_id) {
 		return false;
 	}
 	
+	/* Recuperar la IP del master */
+	$masters = Gatuf::config ('rndc_master', array ());
+	if (count ($masters) == 0) {
+		throw new Exception (__('Configuration Error. There should be only 1 master'));
+	}
+	
+	$master_name = array_key_first ($masters);
+	
 	/* Crear el archivo vacio */
 	$folder = "/etc/bind/dynamic_zones";
-	$created = create_empty_zone ($folder, $managed->dominio);
+	$created = create_empty_zone ($folder, $managed->dominio, $master_name);
 	
 	if ($created == false) {
 		printf ("Error, no pude crear el archivo de zona vacio\n");

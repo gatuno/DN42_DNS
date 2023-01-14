@@ -5,7 +5,7 @@
 	<p>{trans 'The form has errors:'}</p>
 </div>
 {/if}
-<p>{blocktrans}<strong>Warning!</strong>: Beta service. May broke sometimes. Please report bugs to apt [AT] gatuno [DOT] mx{/blocktrans}</p><p>{blocktrans}To serve your DNS domain from this free service, you need to delegate your domain to ns1.gatuno.dn42. Please ensure that DN42 registry is already updated. DN42 root zones could take a little more to be updated.{/blocktrans}</p>
+<p>{blocktrans}<strong>Warning!</strong>: Beta service. May broke sometimes. Please report bugs to apt [AT] gatuno [DOT] mx{/blocktrans}</p><p>{blocktrans}To serve your DNS domain from this free service, you need to delegate your domain to {$master_name}{if $slave_names != ''}, {$slave_names}{/if}. Please ensure that DN42 registry is already updated. DN42 root zones could take a little more to be updated.{/blocktrans}</p>
 <form method="post" action=".">
 	<table>
 	{$form.render_table}
