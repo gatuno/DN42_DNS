@@ -44,22 +44,29 @@ function record_add ($record_id) {
 			break;
 		default:
 			// Cerrar la base de datos para evitar desconexiones por timeout
-			var_dump ("Unsupported record type '".$record->type."' and data: '".$record->rdata."'");
+			printf ("Unsupported record type '%s' and data: '%s'\n", $record->type, $record->rdata);
 			
 			return false;
 			break;
 	}
 	$rr = Net_DNS2_RR::fromString ($line);
-	var_dump ("Going to update");
-	var_dump ($rr);
+	printf ("Going to create a new record\n");
+	//var_dump ($rr);
 	$updater->add ($rr);
 	
 	$updater->signTSIG ($key->nombre, $key->secret, $key->algo);
 	
 	$response = $updater->update();
-	var_dump ("Update Response");
-	var_dump ($response);
+	if ($response == true) {
+		printf ("Successful record added\n");
+	} else {
+		printf ("Failed to add record\n");
+	}
 	
+	if ($response == true) {
+		/* Actualizar el registro SOA del dominio, porque ya cambió el serial */
+		update_soa_from_master ($managed);
+	}
 	// Cerrar la base de datos para evitar desconexiones por timeout
 	return true;
 }

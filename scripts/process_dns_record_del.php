@@ -38,20 +38,29 @@ function record_del ($managed_name, $record_name, $record_type, $record_value) {
 			break;
 		default:
 			// Cerrar la base de datos para evitar desconexiones por timeout
-			var_dump ("Unsupported record type '".$record->type."' and data: '".$record->rdata."'");
+			printf ("Unsupported record type '%s' and data: '%s'\n", $record->type, $record->rdata);
 			
 			return false;
 			break;
 	}
 	
 	$rr = Net_DNS2_RR::fromString ($line);
+	printf ("Going to delete a record\n");
 	$updater->delete ($rr);
 	
 	$updater->signTSIG ($key->nombre, $key->secret, $key->algo);
 	
 	$response = $updater->update();
-	var_dump ("Update Response");
-	var_dump ($response);
+	if ($response == true) {
+		printf ("Successful record deletion\n");
+	} else {
+		printf ("Failed to delete record\n");
+	}
+	
+	if ($response == true) {
+		/* Actualizar el registro SOA del dominio, porque ya cambió el serial */
+		update_soa_from_master ($managed);
+	}
 	
 	// Cerrar la base de datos para evitar desconexiones por timeout
 	return true;
