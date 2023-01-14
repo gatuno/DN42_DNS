@@ -10,6 +10,7 @@ class DNS42_Form_Record_MX extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$this->fields['priority'] = new Gatuf_Form_Field_Integer (
@@ -20,6 +21,7 @@ class DNS42_Form_Record_MX extends Gatuf_Form {
 				'initial' => '',
 				'min' => 0,
 				'max' => 65535,
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$this->fields['hostname'] = new Gatuf_Form_Field_Varchar (
@@ -28,6 +30,7 @@ class DNS42_Form_Record_MX extends Gatuf_Form {
 				'label' => __('Hostname'),
 				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An mx may never be an ip/ipv6 address, and must not point to a cname. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail."),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$ttl_values = array (

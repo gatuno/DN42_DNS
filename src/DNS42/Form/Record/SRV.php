@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_A extends Gatuf_Form {
+class DNS42_Form_Record_SRV extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];
@@ -8,16 +8,49 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 			array (
 				'required' => true,
 				'label' => __('Name'),
-				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
+				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, and .. '@', '*', or the hostname may be used where appropriate. SRV records should be in the format of _servicename._protocol.fqdn.com per the RFC. (ie _jabber._tcp.example.com)"),
 				'initial' => '',
 				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
-		$this->fields['ipv4'] = new Gatuf_Form_Field_Varchar (
+		$this->fields['priority'] = new Gatuf_Form_Field_Integer (
 			array (
 				'required' => true,
-				'label' => __('IPv4 Address'),
-				'help_text' => __("An IPv4 address must be a decimal dotted quad string, for example: '192.168.123.10'"),
+				'label' => __('Priority'),
+				'help_text' => __("The priority must only be within the range 0-65535 (lower is better ). 0 is a good default."),
+				'initial' => '',
+				'min' => 0,
+				'max' => 65535,
+				'widget_attrs' => array ('autocomplete' => 'off'),
+		));
+		
+		$this->fields['weight'] = new Gatuf_Form_Field_Integer (
+			array (
+				'required' => true,
+				'label' => __('Weight'),
+				'help_text' => __("The weight must only be within the range 0-65535 (higher is better ). 0 is a good default."),
+				'initial' => '',
+				'min' => 0,
+				'max' => 65535,
+				'widget_attrs' => array ('autocomplete' => 'off'),
+		));
+		
+		$this->fields['port'] = new Gatuf_Form_Field_Integer (
+			array (
+				'required' => true,
+				'label' => __('Port'),
+				'help_text' => __("The port must only be within the range 0-65535. The port varies depending on the service (ie 80, 5222, 5069, etc)."),
+				'initial' => '',
+				'min' => 0,
+				'max' => 65535,
+				'widget_attrs' => array ('autocomplete' => 'off'),
+		));
+		
+		$this->fields['target'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => __('Target'),
+				'help_text' => __("This is the hostname of the machine running the service. It should exist as an A record and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
 				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
@@ -50,21 +83,21 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 		
 		if ($name == '@') return '@';
 		
-		if (filter_var ($name, FILTER_VALIDATE_DOMAIN) == false) {
+		if (filter_var ($name, FILTER_VALIDATE_DOMAIN, 0) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
 		return $name;
 	}
 	
-	public function clean_ipv4 () {
-		$ipv4 = $this->cleaned_data['ipv4'];
+	public function clean_target () {
+		$hostname = $this->cleaned_data['target'];
 		
-		if (filter_var ($ipv4, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) == false) {
-			throw new Gatuf_Form_Invalid (__('Invalid IPv4 Address'));
+		if (filter_var ($hostname, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
+			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
-		return $ipv4;
+		return $hostname;
 	}
 	
 	public function clean () {
@@ -88,8 +121,14 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 		
 		$this->cleaned_data['name'] = $name;
 		
-		$ipv4 = inet_ntop (inet_pton ($this->cleaned_data['ipv4']));
-		$this->cleaned_data['ipv4'] = $ipv4;
+		/* Para el hostname solo asegurarnos que tenga el punto al final */
+		$hostname = trim ($this->cleaned_data['target']);
+		
+		if (substr ($hostname, -1) != '.') {
+			$hostname = $hostname . '.';
+		}
+		
+		$this->cleaned_data['target'] = $hostname;
 		
 		return $this->cleaned_data;
 	}
@@ -102,9 +141,10 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 		
 		$record->dominio = $this->dominio;
 		$record->name = $this->cleaned_data ['name'];
-		$record->type = 'A';
+		$record->type = 'SRV';
 		$record->ttl = $this->cleaned_data ['ttl'];
-		$record->rdata = $this->cleaned_data ['ipv4'];
+		$rdata = sprintf ("%s %s %s %s", $this->cleaned_data['priority'], $this->cleaned_data['weight'], $this->cleaned_data['port'], $this->cleaned_data ['target']);
+		$record->rdata = $rdata;
 		
 		if ($commit) {
 			$record->create ();

@@ -10,6 +10,7 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$this->fields['ipv6'] = new Gatuf_Form_Field_Varchar (
@@ -18,6 +19,7 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 				'label' => __('IPv6 Address'),
 				'help_text' => __("An IPv6 address must a coloned hex IPv6 address string, for example: '2001:db8::c0ff:e:e'"),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$ttl_values = array (

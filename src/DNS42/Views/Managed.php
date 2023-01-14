@@ -252,6 +252,7 @@ class DNS42_Views_Managed {
 			'MX' => 'DNS42_Form_Record_MX',
 			'NS' => 'DNS42_Form_Record_NS',
 			'TXT' => 'DNS42_Form_Record_TXT',
+			'SRV' => 'DNS42_Form_Record_SRV',
 		);
 		$allowed_reverse = array (
 			'CNAME' => 'DNS42_Form_Record_CNAME',

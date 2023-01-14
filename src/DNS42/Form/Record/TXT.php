@@ -10,6 +10,7 @@ class DNS42_Form_Record_TXT extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$this->fields['txt'] = new Gatuf_Form_Field_Varchar (
@@ -18,6 +19,7 @@ class DNS42_Form_Record_TXT extends Gatuf_Form {
 				'label' => __('Text data'),
 				'help_text' => __("Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple 255 character segments."),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$ttl_values = array (

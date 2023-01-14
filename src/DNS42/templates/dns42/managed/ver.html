@@ -25,15 +25,65 @@
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'MX')}">{trans 'New MX'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'NS')}">{trans 'New NS'}</a></li>
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'TXT')}">{trans 'New TXT'}</a></li>
+<li><a href="#" onmouseover="popup_additional(event)" onmouseout="additional_mouseout(event)">{trans 'Additional'}</a>
+	<ul style="border-bottom: 1px solid black; visibility: hidden;" id="additional_ul" class="additional_ul">	
+		<li><a onmouseover="cancel_close_additional_popup(event)" onmouseout="additional_mouseout(event)" href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.dominio, 'SRV')}">{trans 'New SRV'}</a></li>
+	</ul>
+</li>
 {/if}
 </ul><br class="br_clear_left"/>
 <table class="records">
 <thead><tr><th>{trans 'Name'}</th><th>{trans 'Type'}</th><th>{trans 'TTL'}</th><th>{trans 'Priority'}</th><th>{trans 'Data'}</th><th>{trans 'Delete'}</th></tr></thead>
 <tbody>{foreach $records as $r}
 	{if $r.locked}<tr class="tr_locked">{else}<tr>{/if}
-	<td>{$r.name}</td><td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td><td class="td_center">{$r.ttl}</td><td class="td_center">{$r.format_priority()}</td><td>{$r.format_rdata ()}</td><td class="td_center {if $r.locked}td_locked{else}td_delete{/if}">{if $r.locked}🔒{else}<a href="{url 'DNS42_Views_Managed::eliminar_registro', $r.id}">➖</a>{/if}</td></tr>
+	<td>{$r.name}</td><td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td><td class="td_center">{$r.ttl}</td><td class="td_center">{$r.format_priority()}</td><td>{$r.format_rdata ()}</td>
+	{if $r.locked}<td class="td_center td_locked">🔒</td>{else}
+	<td class="td_center td_delete" onclick="delete_record(event)">
+	<a href="{url 'DNS42_Views_Managed::eliminar_registro', array ($r.id)}">➖</a></td>{/if}
+	</tr>
 {/foreach}</tbody>
 </table>
+{/block}
+{block javascript}
+{literal}
+<script type="text/javascript">
+var additional_ul_timer = 0;
+function cancel_close_additional_popup (event) {
+	if (additional_ul_timer != 0) clearTimeout (additional_ul_timer);
+	additional_ul_timer = 0;
+}
+
+function close_additional_popup () {
+	var ul = document.getElementById ('additional_ul');
+	
+	ul.style.visibility = "hidden";
+	
+	additional_ul_timer = 0;
+}
+
+function popup_additional (event) {
+	var ul = document.getElementById ('additional_ul');
+	cancel_close_additional_popup (event);
+	ul.style.visibility = "visible";
+}
+
+function additional_mouseout (event) {
+	additional_ul_timer = setTimeout (close_additional_popup, 2000);
+}
+
+function delete_record (event) {
+	if (!e) var e = window.event;
+    e.cancelBubble = true;
+    if (e.stopPropagation) e.stopPropagation();
+    
+    var td = e.target;
+    
+    var a = td.firstElementChild;
+    a.click ();
+}
+
+</script>
+{/literal}
 {/block}
 {block extrahead}
 <style type="text/css">
@@ -60,6 +110,16 @@
 	border-left: 1px solid black;
 	border-right: 1px solid black;
 	white-space: nowrap;
+}
+.additional_ul {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+}
+.additional_ul li a {
+	width: auto;
+	padding: 1px 3px;
+	background: #eee;
 }
 .br_clear_left {
 	clear: left;

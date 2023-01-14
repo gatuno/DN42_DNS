@@ -25,7 +25,8 @@ $callback_zone_add_master = function ($msg) {
 	$full_exec = sprintf ("php %s/process_dns_add_master.php %s 2>&1", dirname (__FILE__), $msg->body);
 	
 	exec ($full_exec, $output, $return_code);
-	var_dump ($output);
+	//var_dump ($output);
+	echo $output;
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
@@ -34,7 +35,8 @@ $callback_zone_slave_check_delegation = function ($msg) {
 	$full_exec = sprintf ("php %s/process_dns_full_slave.php %s 2>&1", dirname (__FILE__), $msg->body);
 	
 	exec ($full_exec, $output, $return_code);
-	var_dump ($output);
+	//var_dump ($output);
+	echo $output;
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
@@ -43,7 +45,8 @@ $callback_zone_master_slave_add = function ($msg) {
 	$full_exec = sprintf ("php %s/process_dns_master_slave.php %s 2>&1", dirname (__FILE__), $msg->body);
 	
 	exec ($full_exec, $output, $return_code);
-	var_dump ($output);
+	//var_dump ($output);
+	echo $output;
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
@@ -52,7 +55,8 @@ $callback_zone_del = function ($msg) {
 	$full_exec = sprintf ("php %s/process_dns_del_zone.php %s 2>&1", dirname (__FILE__), $msg->body);
 	
 	exec ($full_exec, $output, $return_code);
-	var_dump ($output);
+	//var_dump ($output);
+	echo $output;
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
@@ -61,7 +65,8 @@ $callback_record_add = function ($msg) {
 	$full_exec = sprintf ("php %s/process_dns_record_add.php %s 2>&1", dirname (__FILE__), $msg->body);
 	
 	exec ($full_exec, $output, $return_code);
-	var_dump ($output);
+	//var_dump ($output);
+	echo $output;
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
@@ -70,7 +75,8 @@ $callback_record_del = function ($msg) {
 	$full_exec = sprintf ("php %s/process_dns_record_del.php %s 2>&1", dirname (__FILE__), $msg->body);
 	
 	exec ($full_exec, $output, $return_code);
-	var_dump ($output);
+	//var_dump ($output);
+	echo $output;
 	
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };

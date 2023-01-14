@@ -10,6 +10,7 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$this->fields['hostname'] = new Gatuf_Form_Field_Varchar (
@@ -18,6 +19,7 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 				'label' => __('Nameserver name'),
 				'help_text' => __("A nameserver should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$ttl_values = array (
