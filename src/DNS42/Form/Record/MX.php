@@ -10,7 +10,7 @@ class DNS42_Form_Record_MX extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$this->fields['priority'] = new Gatuf_Form_Field_Integer (
@@ -30,7 +30,7 @@ class DNS42_Form_Record_MX extends Gatuf_Form {
 				'label' => __('Hostname'),
 				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An mx may never be an ip/ipv6 address, and must not point to a cname. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$ttl_values = array (
@@ -107,6 +107,14 @@ class DNS42_Form_Record_MX extends Gatuf_Form {
 		}
 		
 		$this->cleaned_data['hostname'] = $hostname;
+		$rdata = sprintf ("%s %s", $this->cleaned_data['priority'], $this->cleaned_data ['hostname']);
+		
+		/* Un registro con el mismo nombre, mismo tipo y mismo valor no puede existir duplicado */
+		$sql = new Gatuf_SQL ('type="MX" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $rdata));
+		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
+		if ($records_c > 0) {
+			throw new Gatuf_Form_Invalid (__('This record already exists in this zone with the same name and value'));
+		}
 		
 		return $this->cleaned_data;
 	}

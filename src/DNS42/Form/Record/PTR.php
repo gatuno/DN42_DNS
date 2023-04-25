@@ -19,7 +19,7 @@ class DNS42_Form_Record_PTR extends Gatuf_Form {
 				'label' => __('Host name'),
 				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$ttl_values = array (
@@ -97,6 +97,7 @@ class DNS42_Form_Record_PTR extends Gatuf_Form {
 		
 		$this->cleaned_data['hostname'] = $hostname;
 		
+		/* TODO: Revisar si un PTR no se debe duplicar por IP inversa y el valor del registro */
 		return $this->cleaned_data;
 	}
 	

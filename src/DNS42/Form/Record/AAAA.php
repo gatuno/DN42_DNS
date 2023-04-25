@@ -10,7 +10,7 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$this->fields['ipv6'] = new Gatuf_Form_Field_Varchar (
@@ -19,7 +19,7 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 				'label' => __('IPv6 Address'),
 				'help_text' => __("An IPv6 address must a coloned hex IPv6 address string, for example: '2001:db8::c0ff:e:e'"),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 40),
 		));
 		
 		$ttl_values = array (
@@ -90,6 +90,13 @@ class DNS42_Form_Record_AAAA extends Gatuf_Form {
 		
 		$ipv6 = inet_ntop (inet_pton ($this->cleaned_data['ipv6']));
 		$this->cleaned_data['ipv6'] = $ipv6;
+		
+		/* Un registro con el mismo nombre, mismo tipo y mismo valor no puede existir duplicado */
+		$sql = new Gatuf_SQL ('type="AAAA" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['ipv6']));
+		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
+		if ($records_c > 0) {
+			throw new Gatuf_Form_Invalid (__('This record already exists in this zone with the same name and value'));
+		}
 		
 		return $this->cleaned_data;
 	}

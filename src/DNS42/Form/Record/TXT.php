@@ -10,7 +10,7 @@ class DNS42_Form_Record_TXT extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$this->fields['txt'] = new Gatuf_Form_Field_Varchar (
@@ -85,6 +85,8 @@ class DNS42_Form_Record_TXT extends Gatuf_Form {
 		}
 		
 		$this->cleaned_data['name'] = $name;
+		
+		/* TODO: Revisar si un registro TXT no se puede duplicar por el mismo nombre y valor */
 		
 		return $this->cleaned_data;
 	}

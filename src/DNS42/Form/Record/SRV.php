@@ -10,7 +10,7 @@ class DNS42_Form_Record_SRV extends Gatuf_Form {
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, and .. '@', '*', or the hostname may be used where appropriate. SRV records should be in the format of _servicename._protocol.fqdn.com per the RFC. (ie _jabber._tcp.example.com)"),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$this->fields['priority'] = new Gatuf_Form_Field_Integer (
@@ -52,7 +52,7 @@ class DNS42_Form_Record_SRV extends Gatuf_Form {
 				'label' => __('Target'),
 				'help_text' => __("This is the hostname of the machine running the service. It should exist as an A record and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$ttl_values = array (
@@ -129,6 +129,14 @@ class DNS42_Form_Record_SRV extends Gatuf_Form {
 		}
 		
 		$this->cleaned_data['target'] = $hostname;
+		$rdata = sprintf ("%s %s %s %s", $this->cleaned_data['priority'], $this->cleaned_data['weight'], $this->cleaned_data['port'], $this->cleaned_data ['target']);
+		
+		/* Un registro con el mismo nombre, mismo tipo y mismo valor no puede existir duplicado */
+		$sql = new Gatuf_SQL ('type="SRV" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $rdata));
+		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
+		if ($records_c > 0) {
+			throw new Gatuf_Form_Invalid (__('This record already exists in this zone with the same name and value'));
+		}
 		
 		return $this->cleaned_data;
 	}
