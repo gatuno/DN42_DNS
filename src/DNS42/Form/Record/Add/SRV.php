@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_SRV extends Gatuf_Form {
+class DNS42_Form_Record_Add_SRV extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];

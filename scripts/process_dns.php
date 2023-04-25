@@ -75,15 +75,25 @@ $callback_record_del = function ($msg) {
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
+$callback_record_update = function ($msg) {
+	$full_exec = sprintf ("php %s/process_dns_record_update.php %s 2>&1", dirname (__FILE__), $msg->body);
+	
+	exec ($full_exec, $output, $return_code);
+	foreach ($output as $line) printf ("%s\n", $line);
+	
+	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+};
+
 $channel->queue_declare ('dns_zone_add', false, true, false, false);
 $channel->queue_declare ('dns_zone_slave_add', false, true, false, false);
 $channel->queue_declare ('dns_record_add', false, true, false, false);
+$channel->queue_declare ('dns_record_update', false, true, false, false);
 $channel->queue_declare ('dns_record_del', false, true, false, false);
 $channel->exchange_declare('dns_zone_del', 'fanout', false, false, false);
 $channel->exchange_declare('dns_zone_master_slave_add', 'fanout', false, false, false);
 
 $channel->basic_qos (null, 1, null);
-/* El DNS Maestro procesa, las zonas agregadas maestras, mas todas las zonas esclavas, y agregar y quitar registros */
+/* El DNS Maestro procesa, las zonas agregadas maestras, mas todas las zonas esclavas, y agregar, quitar y actualizar registros */
 
 /*list($queue_name, ,) = $channel->queue_declare("");
 $channel->queue_bind($queue_name, 'dns_zone_all_slaves_add');
@@ -117,6 +127,7 @@ if ($type == 'master') {
 	$channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback_zone_add_master);
 	$channel->basic_consume ('dns_zone_slave_add', '', false, false, false, false, $callback_zone_slave_check_delegation);
 	$channel->basic_consume ('dns_record_add', '', false, false, false, false, $callback_record_add);
+	$channel->basic_consume ('dns_record_update', '', false, false, false, false, $callback_record_update);
 	$channel->basic_consume ('dns_record_del', '', false, false, false, false, $callback_record_del);
 } else {
 	$channel->queue_declare ($queue_name.'_slave_add', false, true, false, false);

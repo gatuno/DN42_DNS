@@ -36,7 +36,11 @@
 <thead><tr><th>{trans 'Name'}</th><th>{trans 'Type'}</th><th>{trans 'TTL'}</th><th>{trans 'Priority'}</th><th>{trans 'Data'}</th><th>{trans 'Delete'}</th></tr></thead>
 <tbody>{foreach $records as $r}
 	{if $r.locked}<tr class="tr_locked">{else}<tr>{/if}
-	<td>{$r.name}</td><td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td><td class="td_center">{$r.ttl}</td><td class="td_center">{$r.format_priority()}</td><td>{$r.format_rdata ()}</td>
+	<td class="td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.name}</a></td>
+	<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}"><span class="rrlabel {$r.type}">{$r.type}</span></a></td>
+	<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.ttl}</a></td>
+	<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.format_priority()}</a></td>
+	<td class="td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.format_rdata ()}</a></td>
 	{if $r.locked}<td class="td_center td_locked">🔒</td>{else}
 	<td class="td_center td_delete" onclick="delete_record(event)">
 	<a href="{url 'DNS42_Views_Managed::eliminar_registro', array ($r.id)}">➖</a></td>{/if}
@@ -73,13 +77,24 @@ function additional_mouseout (event) {
 
 function delete_record (event) {
 	if (!e) var e = window.event;
-    e.cancelBubble = true;
-    if (e.stopPropagation) e.stopPropagation();
-    
-    var td = e.target;
-    
-    var a = td.firstElementChild;
-    a.click ();
+	e.cancelBubble = true;
+	if (e.stopPropagation) e.stopPropagation();
+
+	var td = e.target;
+
+	var a = td.firstElementChild;
+	a.click ();
+}
+
+function update_record(event) {
+	if (!e) var e = window.event;
+	e.cancelBubble = true;
+	if (e.stopPropagation) e.stopPropagation();
+
+	var td = e.target;
+
+	var a = td.firstElementChild;
+	a.click ();
 }
 
 </script>
@@ -134,6 +149,9 @@ function delete_record (event) {
 	background: red;
 }
 .td_delete a {
+	text-decoration: none;
+}
+.td_update a {
 	text-decoration: none;
 }
 

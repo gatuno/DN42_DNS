@@ -129,4 +129,28 @@ class DNS42_RMQ {
 		
 		return true;
 	}
+	
+	public static function send_update_record ($record, $old_record_name, $old_record_rdata) {
+		$server = Gatuf::config ('amqp_dns_server', 'localhost');
+		$user = Gatuf::config ('amqp_dns_user', 'guest');
+		$pass = Gatuf::config ('amqp_dns_password', 'guest');
+		$port = Gatuf::config ('amqp_dns_port', 5672);
+		$vhost = Gatuf::config ('amqp_dns_vhost', '/');
+		
+		$connection = new AMQPStreamConnection($server, $port, $user, $pass, $vhost);
+		
+		$channel = $connection->channel();
+		
+		$channel->queue_declare ('dns_record_update', false, true, false, false);
+		
+		$body = sprintf ("%s %s %s", $record->id, $old_record_name, $old_record_rdata);
+		$msg = new AMQPMessage ($body, array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT));
+		
+		$channel->basic_publish ($msg, '', 'dns_record_update');
+		
+		$channel->close();
+		$connection->close();
+		
+		return true;
+	}
 }

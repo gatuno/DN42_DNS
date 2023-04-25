@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_CNAME extends Gatuf_Form {
+class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];
@@ -13,13 +13,13 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
-		$this->fields['cname'] = new Gatuf_Form_Field_Varchar (
+		$this->fields['txt'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('Hostname'),
-				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
+				'label' => __('Text data'),
+				'help_text' => __("Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple 255 character segments."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$ttl_values = array (
@@ -50,21 +50,19 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		
 		if ($name == '@') return '@';
 		
-		if (filter_var ($name, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
+		if (filter_var ($name, FILTER_VALIDATE_DOMAIN) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
 		return $name;
 	}
 	
-	public function clean_cname () {
-		$cname = $this->cleaned_data['cname'];
+	public function clean_txt () {
+		$txt = $this->cleaned_data['txt'];
 		
-		if (filter_var ($cname, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
-			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
-		}
+		preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $txt);
 		
-		return $cname;
+		return $txt;
 	}
 	
 	public function clean () {
@@ -86,27 +84,9 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 			}
 		}
 		
-		if ($name == $this->dominio->dominio) {
-			throw new Gatuf_Form_Invalid (__('CNAME at zone apex is not allowed. (rfc1912 & rfc2181)'));
-		}
-		
 		$this->cleaned_data['name'] = $name;
 		
-		/* Para el CNAME solo asegurarnos que tenga el punto al final */
-		$cname = trim ($this->cleaned_data['cname']);
-		
-		if (substr ($cname, -1) != '.') {
-			$cname = $cname . '.';
-		}
-		
-		$this->cleaned_data['cname'] = $cname;
-		
-		/* Un registro con el mismo nombre, mismo tipo y mismo valor no puede existir duplicado */
-		$sql = new Gatuf_SQL ('type="CNAME" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['cname']));
-		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
-		if ($records_c > 0) {
-			throw new Gatuf_Form_Invalid (__('This record already exists in this zone with the same name and value'));
-		}
+		/* TODO: Revisar si un registro TXT no se puede duplicar por el mismo nombre y valor */
 		
 		return $this->cleaned_data;
 	}
@@ -117,15 +97,17 @@ class DNS42_Form_Record_CNAME extends Gatuf_Form {
 		
 		$record = new DNS42_Record ();
 		
-		$record->dominio = $this->dominio;
-		$record->name = $this->cleaned_data ['name'];
-		$record->type = 'CNAME';
-		$record->ttl = $this->cleaned_data ['ttl'];
-		$record->rdata = $this->cleaned_data ['cname'];
+		do {
+			$record->dominio = $this->dominio;
+			$record->name = $this->cleaned_data ['name'];
+			$record->type = 'TXT';
+			$txt = $this->cleaned_data ['ttl'];
+			$record->ttl = substr ($txt, 0, 255);
+			$txt = substr ($txt, 255);
+			$record->rdata = $this->cleaned_data ['txt'];
 		
-		if ($commit) {
 			$record->create ();
-		}
+		} while (strlen ($txt) > 0);
 		
 		return $record;
 	}

@@ -246,19 +246,19 @@ class DNS42_Views_Managed {
 		}
 		
 		$allowed_normal = array (
-			'A' => 'DNS42_Form_Record_A',
-			'AAAA' => 'DNS42_Form_Record_AAAA',
-			'CNAME' => 'DNS42_Form_Record_CNAME',
-			'MX' => 'DNS42_Form_Record_MX',
-			'NS' => 'DNS42_Form_Record_NS',
-			'TXT' => 'DNS42_Form_Record_TXT',
-			'SRV' => 'DNS42_Form_Record_SRV',
+			'A' => 'DNS42_Form_Record_Add_A',
+			'AAAA' => 'DNS42_Form_Record_Add_AAAA',
+			'CNAME' => 'DNS42_Form_Record_Add_CNAME',
+			'MX' => 'DNS42_Form_Record_Add_MX',
+			'NS' => 'DNS42_Form_Record_Add_NS',
+			'TXT' => 'DNS42_Form_Record_Add_TXT',
+			'SRV' => 'DNS42_Form_Record_Add_SRV',
 		);
 		$allowed_reverse = array (
-			'CNAME' => 'DNS42_Form_Record_CNAME',
-			'PTR' => 'DNS42_Form_Record_PTR',
-			'NS' => 'DNS42_Form_Record_NS',
-			'TXT' => 'DNS42_Form_Record_TXT',
+			'CNAME' => 'DNS42_Form_Record_Add_CNAME',
+			'PTR' => 'DNS42_Form_Record_Add_PTR',
+			'NS' => 'DNS42_Form_Record_Add_NS',
+			'TXT' => 'DNS42_Form_Record_Add_TXT',
 		);
 		
 		$type = mb_strtoupper ($match[2]);
@@ -367,6 +367,88 @@ class DNS42_Views_Managed {
 		                                         array ('page_title' => __('Delete record'),
 		                                                'record' => $record,
 		                                                'managed' => $managed),
+		                                         $request);
+	}
+	
+	public $actualizar_registro_precond = array ('Gatuf_Precondition::loginRequired');
+	public function actualizar_registro ($request, $match) {
+		$record = new DNS42_Record ();
+		
+		if (false === ($record->get($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$managed = $record->get_dominio ();
+		
+		if ($request->user->id != $managed->owner) {
+			/* La otra posibilidad es que es sea un sub-administrador */
+			$found = false;
+			$allowed_users = $managed->get_users_list ();
+			foreach ($allowed_users as $one) {
+				if ($one->id == $request->user->id) {
+					$found = true;
+				}
+			}
+			if (!$found) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
+		}
+		
+		if ($record->locked) {
+			if ($managed->reversa) {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+			} else {
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			}
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		$update_forms = array (
+			'A' => 'DNS42_Form_Record_Update_A',
+			'AAAA' => 'DNS42_Form_Record_Update_AAAA',
+			'CNAME' => 'DNS42_Form_Record_Update_CNAME',
+			'MX' => 'DNS42_Form_Record_Update_MX',
+			'NS' => 'DNS42_Form_Record_Update_NS',
+			'TXT' => 'DNS42_Form_Record_Update_TXT',
+			'SRV' => 'DNS42_Form_Record_Update_SRV',
+			'PTR' => 'DNS42_Form_Record_Update_PTR',
+		);
+		
+		$form_type = $update_forms[$record->type];
+		
+		$title = sprintf (__('Update record %s'), $record->type);
+		$extra = array ('record' => $record);
+		if ($request->method == 'POST') {
+			$form = new $form_type ($request->POST, $extra);
+			
+			if ($form->isValid ()) {
+				$old_record_name = $record->name;
+				$old_record_rdata = $record->rdata;
+				$old_record_ttl = $record->ttl;
+				
+				$record = $form->save ();
+				
+				if ($managed->delegacion == 2) {
+					$delegar = DNS42_RMQ::send_update_record ($record, $old_record_name, $old_record_rdata);
+				}
+				
+				if ($managed->reversa) {
+					$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+				} else {
+					$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+				}
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new $form_type (null, $extra);
+		}
+		
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/actualizar_registro.html',
+		                                         array ('page_title' => $title,
+		                                                'managed' => $managed,
+		                                                'record' => $record,
+		                                                'form' => $form),
 		                                         $request);
 	}
 	

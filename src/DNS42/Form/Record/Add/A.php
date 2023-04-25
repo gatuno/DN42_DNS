@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_NS extends Gatuf_Form {
+class DNS42_Form_Record_Add_A extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];
@@ -13,13 +13,13 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
-		$this->fields['hostname'] = new Gatuf_Form_Field_Varchar (
+		$this->fields['ipv4'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('Nameserver name'),
-				'help_text' => __("A nameserver should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
+				'label' => __('IPv4 Address'),
+				'help_text' => __("An IPv4 address must be a decimal dotted quad string, for example: '192.168.123.10'"),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
+				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
 		$ttl_values = array (
@@ -50,21 +50,21 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 		
 		if ($name == '@') return '@';
 		
-		if (filter_var ($name, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
+		if (filter_var ($name, FILTER_VALIDATE_DOMAIN) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
 		return $name;
 	}
 	
-	public function clean_hostname () {
-		$hostname = $this->cleaned_data['hostname'];
+	public function clean_ipv4 () {
+		$ipv4 = $this->cleaned_data['ipv4'];
 		
-		if (filter_var ($hostname, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
-			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
+		if (filter_var ($ipv4, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) == false) {
+			throw new Gatuf_Form_Invalid (__('Invalid IPv4 Address'));
 		}
 		
-		return $hostname;
+		return $ipv4;
 	}
 	
 	public function clean () {
@@ -88,17 +88,11 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 		
 		$this->cleaned_data['name'] = $name;
 		
-		/* Para el hostname solo asegurarnos que tenga el punto al final */
-		$hostname = trim ($this->cleaned_data['hostname']);
-		
-		if (substr ($hostname, -1) != '.') {
-			$hostname = $hostname . '.';
-		}
-		
-		$this->cleaned_data['hostname'] = $hostname;
+		$ipv4 = inet_ntop (inet_pton ($this->cleaned_data['ipv4']));
+		$this->cleaned_data['ipv4'] = $ipv4;
 		
 		/* Un registro con el mismo nombre, mismo tipo y mismo valor no puede existir duplicado */
-		$sql = new Gatuf_SQL ('type="NS" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['hostname']));
+		$sql = new Gatuf_SQL ('type="A" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['ipv4']));
 		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
 		if ($records_c > 0) {
 			throw new Gatuf_Form_Invalid (__('This record already exists in this zone with the same name and value'));
@@ -115,9 +109,9 @@ class DNS42_Form_Record_NS extends Gatuf_Form {
 		
 		$record->dominio = $this->dominio;
 		$record->name = $this->cleaned_data ['name'];
-		$record->type = 'NS';
+		$record->type = 'A';
 		$record->ttl = $this->cleaned_data ['ttl'];
-		$record->rdata = $this->cleaned_data ['hostname'];
+		$record->rdata = $this->cleaned_data ['ipv4'];
 		
 		if ($commit) {
 			$record->create ();

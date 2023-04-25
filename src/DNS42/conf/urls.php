@@ -171,4 +171,11 @@ $ctl[] = array (
 	'method' => 'eliminar_registro',
 );
 
+$ctl[] = array (
+	'regex' => '#^/managed/update/record/(\d+)/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'actualizar_registro',
+);
+
 return $ctl;

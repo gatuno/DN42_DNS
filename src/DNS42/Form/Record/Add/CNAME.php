@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_A extends Gatuf_Form {
+class DNS42_Form_Record_Add_CNAME extends Gatuf_Form {
 	private $dominio;
 	public function initFields($extra=array()) {
 		$this->dominio = $extra['dominio'];
@@ -13,13 +13,13 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
-		$this->fields['ipv4'] = new Gatuf_Form_Field_Varchar (
+		$this->fields['cname'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('IPv4 Address'),
-				'help_text' => __("An IPv4 address must be a decimal dotted quad string, for example: '192.168.123.10'"),
+				'label' => __('Hostname'),
+				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$ttl_values = array (
@@ -50,21 +50,21 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 		
 		if ($name == '@') return '@';
 		
-		if (filter_var ($name, FILTER_VALIDATE_DOMAIN) == false) {
+		if (filter_var ($name, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
 		return $name;
 	}
 	
-	public function clean_ipv4 () {
-		$ipv4 = $this->cleaned_data['ipv4'];
+	public function clean_cname () {
+		$cname = $this->cleaned_data['cname'];
 		
-		if (filter_var ($ipv4, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) == false) {
-			throw new Gatuf_Form_Invalid (__('Invalid IPv4 Address'));
+		if (filter_var ($cname, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
+			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
-		return $ipv4;
+		return $cname;
 	}
 	
 	public function clean () {
@@ -86,13 +86,23 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 			}
 		}
 		
+		if ($name == $this->dominio->dominio) {
+			throw new Gatuf_Form_Invalid (__('CNAME at zone apex is not allowed. (rfc1912 & rfc2181)'));
+		}
+		
 		$this->cleaned_data['name'] = $name;
 		
-		$ipv4 = inet_ntop (inet_pton ($this->cleaned_data['ipv4']));
-		$this->cleaned_data['ipv4'] = $ipv4;
+		/* Para el CNAME solo asegurarnos que tenga el punto al final */
+		$cname = trim ($this->cleaned_data['cname']);
+		
+		if (substr ($cname, -1) != '.') {
+			$cname = $cname . '.';
+		}
+		
+		$this->cleaned_data['cname'] = $cname;
 		
 		/* Un registro con el mismo nombre, mismo tipo y mismo valor no puede existir duplicado */
-		$sql = new Gatuf_SQL ('type="A" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['ipv4']));
+		$sql = new Gatuf_SQL ('type="CNAME" AND dominio=%s AND name=%s AND rdata=%s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['cname']));
 		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
 		if ($records_c > 0) {
 			throw new Gatuf_Form_Invalid (__('This record already exists in this zone with the same name and value'));
@@ -109,9 +119,9 @@ class DNS42_Form_Record_A extends Gatuf_Form {
 		
 		$record->dominio = $this->dominio;
 		$record->name = $this->cleaned_data ['name'];
-		$record->type = 'A';
+		$record->type = 'CNAME';
 		$record->ttl = $this->cleaned_data ['ttl'];
-		$record->rdata = $this->cleaned_data ['ipv4'];
+		$record->rdata = $this->cleaned_data ['cname'];
 		
 		if ($commit) {
 			$record->create ();

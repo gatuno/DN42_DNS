@@ -1,0 +1,17 @@
+{extends 'dns42/base.html'}
+{block body}
+{if $form.errors}
+<div class="errors">
+	<p>{trans 'The form has errors:'}</p>
+</div>
+{/if}
+<form method="post" action=".">
+	<table>
+	<tr><td><strong>{trans 'Domain'}:</strong></td><td>{$managed.dominio}</td></tr>
+	{$form.render_table}
+		<tr>
+			<td>&nbsp;</td><td><input type="submit" value="{trans 'Update record'}" /> - <a href="{url 'DNS42_Views_Managed::administrar', array ($managed.dominio)}">{trans 'Cancel'}</a></td>
+		</tr>
+	</table>
+</form>
+{/block}
