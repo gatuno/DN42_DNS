@@ -36,11 +36,19 @@
 <thead><tr><th>{trans 'Name'}</th><th>{trans 'Type'}</th><th>{trans 'TTL'}</th><th>{trans 'Priority'}</th><th>{trans 'Data'}</th><th>{trans 'Delete'}</th></tr></thead>
 <tbody>{foreach $records as $r}
 	{if $r.locked}<tr class="tr_locked">{else}<tr>{/if}
-	<td class="td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.name}</a></td>
-	<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}"><span class="rrlabel {$r.type}">{$r.type}</span></a></td>
-	<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.ttl}</a></td>
-	<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.format_priority()}</a></td>
-	<td class="td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.format_rdata ()}</a></td>
+	{if $r.can_be_updated()}
+		<td class="td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.name}</a></td>
+		<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}"><span class="rrlabel {$r.type}">{$r.type}</span></a></td>
+		<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.ttl}</a></td>
+		<td class="td_center td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.format_priority()}</a></td>
+		<td class="td_update" onclick="update_record(event)"><a href="{url 'DNS42_Views_Managed::actualizar_registro', array ($r.id)}">{$r.format_rdata ()}</a></td>
+	{else}
+		<td>{$r.name}</td>
+		<td class="td_center"><span class="rrlabel {$r.type}">{$r.type}</span></td>
+		<td class="td_center">{$r.ttl}</td>
+		<td class="td_center">{$r.format_priority()}</td>
+		<td>{$r.format_rdata ()}</td>
+	{/if}
 	{if $r.locked}<td class="td_center td_locked">🔒</td>{else}
 	<td class="td_center td_delete" onclick="delete_record(event)">
 	<a href="{url 'DNS42_Views_Managed::eliminar_registro', array ($r.id)}">➖</a></td>{/if}

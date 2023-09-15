@@ -1,25 +1,27 @@
 <?php
 
-class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
+class DNS42_Form_Record_Update_AAAA extends Gatuf_Form {
+	private $record;
 	private $dominio;
 	public function initFields($extra=array()) {
-		$this->dominio = $extra['dominio'];
+		$this->record = $extra['record'];
+		$this->dominio = $this->record->get_dominio ();
 		$this->fields['name'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
-				'initial' => '',
+				'initial' => $this->record->name,
 				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
-		$this->fields['txt'] = new Gatuf_Form_Field_Varchar (
+		$this->fields['ipv6'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('Text data'),
-				'help_text' => __("Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple 255 character segments."),
-				'initial' => '',
-				'widget_attrs' => array ('autocomplete' => 'off'),
+				'label' => __('IPv6 Address'),
+				'help_text' => __("An IPv6 address must a coloned hex IPv6 address string, for example: '2001:db8::c0ff:e:e'"),
+				'initial' => $this->record->rdata,
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 40),
 		));
 		
 		$ttl_values = array (
@@ -39,7 +41,7 @@ class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
 				'required' => true,
 				'label' => __('TTL (Time to live)'),
 				'help_text' => __("The TTL (time to live) indicates how long a DNS record is valid for - and therefore when the address needs to be rechecked."),
-				'initial' => 86400,
+				'initial' => $this->record->ttl,
 				'widget' => 'Gatuf_Form_Widget_SelectInput',
 				'choices' => $ttl_values,
 		));
@@ -57,13 +59,14 @@ class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
 		return $name;
 	}
 	
-	public function clean_txt () {
-		$txt = $this->cleaned_data['txt'];
+	public function clean_ipv6 () {
+		$ipv6 = $this->cleaned_data['ipv6'];
 		
-		preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $txt);
-		$txt = trim ($txt, '"');
+		if (filter_var ($ipv6, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) == false) {
+			throw new Gatuf_Form_Invalid (__('Invalid IPv6 Address'));
+		}
 		
-		return $txt;
+		return $ipv6;
 	}
 	
 	public function clean () {
@@ -87,30 +90,32 @@ class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
 		
 		$this->cleaned_data['name'] = $name;
 		
-		/* TODO: Revisar si un registro TXT no se puede duplicar por el mismo nombre y valor */
+		$ipv6 = inet_ntop (inet_pton ($this->cleaned_data['ipv6']));
+		$this->cleaned_data['ipv6'] = $ipv6;
+		
+		/* Si está actualizando un registro, no puede duplicar datos con otros registros con los mismos valores */
+		$sql = new Gatuf_SQL ('type="AAAA" AND dominio=%s AND name=%s AND rdata=%s AND id != %s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['ipv6'], $this->record->id));
+		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
+		if ($records_c > 0) {
+			throw new Gatuf_Form_Invalid (__('The update record data duplicates in this zone with the same name and value'));
+		}
 		
 		return $this->cleaned_data;
 	}
+	
 	public function save ($commit = true) {
 		if (!$this->isValid()) {
 			throw new Exception (__('Cannot save an invalid form.'));
 		}
 		
-		$record = new DNS42_Record ();
+		$this->record->name = $this->cleaned_data ['name'];
+		$this->record->ttl = $this->cleaned_data ['ttl'];
+		$this->record->rdata = $this->cleaned_data ['ipv6'];
 		
-		$txt = $this->cleaned_data ['txt'];
-		do {
-			$record->dominio = $this->dominio;
-			$record->name = $this->cleaned_data ['name'];
-			$record->type = 'TXT';
-			$record->ttl = $this->cleaned_data ['ttl'];
-			$record->rdata = '"'.substr ($txt, 0, 255).'"';
-			
-			$txt = substr ($txt, 255);
+		if ($commit) {
+			$this->record->update ();
+		}
 		
-			$record->create ();
-		} while (strlen ($txt) > 0);
-		
-		return $record;
+		return $this->record;
 	}
 }

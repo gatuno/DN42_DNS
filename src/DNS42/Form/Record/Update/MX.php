@@ -1,6 +1,6 @@
 <?php
 
-class DNS42_Form_Record_Update_A extends Gatuf_Form {
+class DNS42_Form_Record_Update_MX extends Gatuf_Form {
 	private $record;
 	private $dominio;
 	public function initFields($extra=array()) {
@@ -15,13 +15,25 @@ class DNS42_Form_Record_Update_A extends Gatuf_Form {
 				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
-		$this->fields['ipv4'] = new Gatuf_Form_Field_Varchar (
+		$toks = explode (" ", $this->record->rdata, 2);
+		$this->fields['priority'] = new Gatuf_Form_Field_Integer (
 			array (
 				'required' => true,
-				'label' => __('IPv4 Address'),
-				'help_text' => __("An IPv4 address must be a decimal dotted quad string, for example: '192.168.123.10'"),
-				'initial' => $this->record->rdata,
+				'label' => __('Priority'),
+				'help_text' => __("To differentiate them, each MX record has a priority (lower the number, higher the priority). The MX record with the highest priority is the actual target computer where mail boxes are located. '10' is a good default."),
+				'initial' => $toks[0],
+				'min' => 0,
+				'max' => 65535,
 				'widget_attrs' => array ('autocomplete' => 'off'),
+		));
+		
+		$this->fields['hostname'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => __('Hostname'),
+				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An mx may never be an ip/ipv6 address, and must not point to a cname. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail."),
+				'initial' => $toks[1],
+				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
 		$ttl_values = array (
@@ -52,21 +64,21 @@ class DNS42_Form_Record_Update_A extends Gatuf_Form {
 		
 		if ($name == '@') return '@';
 		
-		if (filter_var ($name, FILTER_VALIDATE_DOMAIN) == false) {
+		if (filter_var ($name, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
 			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
 		return $name;
 	}
 	
-	public function clean_ipv4 () {
-		$ipv4 = $this->cleaned_data['ipv4'];
+	public function clean_hostname () {
+		$hostname = $this->cleaned_data['hostname'];
 		
-		if (filter_var ($ipv4, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) == false) {
-			throw new Gatuf_Form_Invalid (__('Invalid IPv4 Address'));
+		if (filter_var ($hostname, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) == false) {
+			throw new Gatuf_Form_Invalid (__('Invalid domain name'));
 		}
 		
-		return $ipv4;
+		return $hostname;
 	}
 	
 	public function clean () {
@@ -90,14 +102,21 @@ class DNS42_Form_Record_Update_A extends Gatuf_Form {
 		
 		$this->cleaned_data['name'] = $name;
 		
-		$ipv4 = inet_ntop (inet_pton ($this->cleaned_data['ipv4']));
-		$this->cleaned_data['ipv4'] = $ipv4;
+		/* Para el hostname solo asegurarnos que tenga el punto al final */
+		$hostname = trim ($this->cleaned_data['hostname']);
 		
-		/* Si está actualizando un registro, no puede duplicar datos con otros registros con los mismos valores */
-		$sql = new Gatuf_SQL ('type="A" AND dominio=%s AND name=%s AND rdata=%s AND id != %s', array ($this->dominio->id, $this->cleaned_data['name'], $this->cleaned_data['ipv4'], $this->record->id));
+		if (substr ($hostname, -1) != '.') {
+			$hostname = $hostname . '.';
+		}
+		
+		$this->cleaned_data['hostname'] = $hostname;
+		$rdata = sprintf ("%s %s", $this->cleaned_data['priority'], $this->cleaned_data ['hostname']);
+		
+		/* Un registro con el mismo nombre, mismo tipo y mismo valor no puede existir duplicado */
+		$sql = new Gatuf_SQL ('type="MX" AND dominio=%s AND name=%s AND rdata=%s AND id != %s', array ($this->dominio->id, $this->cleaned_data['name'], $rdata, $this->record->id));
 		$records_c = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen (), 'count' => true));
 		if ($records_c > 0) {
-			throw new Gatuf_Form_Invalid (__('The update record data duplicates in this zone with the same name and value'));
+			throw new Gatuf_Form_Invalid (__('This record already exists in this zone with the same name and value'));
 		}
 		
 		return $this->cleaned_data;
@@ -108,9 +127,10 @@ class DNS42_Form_Record_Update_A extends Gatuf_Form {
 			throw new Exception (__('Cannot save an invalid form.'));
 		}
 		
+		$rdata = sprintf ("%s %s", $this->cleaned_data['priority'], $this->cleaned_data ['hostname']);
 		$this->record->name = $this->cleaned_data ['name'];
 		$this->record->ttl = $this->cleaned_data ['ttl'];
-		$this->record->rdata = $this->cleaned_data ['ipv4'];
+		$this->record->rdata = $rdata;
 		
 		if ($commit) {
 			$this->record->update ();

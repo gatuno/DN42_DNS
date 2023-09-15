@@ -37,11 +37,14 @@ function record_update ($record_id, $old_record_name, $old_record_rdata) {
 		case 'CNAME':
 		case 'MX':
 		case 'NS':
-		case 'TXT':
 		case 'PTR':
 		case 'SRV':
 			$line = sprintf ("%s %s IN %s %s", $record->name, $record->ttl, $record->type, $record->rdata);
 			$old_record = sprintf ("%s 0 IN %s %s", $old_record_name, $record->type, $old_record_rdata);
+			break;
+		case 'TXT':
+			$line = sprintf ("%s %s IN %s %s", $record->name, $record->ttl, $record->type, $record->rdata);
+			$old_record = sprintf ("%s 0 IN %s \"%s\"", $old_record_name, $record->type, $old_record_rdata);
 			break;
 		default:
 			// Cerrar la base de datos para evitar desconexiones por timeout

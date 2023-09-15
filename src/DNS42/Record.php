@@ -73,5 +73,11 @@ class DNS42_Record extends Gatuf_Model {
 		}
 		return $this->rdata;
 	}
+	
+	public function can_be_updated () {
+		$updatable = array ('A', 'AAAA', 'CNAME', 'NS', 'MX', 'TXT');
+		if ($this->locked) return false;
+		return in_array ($this->type, $updatable);
+	}
 }
 

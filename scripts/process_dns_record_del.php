@@ -31,10 +31,12 @@ function record_del ($managed_name, $record_name, $record_type, $record_value) {
 		case 'CNAME':
 		case 'MX':
 		case 'NS':
-		case 'TXT':
 		case 'PTR':
 		case 'SRV':
 			$line = sprintf ("%s 300 IN %s %s", $record_name, $record_type, $record_value);
+			break;
+		case 'TXT':
+			$line = sprintf ("%s 300 IN %s \"%s\"", $record_name, $record_type, $record_value);
 			break;
 		default:
 			// Cerrar la base de datos para evitar desconexiones por timeout

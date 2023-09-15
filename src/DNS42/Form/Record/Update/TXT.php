@@ -1,15 +1,17 @@
 <?php
 
-class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
+class DNS42_Form_Record_Update_TXT extends Gatuf_Form {
+	private $record;
 	private $dominio;
 	public function initFields($extra=array()) {
-		$this->dominio = $extra['dominio'];
+		$this->record = $extra['record'];
+		$this->dominio = $this->record->get_dominio ();
 		$this->fields['name'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
 				'label' => __('Name'),
 				'help_text' => __("A name may only contain A-Z, a-z, 0-9, _, -, or .. '@' or the hostname may be used where appropriate."),
-				'initial' => '',
+				'initial' => $this->record->name,
 				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),
 		));
 		
@@ -18,7 +20,7 @@ class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
 				'required' => true,
 				'label' => __('Text data'),
 				'help_text' => __("Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple 255 character segments."),
-				'initial' => '',
+				'initial' => $this->record->rdata,
 				'widget_attrs' => array ('autocomplete' => 'off'),
 		));
 		
@@ -39,7 +41,7 @@ class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
 				'required' => true,
 				'label' => __('TTL (Time to live)'),
 				'help_text' => __("The TTL (time to live) indicates how long a DNS record is valid for - and therefore when the address needs to be rechecked."),
-				'initial' => 86400,
+				'initial' => $this->record->ttl,
 				'widget' => 'Gatuf_Form_Widget_SelectInput',
 				'choices' => $ttl_values,
 		));
@@ -96,21 +98,28 @@ class DNS42_Form_Record_Add_TXT extends Gatuf_Form {
 			throw new Exception (__('Cannot save an invalid form.'));
 		}
 		
-		$record = new DNS42_Record ();
-		
+		$first = true;
+		$record = $this->record;
 		$txt = $this->cleaned_data ['txt'];
 		do {
-			$record->dominio = $this->dominio;
-			$record->name = $this->cleaned_data ['name'];
-			$record->type = 'TXT';
-			$record->ttl = $this->cleaned_data ['ttl'];
+			if (!$first) {
+				$record->dominio = $this->dominio;
+				$record->type = 'TXT';
+			}
 			$record->rdata = '"'.substr ($txt, 0, 255).'"';
-			
 			$txt = substr ($txt, 255);
-		
-			$record->create ();
+			$record->name = $this->cleaned_data ['name'];
+			$record->ttl = $this->cleaned_data ['ttl'];
+			
+			if ($first) {
+				$record->update ();
+				$first = false;
+			} else {
+				$record->create ();
+			}
+			$record = new DNS42_Record ();
 		} while (strlen ($txt) > 0);
 		
-		return $record;
+		return $this->record;
 	}
 }

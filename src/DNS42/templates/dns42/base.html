@@ -20,7 +20,7 @@
 		{if !$user.isAnonymous()}
 		<li class="nav-item" >
 			<a class="nav-link{if $active_tab == 'user'} active{/if}" href="{url 'DNS42_Views_Users::cambiar_pass'}">
-			<img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=22" alt=" "/>
+			<img src="http://s.gravatar.com/avatar/{$user.email|md5}?s=22" alt=" "/>
 			{$user.first_name} {$user.last_name}</a></li>{/if}
 		<li class="nav-item">
 		{if !$user.isAnonymous()}

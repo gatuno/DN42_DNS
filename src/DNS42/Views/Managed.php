@@ -394,7 +394,7 @@ class DNS42_Views_Managed {
 			}
 		}
 		
-		if ($record->locked) {
+		if ($record->can_be_updated () == false) {
 			if ($managed->reversa) {
 				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
 			} else {
@@ -430,6 +430,15 @@ class DNS42_Views_Managed {
 				
 				if ($managed->delegacion == 2) {
 					$delegar = DNS42_RMQ::send_update_record ($record, $old_record_name, $old_record_rdata);
+				}
+				
+				/* Como Bind no permite que el mismo registro tenga diferentes TTL, actualizar todos los registros que coincidan por nombre y tipo al mismo TTL */
+				$sql = new Gatuf_SQL ('dominio=%s AND name=%s AND type=%s AND id!=%s', array ($record->dominio, $record->name, $record->type, $record->id));
+				$others = Gatuf::factory ('DNS42_Record')->getList (array ('filter' => $sql->gen ()));
+				foreach ($others as $other) {
+					$other->ttl = $record->ttl;
+					
+					$other->update ();
 				}
 				
 				if ($managed->reversa) {
