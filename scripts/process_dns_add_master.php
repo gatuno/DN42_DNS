@@ -181,6 +181,7 @@ function check_master ($managed) {
 
 function zone_add_master ($managed_domain_id) {
 	$managed = new DNS42_ManagedDomain ();
+	$is_dn42_zone = false;
 	
 	if (false === $managed->get ($managed_domain_id)) {
 		return false;
@@ -196,13 +197,22 @@ function zone_add_master ($managed_domain_id) {
 	
 	if ($managed->reversa) {
 		$good_delegation = check_reverse ($managed);
+		
+		/* TODO: Poner aquí la excepcion para la red de DN42 */
 	} else {
 		$good_delegation = check_master ($managed);
+		
+		/* Si el dominio termina en .dn42 y la delegacion fué fallida, omitir y permitir que la zona sea creada */
+		if ($good_delegation == false) {
+			$dn42_domain = ".dn42";
+			$length = strlen ($dn42_domain);
+			if (substr ($managed->domain, -$length) == $dn42_domain) {
+				$is_dn42_zone = true;
+			}
+		}
 	}
 	
-	var_dump ("Delegacion");
-	var_dump ($good_delegation);
-	if ($good_delegation) {
+	if ($good_delegation || $is_dn42_zone) {
 		/* Recuperar la IP del master */
 		$masters = Gatuf::config ('rndc_master', array ());
 		if (count ($masters) == 0) {
@@ -253,7 +263,11 @@ function zone_add_master ($managed_domain_id) {
 			$records = $managed->get_records_list ();
 			
 			/* Crear todos los records correspondientes */
-			$managed->delegacion = 2;
+			if ($good_delegation == false) {
+				$managed->delegacion = 6;
+			} else {
+				$managed->delegacion = 2;
+			}
 			$managed->update ();
 			
 			/* Ahora, crear todos los registros pendientes */

@@ -40,7 +40,7 @@ $callback_zone_slave_check_delegation = function ($msg) {
 };
 
 $callback_zone_master_slave_add = function ($msg) {
-	$full_exec = sprintf ("php %s/process_dns_master_slave.php %s 2>&1", dirname (__FILE__), $msg->body);
+	$full_exec = sprintf ("php %s/process_dns_add_master_slave.php %s 2>&1", dirname (__FILE__), $msg->body);
 	
 	exec ($full_exec, $output, $return_code);
 	foreach ($output as $line) printf ("%s\n", $line);
@@ -84,11 +84,21 @@ $callback_record_update = function ($msg) {
 	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 };
 
+$callback_zone_check_delegation = function ($msg) {
+	$full_exec = sprintf ("php %s/process_dns_check_delegation.php %s 2>&1", dirname (__FILE__), $msg->body);
+	
+	exec ($full_exec, $output, $return_code);
+	foreach ($output as $line) printf ("%s\n", $line);
+	
+	$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+};
+
 $channel->queue_declare ('dns_zone_add', false, true, false, false);
 $channel->queue_declare ('dns_zone_slave_add', false, true, false, false);
 $channel->queue_declare ('dns_record_add', false, true, false, false);
 $channel->queue_declare ('dns_record_update', false, true, false, false);
 $channel->queue_declare ('dns_record_del', false, true, false, false);
+$channel->queue_declare ('dns_zone_check_delegation', false, true, false, false);
 $channel->exchange_declare('dns_zone_del', 'fanout', false, false, false);
 $channel->exchange_declare('dns_zone_master_slave_add', 'fanout', false, false, false);
 
@@ -129,6 +139,7 @@ if ($type == 'master') {
 	$channel->basic_consume ('dns_record_add', '', false, false, false, false, $callback_record_add);
 	$channel->basic_consume ('dns_record_update', '', false, false, false, false, $callback_record_update);
 	$channel->basic_consume ('dns_record_del', '', false, false, false, false, $callback_record_del);
+	$channel->basic_consume ('dns_zone_check_delegation', '', false, false, false, false, $callback_zone_check_delegation);
 } else {
 	$channel->queue_declare ($queue_name.'_slave_add', false, true, false, false);
 	$channel->queue_bind ($queue_name.'_slave_add', 'dns_zone_master_slave_add');

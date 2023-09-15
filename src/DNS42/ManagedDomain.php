@@ -46,7 +46,13 @@ class DNS42_ManagedDomain extends Gatuf_Model {
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
-			       'default' => 0, /* 0 = Delegación en prueba, 1 = Delegación fallida, 2 = Delegación buena */
+			       'default' => 0,
+			       /* 0 = Delegación en prueba,
+			        * 1 = Delegación fallida,
+			        * 2 = Delegación buena,
+			        * 3 = Falló crear el archivo de zona
+			        * 4 = Falló crear la zona contra el bind
+			        * 6 = Zona activada PERO sin verificar */
 			),
 			'maestra' =>
 			array (

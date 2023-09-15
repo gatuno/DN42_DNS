@@ -8,8 +8,11 @@
 {if $managed.reversa}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', array ($managed.prefix)}{else}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', array ($managed.dominio)}{/if}{blocktrans}You can <a href="{$check_url}">manually schedule</a> another test{/blocktrans}</p>
 {elseif $managed.delegacion == 0}
 <div class="in_progress">{trans 'Zone validation in progress. Please wait at least 1 minute and refresh the page.'}</div>
+{elseif $managed.delegacion == 6}
+<div class="in_progress">{trans 'Your zone is active, but has not been validated. Please delegate to ns1.gatuno.dn42, otherwise your zone will be deleted.'}</div>
+<div>TODO: Poner un boton para revisar delegacion</div>
 {/if}
-{if $managed.delegacion != 2}
+{if $managed.delegacion == 0 || $managed->delegacion == 1}
 <p>{trans 'You can create records on the domain, but the zone will became active in the DNS until delegation works.'}</p>
 {/if}
 <ul class="new_record">

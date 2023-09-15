@@ -162,7 +162,7 @@ class DNS42_Views_Managed {
 		}
 		
 		if ($request->method == 'POST') {
-			if ($managed->delegacion == 2) {
+			if ($managed->delegacion == 2 || $managed->delegacion == 6) {
 				DNS42_RMQ::send_delete_domain ($managed);
 			}
 			
@@ -223,6 +223,8 @@ class DNS42_Views_Managed {
 		
 		if ($managed->delegacion == 2) {
 			$request->user->setMessage (1, __("The delegation for this zone was found and is correct. The zone is now active"));
+		} else if ($managed->delegacion == 6) {
+			$delegar = DNS42_RMQ::send_check_delegation ($managed);
 		} else {
 			$delegar = DNS42_RMQ::send_create_domain ($managed);
 			
@@ -241,8 +243,10 @@ class DNS42_Views_Managed {
 	public function agregar_registro ($request, $match) {
 		$managed = self::recover_domain ($match[1], $request->user);
 		
-		if ($managed->delegacion != 2) {
+		if ($managed->delegacion == 0 || $managed->delegacion == 1) {
 			$request->user->setMessage (3, __('You can create records on the domain, but the zone will became active in the DNS until delegation works.'));
+		} else if ($managed->delegacion == 6) {
+			$request->user->setMessage (3, __('You can create records on the domain, but please check delegation.'));
 		}
 		
 		$allowed_normal = array (
@@ -291,7 +295,7 @@ class DNS42_Views_Managed {
 			if ($form->isValid ()) {
 				$record = $form->save ();
 				
-				if ($managed->delegacion == 2) {
+				if ($managed->delegacion == 2 || $managed->delegacion == 6) {
 					$delegar = DNS42_RMQ::send_add_record ($record);
 				}
 				
@@ -348,7 +352,7 @@ class DNS42_Views_Managed {
 		}
 		
 		if ($request->method == 'POST') {
-			if ($managed->delegacion == 2) {
+			if ($managed->delegacion == 2 || $managed->delegacion == 6) {
 				DNS42_RMQ::send_del_record ($record);
 			}
 			
@@ -428,7 +432,7 @@ class DNS42_Views_Managed {
 				
 				$record = $form->save ();
 				
-				if ($managed->delegacion == 2) {
+				if ($managed->delegacion == 2 || $managed->delegacion == 6) {
 					$delegar = DNS42_RMQ::send_update_record ($record, $old_record_name, $old_record_rdata);
 				}
 				
