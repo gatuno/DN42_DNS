@@ -193,6 +193,7 @@ function zone_add_master ($managed_domain_id) {
 		$good_delegation = check_reverse ($managed);
 		
 		/* TODO: Poner aquí la excepcion para la red de DN42 */
+		$is_dn42_zone = true;
 	} else {
 		$good_delegation = check_master ($managed);
 		

@@ -51,7 +51,9 @@ class DNS42_Form_Managed_AgregarInversa extends Gatuf_Form {
 			/* Validar que el último octeto sea la red */
 			$last_octeto = ((int) substr ($ip, strrpos ($ip, '.') + 1));
 			
-			$net = $last_octeto & (1 << (8 - ($int_mask - 24)));
+			$pre_mask = (1 << (8 - ($int_mask - 24))) - 1;
+			$pre_mask = ~$pre_mask;
+			$net = $last_octeto & $pre_mask;
 			
 			if ($last_octeto != $net) {
 				throw new Gatuf_Form_Invalid (__('Malformed prefix. Perhaps you are not on the subnet boundary?'));
@@ -83,9 +85,9 @@ class DNS42_Form_Managed_AgregarInversa extends Gatuf_Form {
 			$third_octeto = substr ($ip, $dot_two + 1, $dot_three - $dot_two - 1);
 			$last_octeto = substr ($ip, $dot_three + 1);
 			if ($int_mask > 24) {
-				$net = $last_octeto & (1 << (8 - ($int_mask - 24)));
-				$new_mask = (1 << (8 - ($int_mask - 24))) - 1;
-				$bcast = $net | $new_mask;
+				$pre_mask = (1 << (8 - ($int_mask - 24))) - 1;
+				$pre_mask = ~$pre_mask;
+				$net = $last_octeto & $pre_mask;
 				
 				$dominio = sprintf ("%s/%s.%s.%s.%s.in-addr.arpa", $net, $int_mask, $third_octeto, $second_octeto, $first_octeto);
 			} else {
@@ -146,9 +148,9 @@ class DNS42_Form_Managed_AgregarInversa extends Gatuf_Form {
 			$third_octeto = substr ($ip, $dot_two + 1, $dot_three - $dot_two - 1);
 			$last_octeto = substr ($ip, $dot_three + 1);
 			if ($int_mask > 24) {
-				$net = $last_octeto & (1 << (8 - ($int_mask - 24)));
-				$new_mask = (1 << (8 - ($int_mask - 24))) - 1;
-				$bcast = $net | $new_mask;
+				$pre_mask = (1 << (8 - ($int_mask - 24))) - 1;
+				$pre_mask = ~$pre_mask;
+				$net = $last_octeto & $pre_mask;
 				
 				$prefix = sprintf ("%s.%s.%s.%s_%s", $first_octeto, $second_octeto, $third_octeto, $net, $int_mask);
 				$dominio = sprintf ("%s/%s.%s.%s.%s.in-addr.arpa", $net, $int_mask, $third_octeto, $second_octeto, $first_octeto);

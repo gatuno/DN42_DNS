@@ -678,7 +678,7 @@ class DNS42_Views_Managed {
 				$delegar = DNS42_RMQ::send_create_domain ($managed);
 				
 				/* TODO: Revisar delegar */
-				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar_simple', array ($managed->prefix));
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
