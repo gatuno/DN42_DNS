@@ -31,10 +31,12 @@ class DNS42_Form_Managed_Agregar extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid (__('This DNS zone already exists in this server'));
 		}
 		
-		$ending = substr ($dominio, -5);
-		
-		if ($ending != '.dn42') {
-			throw new Gatuf_Form_Invalid (__('Only .dn42 ending domains are allowed at this moment'));
+		if (Gatuf::config ('only_dn42_domains', false) == true) {
+			$ending = substr ($dominio, -5);
+			
+			if ($ending != '.dn42') {
+				throw new Gatuf_Form_Invalid (__('Only .dn42 ending domains are allowed at this moment'));
+			}
 		}
 		
 		return $dominio;

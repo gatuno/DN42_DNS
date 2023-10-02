@@ -163,6 +163,9 @@ $cfg['rndc_update_port'] = 953;
 # Cuando se agreguen zonas dns, se utilizará esta llave
 $cfg['current_default_update_key'] = 'key_a';
 
+# Configuración que solo permite dominios .dn42
+$cfg['only_dn42_domains'] = false;
+
 $cfg['template_context_processors'] = array ('DNS42_Middleware_ContextPreProcessor');
 
 return $cfg;
