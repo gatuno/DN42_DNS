@@ -206,7 +206,7 @@ function zone_add_master ($managed_domain_id) {
 		if ($good_delegation == false) {
 			$dn42_domain = ".dn42";
 			$length = strlen ($dn42_domain);
-			if (substr ($managed->domain, -$length) == $dn42_domain) {
+			if (substr ($managed->dominio, -$length) == $dn42_domain) {
 				$is_dn42_zone = true;
 			}
 		}

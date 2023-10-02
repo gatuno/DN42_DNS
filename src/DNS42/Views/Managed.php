@@ -207,6 +207,85 @@ class DNS42_Views_Managed {
 		                                         $request);
 	}
 	
+	public $administrar_simple_precond = array ('Gatuf_Precondition::loginRequired');
+	public function administrar_simple ($request, $match, $params) {
+		$managed = self::recover_domain ($match[1], $request->user);
+		
+		$all_records = array ();
+		
+		if (!$managed->reversa) {
+			/* Solo las zonas DNS inversas pueden ser simples */
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		/* Cuando administramos una zona inversa simple, vamos a recuperar TODOS los registros PTR y listarlos de forma "diferente" */
+		$sql = new Gatuf_SQL ('type="PTR"');
+		$records = $managed->get_records_list (array ('filter' => $sql->gen (), 'order' => 'locked DESC, name ASC, rdata ASC'));
+		
+		/* Conseguir el prefijo y la máscara */
+		$toks = explode ('_', $managed->prefix);
+
+		if (count ($toks) != 2) {
+			throw new Exception (__('Undefined'));
+		}
+
+		$prefix = $managed->get_reverse_prefix ();
+		
+		/* Reorganizar cada registro, para que sea el prefijo + "terminacion IP" */
+		$simples = array ();
+		foreach ($records as $record) {
+			$obj = new stdClass;
+			
+			$obj->record = $record;
+			$obj->hostname = trim ($record->rdata, '.');
+			if ($managed->tipo_reversa == 4) {
+				/* Tomamos los primeros octetos de la IP, conforme a la máscara */
+				$obj->prefix = $prefix;
+				$toks = explode ('.', $record->name);
+				
+				$obj->ip = $toks[0];
+			} else if ($managed->tipo_reversa == 6) {
+				$obj->prefix = $prefix;
+				$to_remove = strlen ('.ip6.arpa');
+				$full_ip_parts = array_reverse (explode ('.', substr ($record->name, 0, -$to_remove)));
+				$full_ip = '';
+				for ($g = 0; $g < 32; $g++) {
+					$full_ip .= $full_ip_parts[$g];
+					if (($g % 4) == 3) {
+						$full_ip .= ':';
+					}
+				}
+				$full_ip = trim ($full_ip, ':');
+				
+				/* Convertir con inet_ntop y de regreso para sacar una IP con bloques comprimidos */
+				$ip = inet_ntop (inet_pton ($full_ip));
+				
+				/* Ahora, restar el prefijo que usamos */
+				$ip_part = substr ($ip, strlen ($prefix));
+				$obj->ip = $ip_part;
+			}
+			$simples[] = $obj;
+		}
+		
+		$extra = array ('dominio' => $managed);
+		if (isset ($params['check_form_agregar'])) {
+			$form_agregar = new DNS42_Form_Record_Add_PTRSimple ($request->POST, $extra);
+			$form_agregar->isValid ();
+		} else {
+			$form_agregar = new DNS42_Form_Record_Add_PTRSimple (null, $extra);
+		}
+		
+		$request->active_tab = 'free_dns';
+		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/reversa_simple.html',
+		                                         array ('page_title' => __('Free DNS Management'),
+		                                                'managed' => $managed,
+		                                                'short_prefix' => $prefix,
+		                                                'form_agregar' => $form_agregar,
+		                                                'simples' => $simples),
+		                                         $request);
+	}
+	
 	public $revisar_delegacion_precond = array ('Gatuf_Precondition::loginRequired');
 	public function revisar_delegacion ($request, $match) {
 		$managed = new DNS42_ManagedDomain ();
@@ -318,6 +397,32 @@ class DNS42_Views_Managed {
 		                                         $request);
 	}
 	
+	public $agregar_registro_simple_precond = array ('Gatuf_Precondition::loginRequired');
+	public function agregar_registro_simple ($request, $match) {
+		$managed = self::recover_domain ($match[1], $request->user);
+		
+		if ($request->method != 'POST') {
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar_simple', array ($managed->prefix));
+		}
+		
+		$extra = array ('dominio' => $managed);
+		$form = new DNS42_Form_Record_Add_PTRSimple ($request->POST, $extra);
+
+		if ($form->isValid()) {
+			$record = $form->save();
+			$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar_simple', array ($managed->prefix));
+			
+			if ($managed->delegacion == 2 || $managed->delegacion == 6) {
+				$delegar = DNS42_RMQ::send_add_record ($record);
+			}
+			
+			return new Gatuf_HTTP_Response_Redirect($url);
+		}
+		
+		/* En caso de formulario inválido, retornar la vista de arriba */
+		return $this->administrar_simple ($request, $match, array ('check_form_agregar' => true));
+	}
+	
 	public $eliminar_registro_precond = array ('Gatuf_Precondition::loginRequired');
 	public function eliminar_registro ($request, $match) {
 		$record = new DNS42_Record ();
@@ -351,6 +456,38 @@ class DNS42_Views_Managed {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
+		$simple = false;
+		if ($managed->reversa && isset ($request->REQUEST['simple'])) $simple = true;
+		if ($managed->reversa && $record->type == 'PTR') {
+			/* Calcular la IP completa para las zonas inversas */
+			if ($managed->tipo_reversa == 6) {
+				$domain = '.ip6.arpa';
+				/* Es un IPv6 */
+				$full_hexs = array_reverse (explode ('.', substr ($record->name, 0, -strlen ($domain))));
+				$full_ip = inet_ntop (pack ("H*", implode ('', $full_hexs)));
+			} else if ($managed->tipo_reversa == 4) {
+				/* Es una dirección de IPv4 */
+				$toks = explode ('_', $managed->prefix);
+				$network = $toks[0];
+				$mask = ((int) $toks[1]);
+				
+				$toks = explode ('.', $network);
+				if ($mask >= 24) {
+					$prefix = $toks[0].'.'.$toks[1].'.'.$toks[2].'.';
+				} else if ($mask >= 16) {
+					$prefix = $toks[0].'.'.$toks[1].'.';
+				} else if ($mask >= 8) {
+					$prefix = $toks[0].'.';
+				} else {
+					$prefix = '';
+				}
+				
+				$toks = explode ('.', $record->name);
+				$full_ip = $prefix.$toks[0];
+			}
+			$record->full_ip = $full_ip;
+		}
+		
 		if ($request->method == 'POST') {
 			if ($managed->delegacion == 2 || $managed->delegacion == 6) {
 				DNS42_RMQ::send_del_record ($record);
@@ -359,7 +496,11 @@ class DNS42_Views_Managed {
 			$record->delete ();
 			
 			if ($managed->reversa) {
-				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+				if ($simple) {
+					$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar_simple', array ($managed->prefix));
+				} else {
+					$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->prefix));
+				}
 			} else {
 				$url = Gatuf_HTTP_URL_urlForView ('DNS42_Views_Managed::administrar', array ($managed->dominio));
 			}
@@ -370,6 +511,7 @@ class DNS42_Views_Managed {
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/eliminar_registro.html',
 		                                         array ('page_title' => __('Delete record'),
 		                                                'record' => $record,
+		                                                'simple' => $simple,
 		                                                'managed' => $managed),
 		                                         $request);
 	}

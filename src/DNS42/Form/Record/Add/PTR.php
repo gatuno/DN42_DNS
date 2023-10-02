@@ -16,7 +16,7 @@ class DNS42_Form_Record_Add_PTR extends Gatuf_Form {
 		$this->fields['hostname'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => __('Host name'),
+				'label' => __('Hostname'),
 				'help_text' => __("A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .."),
 				'initial' => '',
 				'widget_attrs' => array ('autocomplete' => 'off', 'size' => 60),

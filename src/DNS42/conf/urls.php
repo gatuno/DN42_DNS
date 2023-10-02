@@ -144,6 +144,14 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/managed/([a-z0-9-\.:_]+)/simple/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'administrar_simple',
+	'params' => array (), /* NOTA: No borrar este params vacio, se usa para saber cuando el formulario de actualizar viene de regreso */
+);
+
+$ctl[] = array (
 	'regex' => '#^/managed/([a-z0-9-\.:_]+)/check/delegation/$#',
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',
@@ -162,6 +170,13 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'DNS42_Views_Managed',
 	'method' => 'agregar_registro',
+);
+
+$ctl[] = array (
+	'regex' => '#^/managed/([a-z0-9-\.:_]+)/add/reverse/simple/$#',
+	'base' => $base,
+	'model' => 'DNS42_Views_Managed',
+	'method' => 'agregar_registro_simple',
 );
 
 $ctl[] = array (

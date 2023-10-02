@@ -5,8 +5,14 @@
 	<table>
 	<tr><td>{trans 'Domain'}: </td><td>{if $managed.reversa}{$managed.prefix_nice ()}{else}{$managed.dominio}{/if}</td></tr>
 	<tr><td>{trans 'Name'}: </td><td>{$record.name} {$record.type} {$record.rdata}</td></tr>
+	{if $managed.reversa && $record.type == 'PTR'}
+		<tr><td>{trans 'Full IP Address'}: </td><td>{$record.full_ip}</td></tr>
+		<tr><td>{trans 'Hostname'}: </td><td>{$record.rdata}</td></tr>
+	{/if}
+	{if $managed.reversa && $simple}<input type="hidden" name="simple" value="1" />{/if}
 		<tr>
-			<td>&nbsp;</td><td><input type="submit" value="{trans 'Delete record'}" /> - <a href="{url 'DNS42_Views_Managed::administrar', array ($managed.dominio)}">{trans 'Cancel'}</a></td>
+			{if $managed.reversa}{if $simple}{aurl 'return_url', 'DNS42_Views_Managed::administrar_simple', array ($managed.prefix)}{else}{aurl 'return_url', 'DNS42_Views_Managed::administrar', array ($managed.prefix)}{/if}{else}{aurl 'return_url', 'DNS42_Views_Managed::administrar', array ($managed.dominio)}{/if}
+			<td>&nbsp;</td><td><input type="submit" value="{trans 'Delete record'}" /> - <a href="{$return_url}">{trans 'Cancel'}</a></td>
 		</tr>
 	</table>
 </form>

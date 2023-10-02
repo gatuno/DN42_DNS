@@ -175,6 +175,7 @@ class DNS42_Form_Managed_AgregarInversa extends Gatuf_Form {
 		$managed->dominio = $dominio;
 		$managed->reversa = true;
 		$managed->maestra = true;
+		$managed->tipo_reversa = $type;
 		$managed->owner = $this->user;
 		$managed->key = $this->key;
 		$managed->good_delegation = false;

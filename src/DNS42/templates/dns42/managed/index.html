@@ -8,7 +8,7 @@
 	<thead><tr><th>{trans 'Domain'}</th><th>{trans 'Action'}</th></tr></thead>
 	<tbody>{foreach $domains as $d}
 	<tr><td>{if $d.reversa}
-	<a href="{url 'DNS42_Views_Managed::administrar', array ($d.prefix)}">{$d.prefix_nice()}</a>
+	<a href="{url 'DNS42_Views_Managed::administrar_simple', array ($d.prefix)}">{$d.prefix_nice()}</a>
 	{else}
 	<a href="{url 'DNS42_Views_Managed::administrar', array ($d.dominio)}">{$d.dominio}</a>
 	{/if}

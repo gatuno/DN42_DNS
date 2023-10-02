@@ -1,0 +1,186 @@
+{extends 'dns42/base.html'}
+{block body}{assign $domain_name = $managed.prefix_nice()}
+<h2>{blocktrans}Managing zone: {$domain_name}{/blocktrans}</h2>
+
+{if $managed.delegacion == 1}
+<div class="bad_delegation">{blocktrans}Zone failed validation test. ERROR: Delegation was not found. Please delegate to ns1.gatuno.dn42 then retry. ({$domain_name}).{/blocktrans}</div>
+<p>
+{if $managed.reversa}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', array ($managed.prefix)}{else}{aurl 'check_url', 'DNS42_Views_Managed::revisar_delegacion', array ($managed.dominio)}{/if}{blocktrans}You can manually <a href="{$check_url}">schedule another test</a>{/blocktrans}</p>
+{elseif $managed.delegacion == 0}
+<div class="in_progress">{trans 'Zone validation in progress. Please wait at least 1 minute and refresh the page.'}</div>
+{elseif $managed.delegacion == 6}
+<div class="in_progress">{trans 'Your zone is active, but has not been validated. Please delegate to ns1.gatuno.dn42, otherwise your zone will be deleted.'}</div>
+<div>TODO: Poner un boton para revisar delegacion</div>
+{/if}
+{if $managed.delegacion == 0 || $managed->delegacion == 1}
+<p>{trans 'You can create records on the domain, but the zone will became active in the DNS until delegation works.'}</p>
+{/if}
+
+{aurl 'switch_url', 'DNS42_Views_Managed::administrar', array ($managed.prefix)}<p>{blocktrans}Switch to <a href="{$switch_url}">advanced editor</a>{/blocktrans}</p>
+<!-- Agregar un registro de forma simple -->
+{if $form_agregar.errors}
+<div class="errors">
+	<p>{trans 'The form has errors:'} {$form_agregar.render_top_errors}</p>
+</div>
+{/if}
+<form action="{url 'DNS42_Views_Managed::agregar_registro_simple', array ($managed.prefix)}" method="post">
+<table class="records_add">
+<thead><tr><th></th><th>{trans 'Address'}</th><th colspan="2">{trans 'Hostname'}</th></tr></thead>
+<tbody>
+	<tr><td>{$short_prefix}</td><td>{$form_agregar.f.IP|safe}</td><td>{$form_agregar.f.hostname|safe}</td><td><input type="submit" value="{trans 'Submit!'}" /></td></tr>
+</tbody>
+</table>
+</form>
+<p></p>
+<!-- La lista completa de registros, de forma simple -->
+<table class="records">
+<thead><tr><th>{trans 'Parent Block'}</th><th>{trans 'Address'}</th><th>{trans 'Hostname'}</th><th>{trans 'Delete'}</th></tr></thead>
+<tbody>{foreach $simples as $s}
+	{if $s.record.locked}<tr class="tr_locked">{else}<tr>{/if}
+		<td>{$s.prefix}</td>
+		<td>{$s.ip}</td>
+		<td>{$s.hostname}</td>
+	{if $s.record.locked}<td class="td_center td_locked">🔒</td>{else}
+	<td class="td_center td_delete" onclick="delete_record(event)">
+	<a href="{url 'DNS42_Views_Managed::eliminar_registro', array ($s.record.id), array ('simple' => 1)}">➖</a></td>{/if}
+	</tr>
+{/foreach}</tbody>
+</table>
+{/block}
+{block javascript}
+{literal}
+<script type="text/javascript">
+function delete_record (event) {
+	if (!e) var e = window.event;
+	e.cancelBubble = true;
+	if (e.stopPropagation) e.stopPropagation();
+
+	var td = e.target;
+
+	var a = td.firstElementChild;
+	a.click ();
+}
+
+function update_record(event) {
+	if (!e) var e = window.event;
+	e.cancelBubble = true;
+	if (e.stopPropagation) e.stopPropagation();
+
+	var td = e.target;
+
+	var a = td.firstElementChild;
+	a.click ();
+}
+
+</script>
+{/literal}
+{/block}
+{block extrahead}
+<style type="text/css">
+{literal}
+.bad_delegation {
+	color: #f00;
+	padding: 3px;
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid red;
+	background: #ffeeee;
+}
+.new_record li {
+	list-style: none;
+	float: left;
+	margin-left: 2px;
+}
+
+.new_record li a {
+	display: block;
+	padding: 1px 3px;
+	text-decoration: none;
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	white-space: nowrap;
+}
+.additional_ul {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+}
+.additional_ul li a {
+	width: auto;
+	padding: 1px 3px;
+	background: #eee;
+}
+.br_clear_left {
+	clear: left;
+}
+.td_center {
+	text-align: center;
+}
+.td_locked {
+	cursor: not-allowed;
+}
+.td_delete:hover {
+	background: red;
+}
+.td_delete a {
+	text-decoration: none;
+}
+.td_update a {
+	text-decoration: none;
+}
+
+.rrlabel {
+	color: #fff;
+	padding: 0px 3px 0px 3px;
+	margin: 1px 0px 1px 0px;
+	border: 1px solid black;
+	display: inline-block;
+}
+.records {
+	border-width: 1px 1px 1px 1px;
+	border-collapse: collapse;
+	border-style: solid;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+.records th {
+	background: #ccc;
+	border-width: 1px 1px 1px 1px;
+	border-style: solid;
+	margin: 0;
+	padding: 4px;
+}
+
+.records td {
+	border-width: 1px 1px 1px 1px;
+	border: 1px solid black;
+}
+
+.records tr:hover {
+	background: #D7D7D7;
+	cursor: pointer;
+}
+
+.tr_locked {
+	background: #fee;
+	cursor: default;
+}
+
+.records_add {
+	border-width: 0px;
+	border-collapse: collapse;
+	border-style: solid;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+.records_add th {
+	background: #ccc;
+	border-width: 0px;
+	margin: 0;
+	padding: 4px;
+}
+
+{/literal}
+</style>
+{/block}

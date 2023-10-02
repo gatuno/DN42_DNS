@@ -10,7 +10,8 @@
 	<tr><td><strong>{trans 'Domain'}:</strong></td><td>{$managed.dominio}</td></tr>
 	{$form.render_table}
 		<tr>
-			<td>&nbsp;</td><td><input type="submit" value="{trans 'Add record'}" /> - <a href="{url 'DNS42_Views_Managed::administrar', array ($managed.dominio)}">{trans 'Cancel'}</a></td>
+			{if $managed.reversa}{aurl 'return_url', 'DNS42_Views_Managed::administrar', array ($managed.prefix)}{else}{aurl 'return_url', 'DNS42_Views_Managed::administrar', array ($managed.dominio)}{/if}
+			<td>&nbsp;</td><td><input type="submit" value="{trans 'Add record'}" /> - <a href="{$return_url}">{trans 'Cancel'}</a></td>
 		</tr>
 	</table>
 </form>

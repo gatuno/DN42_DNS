@@ -15,6 +15,11 @@
 {if $managed.delegacion == 0 || $managed->delegacion == 1}
 <p>{trans 'You can create records on the domain, but the zone will became active in the DNS until delegation works.'}</p>
 {/if}
+
+{if $managed.reversa}
+{aurl 'switch_url', 'DNS42_Views_Managed::administrar_simple', array ($managed.prefix)}<p>{blocktrans}Switch to <a href="{$switch_url}">simple editor</a>{/blocktrans}</p>
+{/if}
+
 <ul class="new_record">
 {if $managed.reversa}
 <li><a href="{url 'DNS42_Views_Managed::agregar_registro', array ($managed.prefix, 'CNAME')}">{trans 'New CNAME'}</a></li>
