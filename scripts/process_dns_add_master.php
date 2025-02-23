@@ -7,6 +7,8 @@ require 'process_dns_common.php';
 function check_reverse ($managed) {
 	$parent_prefix = $managed->prefix;
 	$parent_domain = $managed->dominio;
+	
+	/* Estos prefixes se utilizan para verificar la delegación de los DNS inversos */
 	$prefixes = array (
 		array (
 			'type' => 4,
@@ -56,6 +58,13 @@ function check_reverse ($managed) {
 		return false;
 	}
 	
+	/* Recuperar la IP del master */
+	$masters = Gatuf::config ('rndc_master', array ());
+	if (count ($masters) == 0) {
+		throw new Exception (__('Configuration Error. There should be only 1 master'));
+	}
+	
+	$master_name = array_key_first ($masters);
 	
 	/* Recorrer cada nameserver, preguntando por la delegación */
 	foreach ($ns_list as $ns) {
@@ -75,14 +84,14 @@ function check_reverse ($managed) {
 		
 		foreach ($result->answer as $ns) {
 			if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
-			if ($ns->nsdname == 'ns1.gatuno.dn42') {
+			if ($ns->nsdname == $master_name) {
 				return true;
 			}
 		}
 	
 		foreach ($result->authority as $ns) {
 			if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
-			if ($ns->nsdname == 'ns1.gatuno.dn42') {
+			if ($ns->nsdname == $master_name) {
 				return true;
 			}
 		}

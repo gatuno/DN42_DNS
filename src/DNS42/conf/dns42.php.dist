@@ -128,6 +128,11 @@ $cfg['installed_apps'] = array('Gatuf', 'DNS42');
 $cfg['gatuf_log_file'] = '/tmp/gatuf.log';
 Gatuf_Log::$level = Gatuf_Log::ALL;
 
+# ---------------------------------------------------------------------------- #
+#                             RabbitMQ section                                 #
+# ---------------------------------------------------------------------------- #
+#
+
 /* Configuración de la cola de despache de acciones de dominios */
 $cfg['amqp_dns_server'] = 'localhost';
 $cfg['amqp_dns_user'] = 'guest';
@@ -145,10 +150,12 @@ $cfg['autoload_files'] = array ('/usr/share/php/PhpAmqpLib/autoload.php');
 # Tipo de Servidor al que actualizaré, puede ser master o slave
 $cfg['rndc_type'] = 'master';
 
-# El nombre debe ser único entre los otros servidores
+# El nombre debe ser único entre los otros servidores. Debe ser un FQDN
 $cfg['rndc_name'] = 'machine_name';
 
 $cfg['rndc_master'] = array ('machine_name' => 'IP');
+
+# Si no tienes esclavos, deja vacia esta parte. Los machine_name de los esclavos deben ser FQDN.
 $cfg['rndc_slaves'] = array (
 	'machine_name' => 'IP',
 	'machine_name' => 'IP'

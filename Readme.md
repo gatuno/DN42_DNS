@@ -1,5 +1,15 @@
 # Installing
 
+## Dependencies
+
+You will need the following things:
+
+* PHP 7
+* A web server (apache, nginx, etc...)
+* A rabbitMQ server
+* PhpAmqpLib lib installed. If your installation is not standard, adjust the 'autoload_files' in the config file.
+
+## Configure
 First, you need to fill the base config file. Copy the config file:
 
 `cp src/DN42/conf/dns42.php.dist src/DN42/conf/dns42.php`
@@ -21,6 +31,8 @@ Just point you apache DocumentRoot to the www folder
 To bootstrap the database, use the script `migrate.php` like this:
 
 `php migrate.php --conf=DNS42/conf/dns42.php -a -d -i`
+
+Next, modify the script `bootstrap_first_user.php` and fill your data, and run it `php bootstrap_first_user.php` to create the first admin user.
 
 ## DNS Network watching
 
@@ -63,5 +75,12 @@ controls {
 };
 ```
 
-Next, configure the `rndc_*` options in the main config file. If everything goes fine, run the script `process_dns.php` as a service. It will process the async messages and will update the bind server.
+Next, configure the `rndc_*` options in the main config file.
 
+The web application will use rndc_update_key, rndc_update_server and rndc_update_port to send control commands to create the dynamic zones. After creating the update_key "key_a" it must be inserted in the database. Please use the script `bootstrap_first_update_key.php` to create it.
+
+If everything goes fine, run the script `process_dns.php` as a service. It will process the async messages and will update the bind server.
+
+# Bugs
+
+It is a known bug that if you change the variable `rndc_slaves` on the config file, the old zones created will not be updated, so the new slaves will not receive notifications.

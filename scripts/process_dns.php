@@ -100,12 +100,6 @@ $channel->exchange_declare('dns_zone_master_slave_add', 'fanout', false, false, 
 $channel->basic_qos (null, 1, null);
 /* El DNS Maestro procesa, las zonas agregadas maestras, mas todas las zonas esclavas, y agregar, quitar y actualizar registros */
 
-/*list($queue_name, ,) = $channel->queue_declare("");
-$channel->queue_bind($queue_name, 'dns_zone_all_slaves_add');
-
-// Esta queue está conectada al exchange de agregar zonas
-$channel->basic_consume ($queue_name, '', false, false, false, false, $callback_zone_add_slave)*/
-
 $queue_name = Gatuf::config ('rndc_name', null);
 
 if ($queue_name === null || $queue_name == '') {
@@ -129,6 +123,7 @@ $channel->queue_bind ($queue_name.'_zone_del', 'dns_zone_del');
 $channel->basic_consume ($queue_name.'_zone_del', '', false, false, false, false, $callback_zone_del);
 
 if ($type == 'master') {
+	/* Los DNS de tipo maestro solo manejan los mensajes principales */
 	$channel->basic_consume ('dns_zone_add', '', false, false, false, false, $callback_zone_add_master);
 	$channel->basic_consume ('dns_zone_slave_add', '', false, false, false, false, $callback_zone_slave_check_delegation);
 	$channel->basic_consume ('dns_record_add', '', false, false, false, false, $callback_record_add);
@@ -136,6 +131,7 @@ if ($type == 'master') {
 	$channel->basic_consume ('dns_record_del', '', false, false, false, false, $callback_record_del);
 	$channel->basic_consume ('dns_zone_check_delegation', '', false, false, false, false, $callback_zone_check_delegation);
 } else {
+	/* Los DNS esclavo solo manejan agregar zonas esclavas */
 	$channel->queue_declare ($queue_name.'_slave_add', false, true, false, false);
 	$channel->queue_bind ($queue_name.'_slave_add', 'dns_zone_master_slave_add');
 	$channel->basic_consume ($queue_name.'_slave_add', '', false, false, false, false, $callback_zone_master_slave_add);
