@@ -102,6 +102,15 @@ function check_reverse ($managed) {
 
 function check_master ($managed) {
 	$parent_domain = $managed->dominio;
+	
+	/* Recuperar la IP del master */
+	$masters = Gatuf::config ('rndc_master', array ());
+	if (count ($masters) == 0) {
+		throw new Exception (__('Configuration Error. There should be only 1 master'));
+	}
+	
+	$master_name = array_key_first ($masters);
+	$master_ip = $masters[$master_name];
 	while (1) {
 		/* Primer tarea, revisar que los NS primarios del padre hayan sido delegados a mi */
 		$toks = explode (".", $parent_domain);
@@ -113,7 +122,7 @@ function check_master ($managed) {
 		$resolver = new Net_DNS2_Resolver ();
 		
 		try {
-			$result = $resolver->query ($parent_domain.".", 'NS');
+			$result = $resolver->query ($managed->dominio.".", 'NS');
 		} catch (Net_DNS2_Exception $err) {
 			$result = false;
 		}
@@ -124,8 +133,13 @@ function check_master ($managed) {
 		}
 	
 		$list_ips = array ();
+		$list_names = array ();
 		foreach ($result->answer as $parent_ns) {
 			if (get_class ($parent_ns) != 'Net_DNS2_RR_NS') continue;
+			
+			if (!in_array ($parent_ns->nsdname, $list_names)) {
+				$list_names[] = $parent_ns->nsdname;
+			}
 			try {
 				$result2 = $resolver->query ($parent_ns->nsdname, 'A');
 			} catch (Net_DNS2_Exception $err) {
@@ -133,8 +147,10 @@ function check_master ($managed) {
 			}
 		
 			if ($result2 !== false) {
-				foreach ($result2->answer as $a) {
-					$list_ips[] = $a->address;
+				foreach ($result2->answer as $a) {	
+					if (!in_array ($a->address, $list_ips)) {
+						$list_ips[] = $a->address;
+					}
 				}
 			}
 		
@@ -146,36 +162,25 @@ function check_master ($managed) {
 		
 			if ($result2 !== false) {
 				foreach ($result2->answer as $aaaa) {
-					$list_ips[] = $aaaa->address;
+					if (!in_array ($aaaa->address, $list_ips)) {
+						$list_ips[] = $aaaa->address;
+					}
 				}
 			}
 		}
 		
+		/* Buscar coincidencia por IP */
 		foreach ($list_ips as $ip) {
-			$opts = array ('nameservers' => array ($ip));
-			$resolver2 = new Net_DNS2_Resolver ($opts);
-		
-			try {
-				$result2 = $resolver2->query ($managed->dominio, 'NS');
-			} catch (Net_DNS2_Exception $err) {
-				$result2 = false;
+			if ($ip == $master_ip) {
+				return true;
 			}
-			if ($result2 === false) continue;
+		}
 		
-			foreach ($result2->answer as $ns) {
-				if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
-				if ($ns->nsdname == 'ns1.gatuno.dn42') {
-					return true;
-				}
+		/* Buscar coincidencia por nombre */
+		foreach ($list_names as $name) {
+			if ($ip == $master_name) {
+				return true;
 			}
-		
-			foreach ($result2->authority as $ns) {
-				if (get_class ($ns) != 'Net_DNS2_RR_NS') continue;
-				if ($ns->nsdname == 'ns1.gatuno.dn42') {
-					return true;
-				}
-			}
-		
 		}
 	}
 	
@@ -230,6 +235,7 @@ function zone_add_master ($managed_domain_id) {
 		$created = create_empty_zone ($folder, $managed->dominio, $master_name);
 		
 		if ($created == false) {
+			printf ("Error creating empty zone at: %s, for domain: %s\n", $folder, $managed->dominio);
 			$managed->delegacion = 3;
 			$managed->update ();
 			
@@ -282,6 +288,7 @@ function zone_add_master ($managed_domain_id) {
 			/* Ahora, notificar a los esclavos que por favor creen la zona dns esclava */
 			DNS42_RMQ::send_notify_slaves_from_master ($managed);
 		} else {
+			printf ("Error executing: %s\nResult: %s\n", $full_exec, implode ("\n", $output));
 			$managed->delegacion = 4;
 			$managed->update ();
 		}

@@ -32,6 +32,8 @@ if (!isset ($argv[1])) {
 	return 1;
 }
 
+var_dump ("Este código está roto, GATUNO");
+exit;
 $res = zone_slave_check_delegation ($argv[1]);
 
 return 0;

@@ -27,7 +27,7 @@ class DNS42_RMQ {
 		} else {
 			// Si la zona es totalmente esclava, primero validar que pueda hacer el AXFR
 			// Si el axfr funciona, luego se notificará a todos los esclavos para que agreguen la zona
-			$channel->basic_publish ($msg, '', 'dns_zone_slave_add');
+			//$channel->basic_publish ($msg, '', 'dns_zone_slave_add');
 		}
 		
 		$channel->close();

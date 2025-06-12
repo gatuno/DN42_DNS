@@ -21,6 +21,9 @@ function create_empty_zone ($folder, $domain, $master_name) {
 	
 	fclose ($fp);
 	
+	@chown ($file_name, 'bind');
+	@chmod ($file_name, 0660);
+	
 	return true;
 }
 

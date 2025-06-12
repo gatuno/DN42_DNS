@@ -11,10 +11,10 @@ function zone_add_master_slave ($managed_domain_id) {
 		return false;
 	}
 	
-	if ($managed->maestra) {
+	//if ($managed->maestra) {
 		/* Si es una zona maestra, ignorar */
-		return false;
-	}
+		//return false;
+	//}
 	
 	/* Recuperar la IP del master */
 	$masters = Gatuf::config ('rndc_master', array ());

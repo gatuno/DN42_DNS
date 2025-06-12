@@ -199,10 +199,12 @@ class DNS42_Views_Managed {
 		$records = $managed->get_records_list (array ('filter' => $sql->gen (), 'order' => 'locked DESC, name ASC, rdata ASC'));
 		$all_records = array_merge ($all_records, $records->getArrayCopy ());
 		
+		$master_name = Gatuf::config ('rndc_name', '');
 		$request->active_tab = 'free_dns';
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/ver.html',
 		                                         array ('page_title' => __('Free DNS Management'),
 		                                                'managed' => $managed,
+		                                                'master_name' => $master_name,
 		                                                'records' => $all_records),
 		                                         $request);
 	}
@@ -221,7 +223,7 @@ class DNS42_Views_Managed {
 		
 		/* Cuando administramos una zona inversa simple, vamos a recuperar TODOS los registros PTR y listarlos de forma "diferente" */
 		$sql = new Gatuf_SQL ('type="PTR"');
-		$records = $managed->get_records_list (array ('filter' => $sql->gen (), 'order' => 'locked DESC, name ASC, rdata ASC'));
+		$records = $managed->get_records_list (array ('filter' => $sql->gen (), 'order' => 'locked DESC, LENGTH(name) ASC, name ASC, rdata ASC'));
 		
 		/* Conseguir el prefijo y la máscara */
 		$toks = explode ('_', $managed->prefix);
@@ -276,11 +278,14 @@ class DNS42_Views_Managed {
 			$form_agregar = new DNS42_Form_Record_Add_PTRSimple (null, $extra);
 		}
 		
+		$master_name = Gatuf::config ('rndc_name', '');
+		
 		$request->active_tab = 'free_dns';
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/reversa_simple.html',
 		                                         array ('page_title' => __('Free DNS Management'),
 		                                                'managed' => $managed,
 		                                                'short_prefix' => $prefix,
+		                                                'master_name' => $master_name,
 		                                                'form_agregar' => $form_agregar,
 		                                                'simples' => $simples),
 		                                         $request);
@@ -685,8 +690,10 @@ class DNS42_Views_Managed {
 			$form = new DNS42_Form_Managed_AgregarInversa (null, $extra);
 		}
 		
+		$master_name = Gatuf::config ('rndc_name', '');
 		return DNS42_Shortcuts_RenderToResponse ('dns42/managed/agregar_reversa.html',
 		                                         array ('page_title' => $title,
+		                                                'master_name' => $master_name,
 		                                                'form' => $form),
 		                                         $request);
 	}

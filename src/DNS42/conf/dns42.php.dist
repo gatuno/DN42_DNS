@@ -155,7 +155,7 @@ $cfg['rndc_name'] = 'machine_name';
 
 $cfg['rndc_master'] = array ('machine_name' => 'IP');
 
-# Si no tienes esclavos, deja vacia esta parte. Los machine_name de los esclavos deben ser FQDN.
+# Si no tienes esclavos, deja vacia esta parte.
 $cfg['rndc_slaves'] = array (
 	'machine_name' => 'IP',
 	'machine_name' => 'IP'
